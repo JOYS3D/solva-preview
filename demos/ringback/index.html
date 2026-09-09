@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RingBack — Tradie Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body { font-family: 'Inter', system-ui, sans-serif; }
+  body { background: #f6f7f9; color: #0b1220; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; font-size:14px; font-weight:500; color:#475569; cursor:pointer; transition:all .15s; }
+  .nav-item:hover { background:#f1f5f9; color:#0b1220; }
+  .nav-item.active { background:#0ea5e9; color:#fff; box-shadow: 0 4px 14px -4px rgba(14,165,233,.5); }
+  .nav-item.active:hover { background:#0284c7; color:#fff; }
+  .card { background:#fff; border-radius:16px; border:1px solid #eef0f4; }
+  .pill { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; }
+  .stat-up { color:#059669; }
+  .stat-down { color:#dc2626; }
+  .page { display:none; }
+  .page.active { display:block; animation: fade .25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px);} to { opacity:1; transform: none; } }
+  .bar { background: linear-gradient(180deg, #0ea5e9, #0369a1); border-radius: 6px 6px 0 0; transition: all .3s; }
+  .bar:hover { background: linear-gradient(180deg, #38bdf8, #0ea5e9); }
+  .photo-thumb { aspect-ratio:1; background-size:cover; background-position:center; border-radius:8px; }
+  .lead-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; cursor:pointer; transition:all .15s; }
+  .lead-card:hover { border-color:#0ea5e9; box-shadow: 0 4px 14px -4px rgba(14,165,233,.2); transform: translateY(-1px); }
+  .urgent-dot { width:8px; height:8px; border-radius:999px; display:inline-block; }
+  .topbar { backdrop-filter: blur(10px); background: rgba(255,255,255,.85); }
+  .toggle { width:36px; height:20px; background:#e2e8f0; border-radius:999px; position:relative; cursor:pointer; transition:background .2s; }
+  .toggle.on { background:#10b981; }
+  .toggle::after { content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; background:#fff; border-radius:999px; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .toggle.on::after { left:18px; }
+</style>
+</head>
+<body>
+
+<div class="flex min-h-screen">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col p-4 sticky top-0 h-screen">
+    <div class="flex items-center gap-2 px-2 py-3 mb-2">
+      <div class="w-9 h-9 rounded-xl bg-sky-500 flex items-center justify-center font-bold text-white">R</div>
+      <div>
+        <div class="font-extrabold text-base leading-none">RingBack</div>
+        <div class="text-[10px] font-semibold text-sky-600 mt-0.5">PRO PLAN</div>
+      </div>
+    </div>
+
+    <nav class="space-y-1 mt-2">
+      <div class="nav-item active" data-page="overview">
+        <span>📊</span><span>Overview</span>
+      </div>
+      <div class="nav-item" data-page="leads">
+        <span>📥</span><span>Leads</span>
+        <span class="ml-auto pill bg-rose-100 text-rose-700">3 new</span>
+      </div>
+      <div class="nav-item" data-page="calendar">
+        <span>📅</span><span>Calendar</span>
+      </div>
+      <div class="nav-item" data-page="ai">
+        <span>🧠</span><span>AI Memory</span>
+      </div>
+      <div class="nav-item" data-page="pricing">
+        <span>💰</span><span>Pricing Rules</span>
+      </div>
+      <div class="nav-item" data-page="settings">
+        <span>⚙️</span><span>Settings</span>
+      </div>
+    </nav>
+
+    <div class="mt-auto">
+      <div class="card p-3 mb-3" style="background: linear-gradient(135deg,#0ea5e9,#0369a1); color:#fff; border:none;">
+        <div class="text-xs font-semibold opacity-80 mb-1">THIS MONTH</div>
+        <div class="text-2xl font-extrabold">$34,820</div>
+        <div class="text-xs opacity-90">recovered • 47 leads</div>
+      </div>
+
+      <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-100 rounded-lg cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-white">JM</div>
+        <div class="flex-1">
+          <div class="text-sm font-semibold leading-none">John Murphy</div>
+          <div class="text-[11px] text-slate-500 mt-1">XYZ Plumbing</div>
+        </div>
+        <span class="text-slate-400">⋯</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="flex-1 min-w-0">
+
+    <!-- TOPBAR -->
+    <div class="topbar sticky top-0 z-10 px-8 py-4 border-b border-slate-200 flex items-center justify-between">
+      <div>
+        <div class="text-xs text-slate-500">G'day, John 👋</div>
+        <h1 id="page-title" class="text-2xl font-extrabold tracking-tight">Overview</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="px-3 py-2 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50">📞 Test missed call</button>
+        <div class="relative">
+          <button class="w-10 h-10 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center">🔔</button>
+          <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PAGE: OVERVIEW ==================== -->
+    <div id="page-overview" class="page active px-8 py-6">
+
+      <!-- KPI CARDS -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">RECOVERED THIS MONTH</div>
+          <div class="flex items-end gap-2">
+            <div class="text-3xl font-extrabold">$34,820</div>
+            <div class="text-xs stat-up font-semibold pb-1">↑ 28%</div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1">vs $27,180 last month</div>
+        </div>
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">LEADS CAPTURED</div>
+          <div class="flex items-end gap-2">
+            <div class="text-3xl font-extrabold">47</div>
+            <div class="text-xs stat-up font-semibold pb-1">↑ 12%</div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1">39 booked • 5 lost • 3 pending</div>
+        </div>
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">CONVERSION RATE</div>
+          <div class="flex items-end gap-2">
+            <div class="text-3xl font-extrabold">83%</div>
+            <div class="text-xs stat-up font-semibold pb-1">↑ 4pts</div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1">missed calls → bookings</div>
+        </div>
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">AI ACCURACY</div>
+          <div class="flex items-end gap-2">
+            <div class="text-3xl font-extrabold">89%</div>
+            <div class="text-xs stat-up font-semibold pb-1">↑ 6pts</div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1">avg quote adjustment: -$45</div>
+        </div>
+      </div>
+
+      <!-- MIDDLE ROW -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+
+        <!-- TODAY -->
+        <div class="card p-5 col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-xs font-semibold text-slate-500">TODAY</div>
+              <div class="text-lg font-bold">Tuesday, 11 May 2026</div>
+            </div>
+            <button class="text-xs text-sky-600 font-semibold hover:underline">Open calendar →</button>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+              <div class="text-center px-3 py-1 bg-white rounded-lg">
+                <div class="text-[10px] font-semibold text-slate-500">8:00</div>
+                <div class="text-[10px] font-semibold text-slate-500">AM</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-sm">Blocked drain — Sarah O'Connell</div>
+                <div class="text-xs text-slate-500">📍 Mermaid Beach • $450 • 1.5h est.</div>
+              </div>
+              <span class="pill bg-emerald-100 text-emerald-700">In progress</span>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200">
+              <div class="text-center px-3 py-1 bg-slate-100 rounded-lg">
+                <div class="text-[10px] font-semibold text-slate-500">10:00</div>
+                <div class="text-[10px] font-semibold text-slate-500">AM</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-sm">Hot water replacement — Sarah Mitchell</div>
+                <div class="text-xs text-slate-500">📍 Nerang • $2,800 • 3h est. • $560 deposit ✓</div>
+              </div>
+              <span class="pill bg-sky-100 text-sky-700">Next</span>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200">
+              <div class="text-center px-3 py-1 bg-slate-100 rounded-lg">
+                <div class="text-[10px] font-semibold text-slate-500">2:30</div>
+                <div class="text-[10px] font-semibold text-slate-500">PM</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-sm">Tap repair — Mike Thompson</div>
+                <div class="text-xs text-slate-500">📍 Burleigh Heads • $180 • 45min est.</div>
+              </div>
+              <span class="pill bg-slate-100 text-slate-700">Confirmed</span>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200">
+              <div class="text-center px-3 py-1 bg-slate-100 rounded-lg">
+                <div class="text-[10px] font-semibold text-slate-500">4:00</div>
+                <div class="text-[10px] font-semibold text-slate-500">PM</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-sm">Leak detection — Emma Wilson</div>
+                <div class="text-xs text-slate-500">📍 Robina • $350 • 1h est.</div>
+              </div>
+              <span class="pill bg-slate-100 text-slate-700">Confirmed</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
+            <div class="text-slate-500">Today's earnings</div>
+            <div class="font-bold text-lg">$3,780</div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-xs font-semibold text-slate-500">RECENT ACTIVITY</div>
+            <button class="text-xs text-sky-600 font-semibold hover:underline">All →</button>
+          </div>
+
+          <div class="space-y-3 max-h-[420px] overflow-y-auto scrollbar-thin">
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm flex-shrink-0">💸</div>
+              <div class="flex-1">
+                <div class="text-sm"><strong>Sarah Mitchell</strong> paid deposit</div>
+                <div class="text-xs text-slate-500">$560 • 4 min ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-sm flex-shrink-0">✅</div>
+              <div class="flex-1">
+                <div class="text-sm">You sent quote to <strong>Sarah Mitchell</strong></div>
+                <div class="text-xs text-slate-500">$2,800 • 6 min ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm flex-shrink-0">🧠</div>
+              <div class="flex-1">
+                <div class="text-sm">AI learned 2 new rules</div>
+                <div class="text-xs text-slate-500">From Sarah's quote • 6 min ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center text-sm flex-shrink-0">📞</div>
+              <div class="flex-1">
+                <div class="text-sm">Missed call captured</div>
+                <div class="text-xs text-slate-500">0412 845 392 • 12 min ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm flex-shrink-0">💸</div>
+              <div class="flex-1">
+                <div class="text-sm">Job completed for <strong>David Park</strong></div>
+                <div class="text-xs text-slate-500">$1,240 invoice paid • 1h ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-sm flex-shrink-0">📅</div>
+              <div class="flex-1">
+                <div class="text-sm"><strong>Mike Thompson</strong> booked</div>
+                <div class="text-xs text-slate-500">Today 2:30 PM • 2h ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-sm flex-shrink-0">📞</div>
+              <div class="flex-1">
+                <div class="text-sm">Missed call captured</div>
+                <div class="text-xs text-slate-500">0438 221 178 • 3h ago</div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center text-sm flex-shrink-0">❌</div>
+              <div class="flex-1">
+                <div class="text-sm">Lead lost — <strong>Tony Reeves</strong></div>
+                <div class="text-xs text-slate-500">Said price too high • 4h ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW -->
+      <div class="grid grid-cols-3 gap-4">
+
+        <!-- RECOVERY CHART -->
+        <div class="card p-5 col-span-2">
+          <div class="flex items-center justify-between mb-1">
+            <div class="text-xs font-semibold text-slate-500">$ RECOVERED — LAST 30 DAYS</div>
+            <div class="flex gap-1 text-xs">
+              <button class="px-2 py-1 rounded bg-slate-100 text-slate-600 font-semibold">7d</button>
+              <button class="px-2 py-1 rounded bg-sky-500 text-white font-semibold">30d</button>
+              <button class="px-2 py-1 rounded text-slate-600 font-semibold">90d</button>
+            </div>
+          </div>
+          <div class="text-2xl font-extrabold mb-4">$34,820 <span class="text-xs stat-up font-semibold">↑ 28%</span></div>
+
+          <div class="flex items-end gap-1 h-40">
+            <!-- Bars -->
+            <div class="flex-1 bar" style="height:25%"></div>
+            <div class="flex-1 bar" style="height:40%"></div>
+            <div class="flex-1 bar" style="height:30%"></div>
+            <div class="flex-1 bar" style="height:55%"></div>
+            <div class="flex-1 bar" style="height:48%"></div>
+            <div class="flex-1 bar" style="height:35%"></div>
+            <div class="flex-1 bar" style="height:60%"></div>
+            <div class="flex-1 bar" style="height:50%"></div>
+            <div class="flex-1 bar" style="height:65%"></div>
+            <div class="flex-1 bar" style="height:42%"></div>
+            <div class="flex-1 bar" style="height:70%"></div>
+            <div class="flex-1 bar" style="height:55%"></div>
+            <div class="flex-1 bar" style="height:80%"></div>
+            <div class="flex-1 bar" style="height:60%"></div>
+            <div class="flex-1 bar" style="height:75%"></div>
+            <div class="flex-1 bar" style="height:88%"></div>
+            <div class="flex-1 bar" style="height:65%"></div>
+            <div class="flex-1 bar" style="height:90%"></div>
+            <div class="flex-1 bar" style="height:72%"></div>
+            <div class="flex-1 bar" style="height:85%"></div>
+            <div class="flex-1 bar" style="height:78%"></div>
+            <div class="flex-1 bar" style="height:95%"></div>
+            <div class="flex-1 bar" style="height:82%"></div>
+            <div class="flex-1 bar" style="height:70%"></div>
+            <div class="flex-1 bar" style="height:88%"></div>
+            <div class="flex-1 bar" style="height:75%"></div>
+            <div class="flex-1 bar" style="height:92%"></div>
+            <div class="flex-1 bar" style="height:80%"></div>
+            <div class="flex-1 bar" style="height:100%"></div>
+            <div class="flex-1 bar" style="height:95%; background: linear-gradient(180deg, #10b981, #047857);"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 mt-2">
+            <span>Apr 11</span><span>Apr 21</span><span>May 1</span><span>Today</span>
+          </div>
+        </div>
+
+        <!-- AI INSIGHTS -->
+        <div class="card p-5" style="background: linear-gradient(135deg, #0f172a, #1e293b); color:#fff; border:none;">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-xs font-semibold text-sky-300">🧠 AI INSIGHTS</div>
+            <span class="pill bg-emerald-500/20 text-emerald-300">89% accurate</span>
+          </div>
+
+          <div class="text-sm leading-relaxed space-y-3">
+            <div>
+              <div class="text-amber-300 text-xs font-semibold mb-1">💡 SUGGESTION</div>
+              You priced 3 leak detection jobs at $400 last week. Want me to update your default rule from $350 to $400?
+              <button class="text-xs underline text-sky-300 font-semibold mt-1">Yes, update</button>
+            </div>
+
+            <div class="border-t border-slate-700 pt-3">
+              <div class="text-amber-300 text-xs font-semibold mb-1">📈 TREND</div>
+              Tuesdays are your best day — 6 leads avg. Want to push availability earlier?
+            </div>
+
+            <div class="border-t border-slate-700 pt-3">
+              <div class="text-amber-300 text-xs font-semibold mb-1">⚠️ HEADS UP</div>
+              You've quoted 4 hot water jobs this week. Stock might be running low at Reece Nerang.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== PAGE: LEADS (KANBAN) ==================== -->
+    <div id="page-leads" class="page px-8 py-6">
+
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <input type="text" placeholder="🔍 Search leads..." class="px-4 py-2 rounded-lg border border-slate-200 text-sm w-64" />
+          <button class="px-3 py-2 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50">All time ▼</button>
+          <button class="px-3 py-2 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50">All types ▼</button>
+        </div>
+        <button class="px-4 py-2 text-sm font-semibold rounded-lg bg-sky-500 text-white hover:bg-sky-600">+ Manual lead</button>
+      </div>
+
+      <div class="grid grid-cols-4 gap-4">
+
+        <!-- NEW -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold text-sm flex items-center gap-2">
+              <span class="urgent-dot bg-rose-500"></span>
+              NEW <span class="text-slate-400 font-normal">(3)</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+
+            <div class="lead-card border-l-4 border-rose-500">
+              <div class="flex items-start justify-between mb-2">
+                <div class="font-semibold text-sm">Sarah Mitchell</div>
+                <span class="pill bg-rose-100 text-rose-700">URGENT</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-2">📍 Nerang • Hot water leak</div>
+              <div class="flex gap-1 mb-2">
+                <div class="photo-thumb w-10" style="background:linear-gradient(135deg,#94a3b8,#475569);"></div>
+                <div class="photo-thumb w-10" style="background:linear-gradient(135deg,#a78bfa,#6366f1);"></div>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="text-xs text-sky-700 font-bold">$2,400 (AI)</div>
+                <div class="text-xs text-slate-400">2 min ago</div>
+              </div>
+            </div>
+
+            <div class="lead-card border-l-4 border-rose-500">
+              <div class="flex items-start justify-between mb-2">
+                <div class="font-semibold text-sm">Marcus Chen</div>
+                <span class="pill bg-amber-100 text-amber-700">24h</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-2">📍 Robina • Blocked toilet</div>
+              <div class="flex items-center justify-between">
+                <div class="text-xs text-sky-700 font-bold">$280 (AI)</div>
+                <div class="text-xs text-slate-400">18 min ago</div>
+              </div>
+            </div>
+
+            <div class="lead-card border-l-4 border-rose-500">
+              <div class="flex items-start justify-between mb-2">
+                <div class="font-semibold text-sm">Linda Foster</div>
+                <span class="pill bg-slate-100 text-slate-600">This week</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-2">📍 Burleigh • Tap dripping</div>
+              <div class="flex items-center justify-between">
+                <div class="text-xs text-sky-700 font-bold">$180 (AI)</div>
+                <div class="text-xs text-slate-400">42 min ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUOTED -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold text-sm flex items-center gap-2">
+              <span class="urgent-dot bg-amber-500"></span>
+              QUOTED <span class="text-slate-400 font-normal">(2)</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+
+            <div class="lead-card border-l-4 border-amber-500">
+              <div class="font-semibold text-sm mb-2">Tom Becker</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Southport • Hot water service</div>
+              <div class="text-xs text-slate-600 mb-2">⏳ Sent 2h ago, no reply</div>
+              <div class="flex items-center justify-between">
+                <div class="text-xs font-bold">$1,850</div>
+                <button class="text-xs text-sky-600 font-semibold">Follow up →</button>
+              </div>
+            </div>
+
+            <div class="lead-card border-l-4 border-amber-500">
+              <div class="font-semibold text-sm mb-2">Rachel Quinn</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Coomera • Pipe burst</div>
+              <div class="text-xs text-slate-600 mb-2">👀 Viewed quote 3x</div>
+              <div class="flex items-center justify-between">
+                <div class="text-xs font-bold">$680</div>
+                <div class="text-xs text-slate-400">5h ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOOKED -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold text-sm flex items-center gap-2">
+              <span class="urgent-dot bg-sky-500"></span>
+              BOOKED <span class="text-slate-400 font-normal">(4)</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+
+            <div class="lead-card border-l-4 border-sky-500">
+              <div class="font-semibold text-sm mb-1">Sarah Mitchell</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Nerang • Hot water</div>
+              <div class="text-xs text-emerald-700 font-semibold mb-2">📅 Today 10:00 AM</div>
+              <div class="flex items-center justify-between">
+                <div class="text-xs font-bold">$2,800</div>
+                <span class="pill bg-emerald-100 text-emerald-700">Deposit ✓</span>
+              </div>
+            </div>
+
+            <div class="lead-card border-l-4 border-sky-500">
+              <div class="font-semibold text-sm mb-1">Mike Thompson</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Burleigh • Tap repair</div>
+              <div class="text-xs text-slate-600 font-semibold mb-2">📅 Today 2:30 PM</div>
+              <div class="text-xs font-bold">$180</div>
+            </div>
+
+            <div class="lead-card border-l-4 border-sky-500">
+              <div class="font-semibold text-sm mb-1">Emma Wilson</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Robina • Leak detection</div>
+              <div class="text-xs text-slate-600 font-semibold mb-2">📅 Today 4:00 PM</div>
+              <div class="text-xs font-bold">$350</div>
+            </div>
+
+            <div class="lead-card border-l-4 border-sky-500">
+              <div class="font-semibold text-sm mb-1">Brad Williams</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Helensvale • Drain</div>
+              <div class="text-xs text-slate-600 font-semibold mb-2">📅 Wed 9:00 AM</div>
+              <div class="text-xs font-bold">$450</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPLETED -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold text-sm flex items-center gap-2">
+              <span class="urgent-dot bg-emerald-500"></span>
+              COMPLETED <span class="text-slate-400 font-normal">(this week)</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="lead-card border-l-4 border-emerald-500 opacity-90">
+              <div class="font-semibold text-sm mb-1">Sarah O'Connell</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Mermaid Beach</div>
+              <div class="text-xs font-bold text-emerald-700">$450 • Paid ✓</div>
+            </div>
+            <div class="lead-card border-l-4 border-emerald-500 opacity-90">
+              <div class="font-semibold text-sm mb-1">David Park</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Surfers Paradise</div>
+              <div class="text-xs font-bold text-emerald-700">$1,240 • Paid ✓</div>
+            </div>
+            <div class="lead-card border-l-4 border-emerald-500 opacity-90">
+              <div class="font-semibold text-sm mb-1">Anna Petrov</div>
+              <div class="text-xs text-slate-500 mb-2">📍 Broadbeach</div>
+              <div class="text-xs font-bold text-emerald-700">$890 • Paid ✓</div>
+            </div>
+            <div class="text-xs text-slate-400 text-center pt-2">+ 5 more this week</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== PAGE: AI MEMORY ==================== -->
+    <div id="page-ai" class="page px-8 py-6">
+
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">RULES LEARNED</div>
+          <div class="text-3xl font-extrabold">47</div>
+          <div class="text-xs text-slate-400 mt-1">over 3 months</div>
+        </div>
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">QUOTE ACCURACY</div>
+          <div class="text-3xl font-extrabold text-emerald-600">89%</div>
+          <div class="text-xs text-slate-400 mt-1">↑ from 52% in month 1</div>
+        </div>
+        <div class="card p-5">
+          <div class="text-xs font-semibold text-slate-500 mb-2">AVG ADJUSTMENT</div>
+          <div class="text-3xl font-extrabold">-$45</div>
+          <div class="text-xs text-slate-400 mt-1">last 20 quotes</div>
+        </div>
+      </div>
+
+      <div class="card p-6 mb-6">
+        <div class="text-xs font-semibold text-slate-500 mb-1">ACCURACY OVER TIME</div>
+        <div class="text-lg font-bold mb-4">Your AI has been steadily learning</div>
+        <div class="flex items-end gap-2 h-40">
+          <div class="flex-1 flex flex-col items-center justify-end">
+            <div class="bar w-full" style="height:52%"></div>
+            <div class="text-[10px] text-slate-400 mt-1">M1</div>
+            <div class="text-[10px] font-bold">52%</div>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end">
+            <div class="bar w-full" style="height:68%"></div>
+            <div class="text-[10px] text-slate-400 mt-1">M2</div>
+            <div class="text-[10px] font-bold">68%</div>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end">
+            <div class="bar w-full" style="height:79%"></div>
+            <div class="text-[10px] text-slate-400 mt-1">M3</div>
+            <div class="text-[10px] font-bold">79%</div>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end">
+            <div class="bar w-full" style="height:89%; background: linear-gradient(180deg,#10b981,#047857);"></div>
+            <div class="text-[10px] text-slate-400 mt-1">Now</div>
+            <div class="text-[10px] font-bold text-emerald-700">89%</div>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end opacity-30">
+            <div class="bar w-full" style="height:95%; background: linear-gradient(180deg,#cbd5e1,#94a3b8);"></div>
+            <div class="text-[10px] text-slate-400 mt-1">Target</div>
+            <div class="text-[10px] font-bold">95%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+
+        <div class="card p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">💰</span>
+            <div class="font-bold">Pricing rules</div>
+            <span class="ml-auto pill bg-slate-100 text-slate-600">14 rules</span>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">+$200 on installs &gt;10 years (copper fittings)</div>
+              <button class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Weekend surcharge: +75% (not +50%)</div>
+              <button class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Min charge for leak detection: $300</div>
+              <button class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">After hours (post 6pm): +60%</div>
+              <button class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg">
+              <span class="text-amber-600 mt-0.5">⏳</span>
+              <div class="flex-1">Suggested: leak detection $350 → $400</div>
+              <button class="text-xs text-emerald-600 font-semibold">Accept</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">⏱️</span>
+            <div class="font-bold">Time estimates</div>
+            <span class="ml-auto pill bg-slate-100 text-slate-600">12 rules</span>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Blocked drains: 1.5h avg (was 2h)</div>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Hot water replacement: 3h avg</div>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Tap washer: 30-45min</div>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Pipe burst: 1.5h-2.5h depending on access</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">🛒</span>
+            <div class="font-bold">Supplier prices</div>
+            <span class="ml-auto pill bg-slate-100 text-slate-600">9 items</span>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Reece Nerang — Rinnai Infinity 26: $2,150</div>
+              <span class="text-xs text-slate-400">Updated 6m ago</span>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Reece Nerang — Bosch 26L: $1,890</div>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Tradelink — copper pipe (15mm): $14/m</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">🚫</span>
+            <div class="font-bold">Job preferences</div>
+            <span class="ml-auto pill bg-slate-100 text-slate-600">7 rules</span>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-rose-600 mt-0.5">✗</span>
+              <div class="flex-1">Refuse: jobs further than 30km</div>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-rose-600 mt-0.5">✗</span>
+              <div class="flex-1">Refuse: roof plumbing (no insurance)</div>
+            </div>
+            <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-lg">
+              <span class="text-emerald-600 mt-0.5">✓</span>
+              <div class="flex-1">Prioritize: emergencies in 4211/4214/4220</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== PAGE: PRICING RULES ==================== -->
+    <div id="page-pricing" class="page px-8 py-6">
+
+      <div class="card p-6 mb-4">
+        <div class="text-xs font-semibold text-slate-500 mb-1">BASE RATES</div>
+        <div class="text-lg font-bold mb-4">Your default pricing</div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">CALLOUT FEE</label>
+            <div class="flex items-center border border-slate-200 rounded-lg px-3 py-2">
+              <span class="text-slate-400 text-sm">$</span>
+              <input class="flex-1 outline-none text-sm font-semibold" value="120" />
+              <span class="text-slate-400 text-xs">AUD</span>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">HOURLY RATE</label>
+            <div class="flex items-center border border-slate-200 rounded-lg px-3 py-2">
+              <span class="text-slate-400 text-sm">$</span>
+              <input class="flex-1 outline-none text-sm font-semibold" value="110" />
+              <span class="text-slate-400 text-xs">/h</span>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">MIN CHARGE</label>
+            <div class="flex items-center border border-slate-200 rounded-lg px-3 py-2">
+              <span class="text-slate-400 text-sm">$</span>
+              <input class="flex-1 outline-none text-sm font-semibold" value="180" />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mt-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">AFTER HOURS</label>
+            <div class="flex items-center border border-slate-200 rounded-lg px-3 py-2">
+              <input class="flex-1 outline-none text-sm font-semibold" value="60" />
+              <span class="text-slate-400 text-xs">% extra</span>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">WEEKEND</label>
+            <div class="flex items-center border border-slate-200 rounded-lg px-3 py-2">
+              <input class="flex-1 outline-none text-sm font-semibold" value="75" />
+              <span class="text-slate-400 text-xs">% extra</span>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">PUBLIC HOLIDAYS</label>
+            <div class="flex items-center border border-slate-200 rounded-lg px-3 py-2">
+              <input class="flex-1 outline-none text-sm font-semibold" value="100" />
+              <span class="text-slate-400 text-xs">% extra</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-xs font-semibold text-slate-500">JOB CATALOG</div>
+            <div class="text-lg font-bold">Common jobs & default prices</div>
+          </div>
+          <button class="px-3 py-2 text-sm font-semibold rounded-lg bg-sky-500 text-white">+ Add job</button>
+        </div>
+
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-xs text-slate-500 border-b border-slate-200">
+              <th class="text-left py-2">JOB TYPE</th>
+              <th class="text-left">DEFAULT PRICE</th>
+              <th class="text-left">EST. TIME</th>
+              <th class="text-left">FIXED / RANGE</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr><td class="py-3 font-semibold">Blocked drain (basic)</td><td>$250</td><td>1.5h</td><td><span class="pill bg-sky-100 text-sky-700">Fixed</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Blocked drain (jetter)</td><td>$450 — $650</td><td>2-3h</td><td><span class="pill bg-amber-100 text-amber-700">Range</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Tap washer replacement</td><td>$150</td><td>45min</td><td><span class="pill bg-sky-100 text-sky-700">Fixed</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Hot water (electric)</td><td>$1,800 — $2,400</td><td>2.5h</td><td><span class="pill bg-amber-100 text-amber-700">Range</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Hot water (gas)</td><td>$2,200 — $2,800</td><td>3h</td><td><span class="pill bg-amber-100 text-amber-700">Range</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Burst pipe (visible)</td><td>$300 — $500</td><td>1.5h</td><td><span class="pill bg-amber-100 text-amber-700">Range</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Leak detection</td><td>$350</td><td>1h</td><td><span class="pill bg-sky-100 text-sky-700">Fixed</span></td><td class="text-right text-slate-400">⋯</td></tr>
+            <tr><td class="py-3 font-semibold">Toilet replacement</td><td>$650 — $850</td><td>2h</td><td><span class="pill bg-amber-100 text-amber-700">Range</span></td><td class="text-right text-slate-400">⋯</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== PAGE: CALENDAR ==================== -->
+    <div id="page-calendar" class="page px-8 py-6">
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="text-xs font-semibold text-slate-500">WEEK OF</div>
+            <div class="text-lg font-bold">May 11 — May 17, 2026</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 rounded border border-slate-200 text-sm">←</button>
+            <button class="px-3 py-1.5 rounded border border-slate-200 text-sm">Today</button>
+            <button class="px-3 py-1.5 rounded border border-slate-200 text-sm">→</button>
+            <span class="text-xs text-slate-400 ml-3">Synced with Google Calendar ✓</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-2 text-center">
+          <div class="text-xs font-semibold text-slate-500 pb-2">MON 11</div>
+          <div class="text-xs font-semibold text-slate-500 pb-2">TUE 12</div>
+          <div class="text-xs font-semibold text-slate-500 pb-2">WED 13</div>
+          <div class="text-xs font-semibold text-slate-500 pb-2">THU 14</div>
+          <div class="text-xs font-semibold text-slate-500 pb-2">FRI 15</div>
+          <div class="text-xs font-semibold text-slate-500 pb-2">SAT 16</div>
+          <div class="text-xs font-semibold text-slate-500 pb-2">SUN 17</div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-2 min-h-[400px]">
+          <!-- Monday -->
+          <div class="border border-slate-100 rounded-lg p-2 space-y-1">
+            <div class="text-[10px] bg-emerald-100 text-emerald-700 rounded p-1">8:00 — Drain Mermaid</div>
+          </div>
+          <!-- Tuesday (today) -->
+          <div class="border-2 border-sky-300 rounded-lg p-2 space-y-1 bg-sky-50/30">
+            <div class="text-[10px] bg-emerald-100 text-emerald-700 rounded p-1">8:00 — Drain Mermaid ✓</div>
+            <div class="text-[10px] bg-sky-200 text-sky-800 rounded p-1 font-semibold">10:00 — Hot water Nerang</div>
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">14:30 — Tap Burleigh</div>
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">16:00 — Leak Robina</div>
+          </div>
+          <!-- Wednesday -->
+          <div class="border border-slate-100 rounded-lg p-2 space-y-1">
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">9:00 — Drain Helensvale</div>
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">11:00 — Tap Coomera</div>
+          </div>
+          <!-- Thursday -->
+          <div class="border border-slate-100 rounded-lg p-2 space-y-1">
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">10:00 — Hot water Robina</div>
+          </div>
+          <!-- Friday -->
+          <div class="border border-slate-100 rounded-lg p-2 space-y-1">
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">8:30 — Pipe Burleigh</div>
+            <div class="text-[10px] bg-slate-100 text-slate-700 rounded p-1">13:00 — Drain Surfers</div>
+          </div>
+          <!-- Saturday -->
+          <div class="border border-slate-100 rounded-lg p-2 space-y-1 bg-amber-50/30">
+            <div class="text-[10px] bg-amber-100 text-amber-700 rounded p-1">📵 Off (or +75%)</div>
+          </div>
+          <!-- Sunday -->
+          <div class="border border-slate-100 rounded-lg p-2 bg-slate-50/30">
+            <div class="text-[10px] text-slate-400 text-center mt-2">Off</div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-5 border-t border-slate-100 text-sm">
+          <div class="font-semibold mb-2">📊 This week</div>
+          <div class="grid grid-cols-4 gap-3">
+            <div><div class="text-2xl font-bold">11</div><div class="text-xs text-slate-500">jobs booked</div></div>
+            <div><div class="text-2xl font-bold">38h</div><div class="text-xs text-slate-500">work scheduled</div></div>
+            <div><div class="text-2xl font-bold">$8,420</div><div class="text-xs text-slate-500">expected revenue</div></div>
+            <div><div class="text-2xl font-bold">4</div><div class="text-xs text-slate-500">slots open Thu/Fri</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PAGE: SETTINGS ==================== -->
+    <div id="page-settings" class="page px-8 py-6">
+
+      <div class="card p-6 mb-4">
+        <div class="font-bold text-lg mb-1">📞 Phone & SMS</div>
+        <div class="text-xs text-slate-500 mb-5">Where missed calls are captured and SMS replies are sent</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">YOUR BUSINESS NUMBER</label>
+            <div class="border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold">+61 7 5520 8841</div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">RINGBACK TRACKING NUMBER</label>
+            <div class="border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold">+61 7 3040 9921 <span class="text-emerald-600 text-xs">●  Active</span></div>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="toggle on"></div>
+          <div class="text-sm">Auto-SMS after 3 rings missed</div>
+        </div>
+        <div class="mt-2 flex items-center gap-3">
+          <div class="toggle on"></div>
+          <div class="text-sm">Send WhatsApp notifications to me</div>
+        </div>
+      </div>
+
+      <div class="card p-6 mb-4">
+        <div class="font-bold text-lg mb-1">🕐 Business hours</div>
+        <div class="text-xs text-slate-500 mb-5">When you accept regular bookings (outside = surcharge)</div>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center gap-3"><div class="w-20">Mon-Fri</div><div class="font-semibold">7:00 AM — 5:00 PM</div></div>
+          <div class="flex items-center gap-3"><div class="w-20">Sat</div><div class="font-semibold">8:00 AM — 12:00 PM</div><span class="pill bg-amber-100 text-amber-700">+75%</span></div>
+          <div class="flex items-center gap-3"><div class="w-20">Sun</div><div class="text-slate-400">Closed</div></div>
+        </div>
+      </div>
+
+      <div class="card p-6 mb-4">
+        <div class="font-bold text-lg mb-1">🔌 Connections</div>
+        <div class="text-xs text-slate-500 mb-5">Integrations that power your dashboard</div>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 p-3 border border-slate-100 rounded-lg">
+            <div class="text-2xl">📅</div>
+            <div class="flex-1">
+              <div class="font-semibold text-sm">Google Calendar</div>
+              <div class="text-xs text-slate-500">john@xyzplumbing.com.au</div>
+            </div>
+            <span class="pill bg-emerald-100 text-emerald-700">Connected</span>
+          </div>
+          <div class="flex items-center gap-3 p-3 border border-slate-100 rounded-lg">
+            <div class="text-2xl">💳</div>
+            <div class="flex-1">
+              <div class="font-semibold text-sm">Stripe</div>
+              <div class="text-xs text-slate-500">Deposits & invoices</div>
+            </div>
+            <span class="pill bg-emerald-100 text-emerald-700">Connected</span>
+          </div>
+          <div class="flex items-center gap-3 p-3 border border-slate-100 rounded-lg">
+            <div class="text-2xl">📊</div>
+            <div class="flex-1">
+              <div class="font-semibold text-sm">Xero</div>
+              <div class="text-xs text-slate-500">Auto-sync paid invoices</div>
+            </div>
+            <button class="px-3 py-1 text-xs font-semibold rounded-lg border border-slate-200">Connect</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item');
+  const pages = document.querySelectorAll('.page');
+  const titles = {
+    overview: 'Overview',
+    leads: 'Leads',
+    calendar: 'Calendar',
+    ai: 'AI Memory',
+    pricing: 'Pricing Rules',
+    settings: 'Settings'
+  };
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const page = item.dataset.page;
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.getElementById('page-title').textContent = titles[page];
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

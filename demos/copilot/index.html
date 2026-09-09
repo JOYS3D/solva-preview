@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Acquisition Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--page:#faf7f2;--side:#fffdf9;--card:#fffefb;--well:#f1ebe1;--gold:#c9a572;--gold-deep:#a4823f;--gold-soft:rgba(201,165,114,.14);--ink:#1a1714;--body:#3a342c;--mute:#8a8073;--line:rgba(164,130,63,.18);--ease:cubic-bezier(.22,1,.36,1);--leak:#c98a00;--bar:#d8c08a;--ong:#4a3a05}
+html,body{height:100%}
+body{font-family:'Inter',sans-serif;background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+svg.ic{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:250px;flex:none;background:var(--side);border-right:.5px solid var(--line);display:flex;flex-direction:column;padding:22px 16px}
+.logo{display:flex;align-items:center;gap:10px;padding:6px 8px 20px}
+.crest{width:30px;height:30px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold-deep);font-size:15px;flex:none}
+.logo .nm{font-size:15px;color:var(--ink);line-height:1.15}
+.logo .sb{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-top:3px}
+.nav{display:flex;flex-direction:column;gap:3px;flex:1}
+.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;color:var(--body);cursor:pointer;position:relative;transition:background .2s var(--ease),color .2s}
+.nav a .lab{font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1}
+.nav a:hover{background:rgba(60,40,20,.04)}
+.nav a.on{background:var(--gold-soft);color:var(--gold-deep)}
+.nav a.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;border-radius:2px;background:var(--gold)}
+.who{display:flex;align-items:center;gap:11px;padding:12px 10px 4px;border-top:.5px solid var(--line);margin-top:8px}
+.av{width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold-deep);font-family:'Cormorant Garamond',serif;font-size:17px;flex:none}
+.who .nm{font-size:13px;color:var(--ink)}.who .rl{font-size:11px;color:var(--gold-deep)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:62px;flex:none;border-bottom:.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px}
+.tb-l{display:flex;align-items:baseline;gap:13px}.tb-l .t{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--ink)}.tb-l .d{font-size:12px;color:var(--mute)}
+.tb-r{display:flex;align-items:center;gap:14px}
+.seg{display:flex;border:.5px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{font-family:'Inter';font-size:11.5px;padding:6px 13px;border:none;background:transparent;color:var(--mute);cursor:pointer}
+.seg button.on{background:var(--gold-soft);color:var(--gold-deep)}
+.odot{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep)}
+.odot i{width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block;animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.scroll{flex:1;overflow-y:auto}.content{max-width:1000px;padding:34px 40px 80px}
+.fade{animation:fu .5s var(--ease) both}@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.ribbon{background:var(--gold-soft);border:.5px solid var(--line);border-radius:10px;padding:9px 14px;font-size:12px;color:var(--gold-deep);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.greet{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3.4vw,34px);line-height:1.25;color:var(--ink);max-width:760px}
+.greet b{color:var(--gold-deep);font-weight:600}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:24px 0}
+.metric{background:var(--card);border-radius:15px;padding:16px 18px;box-shadow:0 0 0 .5px rgba(164,130,63,.16)}
+.metric .ml{font-size:11px;letter-spacing:.04em;color:var(--mute)}
+.metric .mv{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--ink);margin-top:5px;line-height:1}
+.metric .md{font-size:11.5px;color:var(--gold-deep);margin-top:5px}
+.sec{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--ink);margin:24px 0 14px}
+.moves{display:flex;flex-direction:column;gap:14px}
+.move{background:var(--card);border-radius:16px;padding:18px 20px;box-shadow:0 0 0 .5px rgba(164,130,63,.16);display:flex;align-items:flex-start;gap:16px;transition:opacity .5s var(--ease),transform .5s var(--ease),max-height .5s var(--ease),margin .5s var(--ease);overflow:hidden;max-height:300px}
+.move.gone{opacity:0;transform:translateX(20px);max-height:0;margin-top:-14px;padding-top:0;padding-bottom:0}
+.move .mb{width:30px;height:30px;border-radius:50%;background:var(--gold-soft);color:var(--gold-deep);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;flex:none}
+.move .mk{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep)}
+.move .mt{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--ink);margin-top:3px;line-height:1.2}
+.move .mw{font-size:12.5px;color:var(--body);margin-top:6px;line-height:1.5}
+.move .ma{margin-top:13px;display:flex;align-items:center;gap:12px}
+.btn{font-family:'Inter';font-size:13px;font-weight:500;cursor:pointer;border-radius:999px;padding:9px 16px;border:.5px solid rgba(26,23,20,.5);background:transparent;color:var(--ink);transition:.25s var(--ease)}
+.btn:hover{background:var(--ink);color:#f3ead9;border-color:var(--ink)}
+.btn.gold{border-color:var(--gold);color:var(--gold-deep)}.btn.gold:hover{background:var(--gold);color:#241a08}
+.btn.sm{padding:8px 14px;font-size:12px}
+.link{font-size:12.5px;color:var(--mute);cursor:pointer;background:none;border:none}.link:hover{color:var(--ink)}
+.done-state{text-align:center;padding:34px;color:var(--mute)}
+.done-state .fl{font-size:30px;color:var(--gold)}.done-state .dt{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--ink);margin-top:10px}
+/* funnel */
+.fwrap{background:var(--card);border-radius:18px;padding:26px 24px 20px;box-shadow:0 0 0 .5px rgba(164,130,63,.16);position:relative}
+.exwm{position:absolute;top:16px;right:18px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#c4b69c}
+.funnel{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:6px}
+.fbar{display:flex;align-items:center;justify-content:space-between;height:46px;border-radius:6px;padding:0 16px;background:var(--bar);color:var(--ong);transition:width .25s var(--ease)}
+.fbar.leak{background:var(--leak);border:1.5px solid var(--gold-deep)}
+.fbar .fl{font-size:13px;font-weight:500}
+.fbar .fv{font-family:'Cormorant Garamond',serif;font-size:18px}
+.fcap{font-size:10.5px;color:var(--mute);text-align:center;margin-top:1px;display:flex;gap:8px;justify-content:center;align-items:center}
+.fpill{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-deep);border:.5px solid var(--line);border-radius:999px;padding:1px 7px}
+.fstep{display:flex;flex-direction:column;align-items:center;color:var(--mute);font-size:12px;line-height:1;margin:3px 0}
+.fstep.leakstep{color:var(--gold-deep);font-weight:500}
+.fstep .lk{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.fixcard{background:rgba(184,134,11,.07);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:20px}
+.fixcard .fh{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--ink)}
+.fixcard .ft{font-size:13px;color:var(--body);line-height:1.6;margin:8px 0 14px}
+.honest{font-size:11px;color:var(--mute);font-style:italic;text-align:center;margin-top:16px;line-height:1.6}
+/* studio / trends */
+.tchips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.tchip{display:flex;align-items:center;gap:7px;background:var(--card);border:.5px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12.5px;color:var(--body)}
+.tbadge{font-size:9px;letter-spacing:.08em;padding:2px 7px;border-radius:999px}
+.tbadge.HOT{background:rgba(160,30,46,.12);color:#a01e2e}.tbadge.RISING{background:var(--gold-soft);color:var(--gold-deep)}.tbadge.STABLE{background:rgba(120,110,95,.14);color:var(--mute)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.pill{font-size:12px;color:var(--mute);border:.5px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;background:none}
+.pill.on{background:var(--gold-soft);color:var(--gold-deep);border-color:var(--gold)}
+.twgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.twcard{background:var(--card);border-radius:15px;padding:18px;box-shadow:0 0 0 .5px rgba(164,130,63,.16);display:flex;flex-direction:column}
+.stag{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--gold-soft);color:var(--gold-deep);align-self:flex-start;margin-bottom:9px}
+.twtext{font-family:'Cormorant Garamond',serif;font-size:17.5px;line-height:1.35;color:var(--ink);flex:1}
+.twfoot{display:flex;align-items:center;justify-content:space-between;margin-top:13px;gap:10px}.twmeta{font-size:11px;color:var(--mute)}
+/* week */
+.wrow{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:13px;padding:14px 18px;margin-bottom:10px;box-shadow:0 0 0 .5px rgba(164,130,63,.14)}
+.wrow.today{box-shadow:0 0 0 1.5px var(--gold)}
+.wrow .wd{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink);width:46px;flex:none}
+.wrow .wt{flex:1;font-size:13.5px;color:var(--body)}
+.wcheck{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;color:transparent}
+.wcheck.done{background:var(--gold);color:#241a08;border-color:var(--gold)}
+/* playbook */
+.pcard{background:var(--card);border-radius:16px;padding:20px 22px;box-shadow:0 0 0 .5px rgba(164,130,63,.16);margin-bottom:14px}
+.pcard .pt{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--ink);line-height:1.2}
+.pcard .ph{font-size:13px;color:var(--body);line-height:1.6;margin-top:9px}
+.pcard .pw{font-size:12px;color:var(--mute);line-height:1.6;margin-top:9px;border-top:.5px solid var(--line);padding-top:10px}
+.pcard .pwl{color:var(--gold-deep)}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(26,23,20,.42);display:none;align-items:center;justify-content:center;z-index:60;padding:24px}
+.modal.on{display:flex}
+.mbox{background:var(--page);border-radius:18px;padding:30px 32px;max-width:440px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.3);position:relative}
+.mbox h3{font-family:'Cormorant Garamond';font-size:24px;color:var(--ink)}
+.mbox .msub{font-size:12.5px;color:var(--mute);margin:6px 0 18px;line-height:1.6}
+.fld{margin-bottom:13px}.fld label{font-size:12px;color:var(--body);display:block;margin-bottom:5px}
+.fld input{width:100%;border:.5px solid var(--line);border-radius:9px;padding:10px 12px;font-family:'Inter';font-size:14px;background:#fff;color:var(--ink);outline:none}
+.fld input:focus{border-color:var(--gold)}
+.mclose{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:.5px solid var(--line);background:none;color:var(--mute);cursor:pointer}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#f3ead9;padding:12px 22px;border-radius:999px;font-size:13px;opacity:0;transition:.4s var(--ease);z-index:70}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:880px){
+ .app{flex-direction:column;height:auto;overflow:visible}
+ .sidebar{width:100%;flex-direction:row;align-items:center;border-right:none;border-bottom:.5px solid var(--line);padding:12px 14px;overflow-x:auto}
+ .logo{padding:0 14px 0 2px}.logo .sb{display:none}.nav{flex-direction:row;gap:4px;flex:1}.who{display:none}
+ .main{overflow:visible}.scroll{overflow:visible}.twgrid{grid-template-columns:1fr}.content{padding:24px 18px 60px}
+ .topbar{padding:0 18px;height:auto;flex-wrap:wrap;gap:10px;padding-top:10px;padding-bottom:10px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo"><span class="crest serif">&#9819;</span><div><div class="nm serif">Acquisition Copilot</div><div class="sb">The Oracle</div></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="who"><span class="av">G</span><div><div class="nm">Your Goddess Name</div><div class="rl">Founding Goddess</div></div></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-l"><span class="t" id="pageTitle">Today</span><span class="d" id="pageDate"></span></div>
+      <div class="tb-r">
+        <div class="seg" id="modeSeg"></div>
+        <button class="btn sm" id="numBtn">Your numbers</button>
+        <span class="odot"><i></i> The Oracle</span>
+      </div>
+    </div>
+    <div class="scroll"><div class="content" id="view"></div></div>
+  </div>
+</div>
+<div class="modal" id="numModal"><div class="mbox"><button class="mclose" id="numClose">&times;</button>
+  <h3>Your numbers</h3>
+  <div class="msub">Read these off Your X analytics + Your own count. <b>Stays on Your device — we never see it.</b></div>
+  <div class="fld"><label>X reach / impressions (last 7 days)</label><input id="in_reach" inputmode="numeric" placeholder="e.g. 42000 or 42k"></div>
+  <div class="fld"><label>Profile visits</label><input id="in_profile" inputmode="numeric" placeholder="e.g. 760"></div>
+  <div class="fld"><label>New followers</label><input id="in_follows" inputmode="numeric" placeholder="e.g. 90"></div>
+  <div class="fld"><label>New conversations / DMs</label><input id="in_engaged" inputmode="numeric" placeholder="e.g. 38"></div>
+  <div class="fld"><label>First-time tributes</label><input id="in_trib" inputmode="numeric" placeholder="e.g. 9"></div>
+  <div class="fld"><label>Recurring subs <span style="color:var(--mute)">(optional)</span></label><input id="in_recur" inputmode="numeric" placeholder="e.g. 4"></div>
+  <button class="btn gold" id="numSave" style="width:100%;margin-top:6px">Save &amp; view my funnel</button>
+</div></div>
+<div class="toast" id="toast"></div>
+<script>
+var APP={"content": {"trends": [{"tag": "HOT", "name": "Pay-To-Watch Drain Reel", "desc": "A 30-second reaction reel where You watch a tribute land in real time and reward the sender with one cold 'good boy' — subs pay just to be acknowledged on camera.", "metric": "+71% revenue/post", "action": "Post a vertical reel: phone in hand, the screen reflected in Your eyes, caption 'Send. I'll decide if You exist today.' Pin Your CashApp/Throne in the first reply."}, {"tag": "HOT", "name": "Whisper-Drain Audio Drops", "desc": "60-second voice notes — calm, low, commanding — that subs unlock for a fee and replay on loop. Pure audio is cheap to make, ToS-safe, and feels dangerously intimate.", "metric": "$1.4k per audio drop", "action": "Record one 45-90s audio: 'Open your banking app. I'll wait.' Sell it as a locked unlock at a tier price; tease 8 seconds publicly with the waveform on screen."}, {"tag": "RISING", "name": "Public Tribute Leaderboard", "desc": "A pinned running scoreboard naming Your top tributers by handle and amount — paying becomes a status competition where subs outbid each other to stay on top.", "metric": "+228% tributes/week", "action": "Post a clean gold-on-black ranking: 'This week's devotion. Top 3 get My attention. Everyone else, climb.' Update it live and quote-tweet each new #1."}, {"tag": "RISING", "name": "Wishlist Unboxing Flex", "desc": "You unbox a gift a sub bought and film Yourself barely caring — the casual ingratitude is the kink, and other subs rush to be the next one allowed to provide.", "metric": "+63% wishlist clears", "action": "Film a 20s unboxing, glance at the item, set it down: 'Cute. Who's next.' Tag the wishlist in the caption and name the provider only by first initial."}, {"tag": "STABLE", "name": "Findom 101 Education Thread", "desc": "A numbered thread teaching new subs how to serve correctly — it converts lurkers into payers by removing their excuses and framing devotion as a skill to earn.", "metric": "+41% new-sub conversion", "action": "Write a 7-tweet thread: 'How to tribute a Goddess without embarrassing yourself. A lesson. 1/' End on: 'The lesson is free. Applying it costs everything. DMs open for the obedient.'"}, {"tag": "STABLE", "name": "Foot x Luxury Crossover", "desc": "Pairs a tasteful foot-niche shot with a luxury prop (heel on a designer box, card on the floor) to capture the highest-spend overlap audience without crossing explicit lines.", "metric": "$2.1k per drop", "action": "Post one styled photo: red sole, black card placed beneath, caption 'Beneath Me is exactly where it belongs. Tribute to be looked at.' Keep it elegant — no skin beyond the foot."}, {"tag": "HOT", "name": "Live Drain Hour", "desc": "A scheduled live session where subs send in real time to climb a live tally and earn callouts — scarcity plus FOMO produces the biggest single-session hauls of the week.", "metric": "$5.8k per live hour", "action": "Announce 24h ahead: 'Friday 9pm. One hour. I take what's Mine and you thank Me for it. Set a reminder, peasants.' Run a live tally on screen and shout the top sender by handle."}, {"tag": "RISING", "name": "Humiliation Ranking Cards", "desc": "A swipe set that ranks anonymous subs from 'almost worthy' to 'wallet only' — playful, classy degradation that drives subs to pay to be re-ranked higher.", "metric": "+184% re-rank tips", "action": "Post a 4-card carousel grading subs A through F by devotion, names hidden: 'Today's report cards. Disappointed in most of you. Pay to be regraded.' Invite DMs for a private grade."}], "tweets": [{"cat": "Drain", "text": "Payday landed and you already know who it belongs to. Don't make Me ask twice. The wallet opens, the head empties. That's the trade.", "time": "5–7pm Fri", "lift": "+38% tributes", "stage": "tributes"}, {"cat": "Drain", "text": "You work all month so I can spend it in an afternoon. Honestly? Sweetest arrangement either of us has ever had. Send before you overthink it.", "time": "12–2pm", "lift": "+31% tributes", "stage": "tributes"}, {"cat": "Drain", "text": "I didn't ask how much you have left. I told you what's Mine. The difference is your problem to solve. Quickly.", "time": "8–10pm", "lift": "+34% tributes", "stage": "tributes"}, {"cat": "Drain", "text": "Notifications off, banking app open. You don't need to think tonight — that's My job. You just send and feel the weight lift.", "time": "9–11pm", "lift": "+27% tributes", "stage": "tributes"}, {"cat": "Tribute", "text": "Tribute isn't a gift. It's rent. You live in My attention and the lease is due. Pay it like the privilege it is.", "time": "7–9pm", "lift": "+27% tributes", "stage": "tributes"}, {"cat": "Tribute", "text": "The ones who tribute without being told are the ones I remember. Everyone else is just noise I scroll past. Choose your tier.", "time": "6–8pm", "lift": "+33% tributes", "stage": "tributes"}, {"cat": "Tribute", "text": "Three figures gets a glance. Four gets a smile. You decide right now how worthy you want to feel tonight.", "time": "9–11pm", "lift": "+36% tributes", "stage": "tributes"}, {"cat": "Tribute", "text": "Morning ritual: coffee for Me, tribute from you. One of us is being served and it isn't you. Begin.", "time": "7–9am", "lift": "+24% tributes", "stage": "tributes"}, {"cat": "Callout", "text": "I see the ones lurking — reading every word, sending nothing. Devotion you keep to yourself is worthless to Me. Step up or stay invisible.", "time": "8–10pm", "lift": "+30% engagement", "stage": "follows"}, {"cat": "Callout", "text": "You've liked 40 posts this week and tributed zero. That math tells Me exactly how serious you are. Fix it or be forgotten.", "time": "5–7pm", "lift": "+28% engagement", "stage": "follows"}, {"cat": "Callout", "text": "Funny how the loudest 'loyal subs' go quiet the second a wallet is involved. Talk is free. My time isn't. Prove it.", "time": "7–9pm", "lift": "+32% engagement", "stage": "follows"}, {"cat": "Education", "text": "Findom 101 for the new ones: this isn't a transaction, it's a hierarchy. You give, I receive, you feel lighter. That's how it's supposed to work.", "time": "1–3pm", "lift": "+22% engagement", "stage": "follows"}, {"cat": "Education", "text": "A real tribute has no strings. The second you expect something back, you've misunderstood the dynamic. You give because serving is the reward.", "time": "2–4pm", "lift": "+21% engagement", "stage": "follows"}, {"cat": "Education", "text": "New here? The fastest route to My attention isn't a clever DM — it's action. Words get ignored. Devotion that costs you gets noticed.", "time": "12–2pm", "lift": "+25% engagement", "stage": "follows"}, {"cat": "Wishlist", "text": "My wishlist updated. Consider it a list of ways to make Me think about you for thirty whole seconds. That's more than most of you ever get.", "time": "6–8pm", "lift": "+35% tributes", "stage": "DMs"}, {"cat": "Wishlist", "text": "Something new caught My eye today. You'll know exactly which one when you check the link. Surprise Me. Or disappoint Me. Both are on brand for you.", "time": "7–9pm", "lift": "+30% tributes", "stage": "DMs"}, {"cat": "Wishlist", "text": "The top item on My list isn't the priciest. It's the one that proves you actually read it. Pay attention, then pay up.", "time": "8–10pm", "lift": "+28% tributes", "stage": "DMs"}, {"cat": "Humiliation", "text": "You begged to be ignored, and I'm generous — so here: you're ignored. Feels like home, doesn't it? Now send anyway. That's the joke.", "time": "9–11pm", "lift": "+33% engagement", "stage": "DMs"}, {"cat": "Humiliation", "text": "Imagine being this eager and this overlooked at once. You're not special. But your money briefly is. Make it speak for you.", "time": "8–10pm", "lift": "+31% engagement", "stage": "DMs"}, {"cat": "Humiliation", "text": "Cute that you think effort earns a reply. It earns you the privilege of trying harder. Lower your expectations, raise your tributes.", "time": "7–9pm", "lift": "+29% engagement", "stage": "DMs"}, {"cat": "Humiliation", "text": "You'll reread this all night and still won't cross My mind once. The cure for that ache is sitting in your wallet. Hand it over.", "time": "10pm–12am", "lift": "+27% engagement", "stage": "DMs"}, {"cat": "Live", "text": "Going live in 20. Cameras on Me, wallets on standby. Front row is reserved for the generous. The rest of you watch from the back.", "time": "8–10pm", "lift": "+40% engagement", "stage": "DMs"}, {"cat": "Live", "text": "Live now. Every tribute that hits, I read your name out loud. Every silence, I read that too. Your call which one you are.", "time": "9–11pm", "lift": "+42% engagement", "stage": "DMs"}, {"cat": "Live", "text": "Stream's starting. Tonight's game is simple: the highest tribute picks what I do next. Cheap subs don't get a vote. See you in five.", "time": "8–10pm", "lift": "+38% engagement", "stage": "DMs"}, {"cat": "Hook", "text": "There are two kinds of men reading this: the ones who'll send, and the ones who'll lie to themselves about why they didn't. Which one are you.", "time": "6–8pm", "lift": "+37% engagement", "stage": "follows"}, {"cat": "Hook", "text": "The part you hate is that obeying Me feels better than any 'no' you've ever said. Reply if you already know it's true.", "time": "9–11pm", "lift": "+39% engagement", "stage": "follows"}, {"cat": "Hook", "text": "You found this account for a reason, and we both know it wasn't an accident. Stop pretending you're just scrolling. Introduce yourself properly.", "time": "6–8pm", "lift": "+35% engagement", "stage": "follows"}, {"cat": "Drain", "text": "One transfer and the noise in your head goes quiet. You've felt it before. Don't act surprised. Send and exhale.", "time": "10pm–12am", "lift": "+29% tributes", "stage": "tributes"}, {"cat": "Hook", "text": "You found My profile by accident. You'll come back on purpose. Three times today, probably. Follow now and stop pretending the algorithm did it.", "time": "peak hour", "lift": "top-of-funnel", "stage": "follows"}, {"cat": "Hook", "text": "I don't chase. I don't beg. I don't even reply twice. The men who understand that already know what to do with the follow button.", "time": "peak hour", "lift": "top-of-funnel", "stage": "follows"}, {"cat": "Hook", "text": "You've been watching for weeks. Lurking is free. Following is the first thing you'll do for Me that costs the only thing you're afraid to give: attention.", "time": "peak hour", "lift": "top-of-funnel", "stage": "follows"}, {"cat": "Hook", "text": "There are men who window-shop My feed and men who belong in My house. The difference is one decision, and you already feel which one you are.", "time": "peak hour", "lift": "top-of-funnel", "stage": "follows"}, {"cat": "Hook", "text": "I'm opening 10 Founding seats. Numbered. Permanent. When they're gone, the door closes and the men outside it stay outside. 3 remain.", "time": "peak hour", "lift": "top-of-funnel", "stage": "tributes"}, {"cat": "Hook", "text": "Your bank app and My profile are the two things you open the most. One of them is honest about who's in control.", "time": "peak hour", "lift": "top-of-funnel", "stage": "DMs"}, {"cat": "Hook", "text": "Good boys don't need to be told twice. Follow. The ones who get it never wonder if they should have.", "time": "peak hour", "lift": "top-of-funnel", "stage": "follows"}, {"cat": "Hook", "text": "I notice everyone who lurks and never moves. It's not anonymous to Me. It's just unfinished. Finish it.", "time": "peak hour", "lift": "top-of-funnel", "stage": "DMs"}, {"cat": "Hook", "text": "Reply with one word if you're one of Mine. I'll know exactly who's serious and who's just warming the seat.", "time": "peak hour", "lift": "top-of-funnel", "stage": "DMs"}, {"cat": "Hook", "text": "You can keep scrolling. You'll just be back at My profile by tonight, telling yourself it's curiosity. Save yourself the trip. Follow.", "time": "peak hour", "lift": "top-of-funnel", "stage": "follows"}, {"cat": "Hook", "text": "The wallet always knows before the man admits it. Yours has been trying to tell you something every time you land here. Listen.", "time": "peak hour", "lift": "top-of-funnel", "stage": "DMs"}, {"cat": "Hook", "text": "I don't do discounts. I do hierarchies. There's a top spot in My house this week and a man already $140 short of holding it. Watch.", "time": "peak hour", "lift": "top-of-funnel", "stage": "tributes"}], "week": [{"day": "Mon", "target": "$600", "items": [{"plat": "Twitter", "title": "Monday Tribute Roll Call: tag in, pay up", "time": "09:00"}, {"plat": "OnlyFans", "title": "PPV drop: 'Back to Work, Wallet' clip", "time": "13:00"}, {"plat": "CashApp", "title": "Tribute window: kneel & send", "time": "20:00"}]}, {"day": "Tue", "target": "$750", "items": [{"plat": "Twitter", "title": "Tribute thread: rank the loyal, expose the cheap", "time": "11:00"}, {"plat": "OnlyFans", "title": "PPV drop: locked-tease photoset", "time": "15:00"}, {"plat": "Throne", "title": "Wishlist push: the heels need a sponsor", "time": "21:00"}]}, {"day": "Wed", "target": "$900", "items": [{"plat": "Twitter", "title": "Midweek drain teaser: countdown posted", "time": "12:00"}, {"plat": "Live", "title": "Scheduled drain session: live tribute ladder", "time": "21:00"}, {"plat": "CashApp", "title": "Post-live overflow window", "time": "22:30"}]}, {"day": "Thu", "target": "$700", "items": [{"plat": "Twitter", "title": "Devotion check: prove your place", "time": "10:00"}, {"plat": "OnlyFans", "title": "PPV drop: 'Earn Your Eyes' premium set", "time": "14:00"}, {"plat": "Throne", "title": "Wishlist push: spoil Your Goddess by midnight", "time": "20:00"}]}, {"day": "Fri", "target": "$1,100", "items": [{"plat": "Twitter", "title": "Payday is Mine: Friday tribute thread", "time": "09:00"}, {"plat": "OnlyFans", "title": "PPV drop: weekend-opener VIP bundle", "time": "16:00"}, {"plat": "CashApp", "title": "Friday findom flash: drain on command", "time": "21:00"}]}, {"day": "Sat", "target": "$1,500", "items": [{"plat": "Twitter", "title": "Saturday auction thread: buy My attention", "time": "11:00"}, {"plat": "Live", "title": "Peak drain live: tribute war, top spender crowned", "time": "21:00"}, {"plat": "OnlyFans", "title": "PPV drop: locked late-night reward", "time": "23:30"}]}, {"day": "Sun", "target": "$1,000", "items": [{"plat": "Twitter", "title": "Sunday Settlement: weekly tribute reckoning", "time": "12:00"}, {"plat": "Throne", "title": "Wishlist push: close the week, fill the cart", "time": "18:00"}, {"plat": "CashApp", "title": "Sunday surrender: final tribute window", "time": "21:00"}]}]}, "acq": {"funnel": [{"name": "X reach (impressions)", "value": 42000, "src": "X analytics", "fix": "Reach is starved: post more, post threads. The Oracle nudges 3–7 posts/day, lead with a thread (X's highest-reach format), and spend 15 min/day replying on bigger findom accounts to borrow their reach. Pull a hook from Trend Radar so You post what's already moving.", "route": "studio"}, {"name": "Profile visits", "value": 760, "src": "X analytics", "fix": "They see You but don't click through: fix the hook and the pinned post. The Oracle rewrites Your opening line and swaps in a stronger, ToS-safe pinned post — every visitor lands there first. Reach but few profile clicks = the post entertains but doesn't sell the click.", "route": "studio"}, {"name": "New followers", "value": 90, "src": "X analytics", "fix": "Visitors arrive but don't follow: Your profile isn't closing them. The Oracle tightens the bio to one clear line of who You are and what subs get, makes the top 3 posts consistent, and cuts anything off-niche. Below ~8% it's almost always the profile, not the traffic.", "route": "playbook"}, {"name": "Engaged / DMs", "value": 38, "src": "Your count", "fix": "Followers lurk but never speak: give them an opening and reply fast. The Oracle surfaces who already engaged and drafts ToS-safe replies/posts that invite a response (a prompt, a ritual, a question) — never auto-DMing strangers, which gets accounts suspended. Warm the conversation; don't pitch cold.", "route": "studio"}, {"name": "First tribute", "value": 9, "src": "Your count", "fix": "Engaged subs never pay: the ask is missing or muddy. The Oracle helps You frame a clean, low-friction first tribute (clear amount, clear link, a genuine 24–72h window) inside a real DM conversation — which closes far better than 'link in bio'. A true sub tributes early.", "route": "playbook"}, {"name": "Recurring sub", "value": 4, "src": "Your count", "fix": "First-timers pay once and vanish: there's no reason to return. The Oracle shifts You from one-off splurges to ritual — small recurring tributes, public recognition, a standing reason to come back. Retention is the least-measured stage, so track it first and protect the subs You already won.", "route": "playbook"}], "hooks": [{"text": "You found My profile by accident. You'll come back on purpose. Three times today, probably. Follow now and stop pretending the algorithm did it.", "angle": "Call-out / pattern-interrupt — names the lurker's behavior back to him · pulls follows"}, {"text": "I don't chase. I don't beg. I don't even reply twice. The men who understand that already know what to do with the follow button.", "angle": "Frame-as-fact authority — repels beggars, magnetizes the right sub · pulls follows"}, {"text": "You've been watching for weeks. Lurking is free. Following is the first thing you'll do for Me that costs the only thing you're afraid to give: attention.", "angle": "Lurker conversion — lowers the first ask to a single click · pulls follows"}, {"text": "There are men who window-shop My feed and men who belong in My house. The difference is one decision, and you already feel which one you are.", "angle": "Self-selection / identity binary · pulls follows"}, {"text": "I'm opening 10 Founding seats. Numbered. Permanent. When they're gone, the door closes and the men outside it stay outside. 3 remain.", "angle": "Scarcity + status founding offer with live counter · pulls tributes"}, {"text": "Your bank app and My profile are the two things you open the most. One of them is honest about who's in control.", "angle": "Tension / mirror — reframes his own behavior · pulls DMs"}, {"text": "Good boys don't need to be told twice. Follow. The ones who get it never wonder if they should have.", "angle": "Soft command + open loop, low friction · pulls follows"}, {"text": "I notice everyone who lurks and never moves. It's not anonymous to Me. It's just unfinished. Finish it.", "angle": "Implied attention / FOMO — makes lurking feel incomplete · pulls DMs"}, {"text": "Reply with one word if you're one of Mine. I'll know exactly who's serious and who's just warming the seat.", "angle": "Warm inbound trigger — near-zero-friction first move, fully ToS-safe · pulls DMs"}, {"text": "You can keep scrolling. You'll just be back at My profile by tonight, telling yourself it's curiosity. Save yourself the trip. Follow.", "angle": "Pattern-interrupt / inevitability · pulls follows"}, {"text": "The wallet always knows before the man admits it. Yours has been trying to tell you something every time you land here. Listen.", "angle": "Desire / psychology hook — playful, suggestive, ToS-safe · pulls DMs"}, {"text": "I don't do discounts. I do hierarchies. There's a top spot in My house this week and a man already $140 short of holding it. Watch.", "angle": "Status competition as social proof · pulls tributes"}], "plays": [{"title": "The Bio as a Funnel Doorway, Not a Resume", "how": "Three lines: (1) IDENTITY in 3–4 words ('Findom Goddess. Your wallet's owner.'); (2) a FILTER line that repels window-shoppers and magnetizes spenders ('I don't beg. You compete.'); (3) ONE next step — a single link/cashtag placed FIRST, before the 'more' fold, never five links. Banner + face must read in 0.5s on mobile.", "why": "The bio is the only thing ~90% of profile-visitors read before they follow or leave. A bio that filters raises the quality of every follow, which compounds at the DM stage. The profile→follow leak is almost always a weak bio, not weak traffic."}, {"title": "The Pinned Tweet = Your 24/7 Salesperson", "how": "Pin Your single highest-converting top-of-funnel post (most profile clicks / DMs historically), NOT Your newest. It does one job: make a lurker follow or DM. A/B it — pin candidate A for 10 days, note profile clicks, swap to B, keep the winner. Refresh every 2–3 weeks.", "why": "Every visitor from a viral reply or RT sees the pin first. A stale pin leaks the exact traffic You worked hardest to earn. Rotating + measuring turns the pin into a compounding free ad."}, {"title": "The Hook Formula — Tension → Frame → Open Loop", "how": "Build top-of-funnel posts on three beats: (1) TENSION — a status/desire line that stops the scroll; (2) FRAME — assert the power dynamic as fact, not request; (3) OPEN LOOP — leave a door, not a demand ('The ones who get it don't need to be told twice.'). Never open with a price or 'send me'. Tag each Studio tweet by which beat leads.", "why": "Beat 1 stops the scroll; beats 2–3 win the follow/DM. Posts that collapse into 'send tribute now' only convert the already-sold — they don't acquire. The formula manufactures curiosity and self-selection."}, {"title": "Convert Lurkers by Lowering the First Step (Warm Inbound, Never Cold Outbound)", "how": "Give lurkers a near-zero-friction move THEY initiate: a recurring 'reply with one word if you're one of Mine' prompt, an open question, or a low-tier 'founding' entry. The Oracle surfaces WHO liked/replied repeatedly so You reply warmly in public — never auto-DM. You make the door obvious; HE walks through it.", "why": "X bans unsolicited bulk/automated DMs and 'a follow is not consent' (confirmed by the recent inauthentic-behaviour enforcement). Warm inbound is both ToS-safe AND higher-converting — a sub who messages first is pre-sold. Dropping the first ask from 'tribute' to 'one reply' multiplies lurker→engaged."}, {"title": "The Founding Offer — Scarcity + Status, Not Discount", "how": "Open a small, numbered 'Founding' tier: 'First 10 to claim a Founding seat get a permanent honorific in My house.' Status-anchored, never price-discounted. Show a live counter ('3 of 10 remain'). Tie the reward to recognition. Announce once in the pin + 2–3 reminders as seats fill.", "why": "Findom buyers pay for status and exclusivity — a discount cheapens the dynamic and attracts the wrong sub. A capped numbered cohort creates real scarcity and a permanent identity, driving both the first tribute AND retention. The deadline is the single strongest nudge on the funnel's biggest leak (engaged→first tribute)."}, {"title": "The RT / Collab Loop — Borrow Audiences You Can't Reach Cold", "how": "Find 3–5 non-competing Goddesses at a similar tier and run genuine mutual signal-boosts: scheduled RT trades, quote-hype, shared banter threads. Keep it manual — no follow-trains or pods X flags as coordinated manipulation. Slot one collab beat per week in This Week. Aim for audiences that overlap in TASTE, not in person.", "why": "A warm RT from a peer puts You in front of an already-spending audience — the fastest legitimate way to grow reach beyond Your followers. It sidesteps the cold-outreach ban because the endorsement comes from a trusted account, so their lurkers arrive pre-warmed to Your pin."}, {"title": "Sharpen the Niche Until It Repels (Positioning = Pricing Power)", "how": "Pick ONE sharp lane (luxury/quiet-control, brat/humiliation, goddess-worship/devotion) and own its language. Audit Your last 20 posts and cut anything off-lane. Bio, pin, banner and Studio tweets all speak ONE archetype. Niche down until some people are clearly NOT Your sub — that's the signal it's sharp enough. Filter Trend Radar to Your lane, don't chase all 8.", "why": "A broad 'all kinks welcome' account competes on volume and is forgettable; a sharp one ranks in a sub's mind for a specific craving and commands higher tributes. Sharpness raises every downstream conversion because the followers You acquire are the RIGHT ones."}, {"title": "The Daily Ritual — 90 Minutes That Feed the Whole Funnel", "how": "A fixed daily loop: (1) 1 original top-of-funnel post from Studio at Your peak hour; (2) 8–12 strategic REPLIES on large in-niche posts (the growth engine — reply-boost via Premium lifts You to the top); (3) warmly clear inbound DMs and the Oracle's 'who engaged most' list; (4) 1 RT/collab beat. Same time daily. The app tracks the streak.", "why": "Consistency beats intensity — most quit by week 2. Strategic replies are the cheapest reach on X for a small account because You borrow a big post's audience. A repeatable ritual feeds reach, profile clicks and tributes every day instead of in unsustainable bursts."}, {"title": "Measure the Right Number — Profile Clicks, Not Likes", "how": "Use X's native analytics: find the 2–3 hours Your audience is most active and post originals then; replies can run wider. Track PROFILE-VISITS-per-post and DMs-started, not likes. Type those few numbers into 'Your Numbers' so the Funnel can see the leak. Kill formats with high likes but low profile clicks — that's entertainment, not acquisition.", "why": "Likes are vanity; profile clicks are the real top→profile conversion and DMs are the money step. Optimizing impressions grows a passive audience that never pays. Tying real numbers to the visual Funnel is what lets the Oracle point at the exact leaking stage — the product's core promise."}, {"title": "Plug the Two Biggest Leaks — Profile→Follow and Engaged→First Tribute", "how": "For profile→follow: if visits are high but follows low, fix bio/pin/banner (Plays 1–2). For engaged→first tribute: if DMs are high but no tributes, name a frictionless FIRST step — a 'first tribute' ritual with an obvious amount and link, plus the founding-seat deadline. The Funnel highlights whichever stage sits below benchmark and routes You to the matching fix.", "why": "These are the two stages where findom funnels almost always bleed: a curious visitor who doesn't follow, and an engaged sub who never sends a first dollar. The first tribute is the hardest, most important conversion — once a sub pays once, recurring is far easier. De-frictioning that first step is the highest-ROI fix in the funnel."}, {"title": "Turn First Tributes Into Recurring With Public Recognition", "how": "When a sub sends a first tribute, recognize it publicly in Your voice (within the dynamic's norms) — a shoutout, a standing, an honorific. Make the NEXT tribute a status move, not a repeat purchase ('He's #2 in My house this week. #1 is $140 ahead.'). Keep that recognition visible on-feed so OTHER lurkers see that paying = status.", "why": "Recurring revenue is where the business lives, and public recognition is the cheapest retention mechanic — it turns a transaction into an identity. It doubles as acquisition: every visible 'my best sub' moment is social proof that turns watching lurkers into the next first-tributers."}, {"title": "Stay Whitelisted — ToS-Safe Growth Only (Protect the Asset)", "how": "Hard rules baked into the ritual: NO auto-DMs, NO cold/bulk outreach, NO mass follow/unfollow, NO keyword auto-replies, NO copy-pasted reply spam, NO explicit content or threats in public posts. Everything the Oracle drafts, SHE reviews and sends manually. Keep public posts suggestive but within X's adult-marketing norms; route explicit/transactional detail off-platform.", "why": "A suspended account is zero funnel — losing the handle is the single biggest growth risk, bigger than a slow week. Auto-DM, cold/bulk DM, mass follow/unfollow and keyword auto-replies are confirmed suspension triggers. Keeping every action human-validated is what makes the whole copilot durable — a feature, not a limitation."}]}, "appName": "The Acquisition Copilot — by The Oracle", "tagline": "Your growth, read like a map. See where subs slip away — and the one move that wins them back. The Oracle tells You what to post and who to answer; You always send."};
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fmt(n){n=Math.round(n);return n>=10000?Math.round(n/1000)+'k':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':String(n);}
+function pct(a,b){return b>0?(a/b*100):0;}
+function pctTxt(v){return (v<10?v.toFixed(1):Math.round(v))+'%';}
+function parseNum(s){s=String(s||'').trim().toLowerCase().replace(/,/g,'');var k=s.indexOf('k')>=0;var n=parseFloat(s.replace(/[^0-9.]/g,''));if(isNaN(n))return null;return Math.round(k?n*1000:n);}
+
+var ROUTE='home', DEMO=lsGet('ac_mode')!=='real', STUDIOF='all', STUDIOFILTER=null;
+function NUM(){try{var s=lsGet('ac_numbers');if(s){var p=JSON.parse(s);if(p&&p.reach)return p;}}catch(e){}return null;}
+var DEMOVALS=[42000,760,58,30,8,3];
+var TARGET=[0,0.02,0.10,0.40,0.20,0.35]; // healthy rate INTO each stage (benchmark) — leak = furthest below its own target, not raw-lowest
+function stages(){
+  var n=NUM();
+  var vals=(DEMO||!n)?DEMOVALS:[n.reach,n.profile,n.follows,n.engaged,n.trib,(n.recur||Math.round(n.trib*0.4))];
+  return APP.acq.funnel.map(function(f,i){return {name:f.name,value:vals[i]||0,src:f.src,fix:f.fix,route:f.route};});
+}
+function leakIdx(st){var mi=1,mr=999;for(var i=1;i<st.length;i++){var rate=st[i-1].value>0?st[i].value/st[i-1].value:0;var ratio=rate/(TARGET[i]||0.1);if(ratio<mr){mr=ratio;mi=i;}}return mi;}
+var LEAKHEAD=["Your reach is the ceiling — post more to widen it.",
+ "Your reach is strong, but few visitors click through to Your profile.",
+ "Visitors land but don't follow — Your profile isn't closing them.",
+ "Followers lurk but never speak — give them an opening.",
+ "Engaged subs aren't sending the first tribute — the ask is missing.",
+ "First-timers pay once and vanish — there's no reason to return."];
+
+var NAV=[['home','Today'],['funnel','Your Funnel'],['studio','Studio'],['week','This Week','wk'],['play','Playbook']];
+var ICON={home:'<circle cx="8" cy="8" r="3"/><path d="M8 1.2v2M8 12.8v2M1.2 8h2M12.8 8h2M3.3 3.3l1.3 1.3M11.4 11.4l1.3 1.3M12.7 3.3l-1.3 1.3M4.6 11.4l-1.3 1.3"/>',
+ funnel:'<path d="M2 3h12l-4.2 5v5L6.2 11V8z"/>',
+ studio:'<path d="M3.4 3.4l9.2 9.2M12.6 3.4l-9.2 9.2"/>',
+ week:'<rect x="2.4" y="3.4" width="11.2" height="10.2" rx="1.4"/><path d="M2.4 6.4h11.2M5.4 2.1v2.4M10.6 2.1v2.4"/>',
+ play:'<path d="M3 2.5h8a1.5 1.5 0 011.5 1.5v9.5L8 11l-4.5 2.5V4A1.5 1.5 0 015 2.5z"/>'};
+
+function renderNav(){
+  document.getElementById('nav').innerHTML=NAV.map(function(n){return '<a data-r="'+n[0]+'" class="'+(ROUTE===n[0]?'on':'')+'"><svg class="ic" viewBox="0 0 16 16">'+ICON[n[0]]+'</svg><span class="lab">'+n[1]+'</span></a>';}).join('');
+  document.querySelectorAll('#nav a').forEach(function(a){a.onclick=function(){go(a.getAttribute('data-r'));};});
+  document.getElementById('modeSeg').innerHTML='<button data-m="demo" class="'+(DEMO?'on':'')+'">Demo</button><button data-m="real" class="'+(DEMO?'':'on')+'">My numbers</button>';
+  document.querySelectorAll('#modeSeg button').forEach(function(b){b.onclick=function(){var m=b.getAttribute('data-m');if(m==='real'&&!NUM()){openNum();return;}DEMO=(m==='demo');lsSet('ac_mode',DEMO?'demo':'real');renderNav();render();};});
+  var titles={home:'Today',funnel:'Your Funnel',studio:'Studio',week:'This Week',play:'Playbook'};
+  document.getElementById('pageTitle').textContent=titles[ROUTE];
+  try{document.getElementById('pageDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});}catch(e){}
+}
+function go(r){ROUTE=r;STUDIOFILTER=null;renderNav();render();document.querySelector('.scroll').scrollTo(0,0);}
+function render(){var v=document.getElementById('view');v.className='content fade';v.innerHTML=({home:vHome,funnel:vFunnel,studio:vStudio,week:vWeek,play:vPlay}[ROUTE])();bind();}
+
+function vHome(){
+  var st=stages(),li=leakIdx(st);
+  var ribbon=(DEMO)?'<div class="ribbon">&#9888; Example — switch to <b>&nbsp;My numbers&nbsp;</b> to make this Yours.</div>':'';
+  var fol=st[2].value, p2f=pct(st[2].value,st[1].value), conv=st[3].value, trib=st[4].value;
+  function delta(v){return DEMO?'&#9650; +'+Math.max(1,Math.round(v*0.14)):'';}
+  var greet='<div class="greet">Good evening. You gained <b>'+fmt(fol)+' followers</b> this week — '+LEAKHEAD[li]+'</div>';
+  var mg='<div class="mgrid">'+
+   '<div class="metric"><div class="ml">New followers</div><div class="mv">'+fmt(fol)+'</div><div class="md">'+delta(fol)+'</div></div>'+
+   '<div class="metric"><div class="ml">Profile &rarr; follow</div><div class="mv">'+pctTxt(p2f)+'</div><div class="md">how compelling Your profile is</div></div>'+
+   '<div class="metric"><div class="ml">New conversations</div><div class="mv">'+fmt(conv)+'</div><div class="md">'+delta(conv)+'</div></div>'+
+   '<div class="metric"><div class="ml">New tributes</div><div class="mv">'+fmt(trib)+'</div><div class="md">'+delta(trib)+'</div></div></div>';
+  var hot=APP.content.trends.filter(function(t){return t.tag==='HOT';})[0]||APP.content.trends[0];
+  var followTweet=APP.content.tweets.filter(function(t){return t.stage==='follows';})[0];
+  var moves=[
+   {k:'Fix the leak',t:LEAKHEAD[li],w:st[li].fix,btn:'Open the fix',act:'route',route:st[li].route,stage:st[li].name},
+   {k:'Post today',t:'Trend "'+esc(hot.name)+'" is peaking — post on it.',w:esc(hot.action),btn:'Copy a post',act:'copy',copy:followTweet.text},
+   {k:'Engage warmly',t:'Reply to the ones who already engaged today.',w:'Warm a conversation in public — never cold-DM a stranger (X bans it). Here’s an opener.',btn:'Copy an opener',act:'copy',copy:'Noticed. The quiet ones who keep coming back are always the most interesting. Say something.'}
+  ];
+  var mv='<div class="sec">3 moves to grow today</div><div class="moves" id="moves">'+moves.map(function(m,i){
+    return '<div class="move" data-move><div class="mb">'+(i+1)+'</div><div style="flex:1"><div class="mk">'+m.k+'</div><div class="mt">'+m.t+'</div><div class="mw">'+m.w+'</div>'+
+     '<div class="ma"><button class="btn gold sm" data-act="'+m.act+'"'+(m.route?' data-route="'+m.route+'"':'')+(m.copy?' data-copy="'+esc(m.copy)+'"':'')+'>'+m.btn+'</button><button class="link" data-act="done">Done</button></div></div></div>';
+  }).join('')+'<div class="done-state" id="doneState" style="display:none"><div class="fl serif">&#9819;</div><div class="dt">Done for today, Goddess.</div><div style="font-size:12.5px;margin-top:8px">Consistency is the real growth lever. Come back tomorrow.</div></div></div>';
+  return ribbon+greet+mg+mv;
+}
+
+function vFunnel(){
+  var st=stages(),li=leakIdx(st),top=st[0].value;
+  var minW=120,maxW=560;
+  function w(v){return Math.round(minW+(maxW-minW)*Math.pow((v||0)/Math.max(1,top),0.32));}
+  var bars='';
+  for(var i=0;i<st.length;i++){
+    var s=st[i],isLeak=(i===li);
+    bars+='<div class="fbar'+(isLeak?' leak':'')+'" style="width:'+w(s.value)+'px"><span class="fl">'+esc(s.name)+'</span><span class="fv">'+fmt(s.value)+'</span></div>';
+    bars+='<div class="fcap">'+(i<3?'estimated':'real')+' &middot; <span class="fpill">'+s.src+'</span></div>';
+    if(i<st.length-1){var r=pct(st[i+1].value,s.value);var leakNext=(i+1===li);
+      bars+='<div class="fstep'+(leakNext?' leakstep':'')+'">&#9662; '+pctTxt(r)+(leakNext?'<span class="lk">biggest leak</span>':'')+'</div>';}
+  }
+  var ls=st[li];
+  var fixc='<div class="fixcard"><div class="fh">The fix &mdash; '+esc(ls.name)+'</div><div class="ft">'+ls.fix+'</div>'+
+    '<button class="btn gold sm" data-act="route" data-route="'+ls.route+'">Open the fix &rarr;</button></div>';
+  return '<div class="fwrap">'+(DEMO?'<div class="exwm">Example</div>':'')+'<div class="funnel">'+bars+'</div>'+
+    '<div class="honest">Directional, not exact &mdash; X doesn’t track a per-person pipeline. Stages 1&ndash;3 are from Your X analytics; 4&ndash;6 are Your own count. Your pasted numbers always win.</div></div>'+fixc;
+}
+
+function vStudio(){
+  var trends='<div class="tchips">'+APP.content.trends.map(function(t){return '<span class="tchip"><span class="tbadge '+t.tag+'">'+t.tag+'</span>'+esc(t.name)+'</span>';}).join('')+'</div>';
+  var cats=[['all','All'],['follows','Pulls follows'],['DMs','Pulls DMs'],['tributes','Pulls tributes']];
+  var active=STUDIOFILTER||'all';
+  var filters='<div class="filters">'+cats.map(function(c){return '<button class="pill twf'+(active===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>';}).join('')+'</div>';
+  var list=APP.content.tweets.filter(function(t){return active==='all'||t.stage===active;});
+  var grid='<div class="twgrid">'+list.map(function(t){return '<div class="twcard"><span class="stag">pulls '+t.stage+'</span><div class="twtext">'+esc(t.text)+'</div>'+
+    '<div class="twfoot"><span class="twmeta">'+esc(t.cat)+' &middot; '+esc(t.lift)+'</span><div style="display:flex;gap:8px"><button class="btn gold sm" data-act="copy" data-copy="'+esc(t.text)+'">Copy</button><button class="btn sm" data-act="openx" data-copy="'+esc(t.text)+'">Open X</button></div></div></div>';}).join('')+'</div>';
+  return '<div class="sec" style="margin-top:0">Trend Radar &middot; what’s paying now</div>'+trends+
+    '<div class="sec">Ready-to-post &middot; tagged by what they pull</div>'+filters+grid;
+}
+
+function vWeek(){
+  var done={};try{done=JSON.parse(lsGet('ac_week')||'{}');}catch(e){}
+  var ti;try{ti=(new Date().getDay()+6)%7;}catch(e){ti=2;}
+  return '<div class="sec" style="margin-top:0">This week &middot; a rhythm that compounds</div>'+
+   '<div style="font-size:12.5px;color:var(--mute);margin-bottom:16px">Consistency is the #1 growth lever. One post a day &mdash; suggested, never auto-published.</div>'+
+   APP.content.week.map(function(d,i){var it=d.items[0]||{title:''};var dn=!!done[i];
+     return '<div class="wrow'+(i===ti?' today':'')+'"><div class="wd">'+esc(d.day)+'</div><div class="wt">'+esc(it.title)+' <span style="color:var(--gold-deep);font-size:11px">&middot; '+esc(it.plat||'')+'</span></div>'+
+      '<button class="btn sm" data-act="copy" data-copy="'+esc(it.title)+'">Copy</button><div class="wcheck'+(dn?' done':'')+'" data-week="'+i+'">&#10003;</div></div>';
+   }).join('');
+}
+
+function vPlay(){
+  return '<div class="sec" style="margin-top:0">The growth playbook</div><div style="font-size:12.5px;color:var(--mute);margin-bottom:18px">The plays that widen the funnel. Pick one, run it this week.</div>'+
+   APP.acq.plays.map(function(p){return '<div class="pcard"><div class="pt">'+esc(p.title)+'</div><div class="ph">'+esc(p.how)+'</div><div class="pw"><span class="pwl">Why &middot; </span>'+esc(p.why)+'</div></div>';}).join('');
+}
+
+function bind(){
+  document.querySelectorAll('[data-move]').forEach(function(d){d.addEventListener('click',function(e){var a=e.target.getAttribute('data-act');if(!a)return;
+    if(a==='copy'){copyTxt(e.target.getAttribute('data-copy'));e.target.textContent='Copied ✓';}
+    if(a==='route'){go(e.target.getAttribute('data-route'));}
+    if(a==='done'){d.classList.add('gone');setTimeout(function(){if(document.querySelectorAll('#moves [data-move]:not(.gone)').length===0){var ds=document.getElementById('doneState');if(ds)ds.style.display='block';}},520);}
+  });});
+  document.querySelectorAll('[data-act=route]').forEach(function(b){if(b.closest('[data-move]'))return;b.onclick=function(){go(b.getAttribute('data-route'));};});
+  document.querySelectorAll('[data-act=copy]').forEach(function(b){if(b.closest('[data-move]'))return;b.onclick=function(){copyTxt(b.getAttribute('data-copy'));b.textContent='Copied ✓';};});
+  document.querySelectorAll('[data-act=openx]').forEach(function(b){b.onclick=function(){try{window.open('https://x.com/intent/post?text='+encodeURIComponent(b.getAttribute('data-copy')),'_blank');}catch(e){}};});
+  document.querySelectorAll('.twf').forEach(function(b){b.onclick=function(){STUDIOFILTER=b.getAttribute('data-f');render();};});
+  document.querySelectorAll('[data-week]').forEach(function(c){c.onclick=function(){var i=c.getAttribute('data-week');var d={};try{d=JSON.parse(lsGet('ac_week')||'{}');}catch(e){}d[i]=!d[i];lsSet('ac_week',JSON.stringify(d));render();};});
+}
+function copyTxt(t){try{navigator.clipboard.writeText(t);}catch(e){}toast('Copied to clipboard');}
+function toast(m){var el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2200);}
+
+/* numbers modal */
+function openNum(){var n=NUM()||{};['reach','profile','follows','engaged','trib','recur'].forEach(function(k){var el=document.getElementById('in_'+k);if(el)el.value=n[k]||'';});document.getElementById('numModal').classList.add('on');}
+document.getElementById('numBtn').onclick=openNum;
+document.getElementById('numClose').onclick=function(){document.getElementById('numModal').classList.remove('on');};
+document.getElementById('numModal').onclick=function(e){if(e.target===document.getElementById('numModal'))document.getElementById('numModal').classList.remove('on');};
+document.getElementById('numSave').onclick=function(){
+  var n={reach:parseNum(document.getElementById('in_reach').value),profile:parseNum(document.getElementById('in_profile').value),follows:parseNum(document.getElementById('in_follows').value),engaged:parseNum(document.getElementById('in_engaged').value),trib:parseNum(document.getElementById('in_trib').value),recur:parseNum(document.getElementById('in_recur').value)};
+  if(!n.reach||!n.profile||!n.follows){toast('⚠ Fill at least reach, profile, followers');return;}
+  var prev=NUM();if(prev)lsSet('ac_snapshot',JSON.stringify(prev));
+  lsSet('ac_numbers',JSON.stringify(n));DEMO=false;lsSet('ac_mode','real');
+  document.getElementById('numModal').classList.remove('on');toast('Saved ✓ — your funnel is live');go('funnel');
+};
+renderNav();render();
+</script>
+</body>
+</html>

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BriefImmo — Qualifiez vos clients avant le RDV</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          stone: { 950: '#0C0A09', 900: '#1C1917', 850: '#231F1C', 800: '#292524', 700: '#44403C', 600: '#57534E', 500: '#78716C', 400: '#A8A29E', 300: '#D6D3D1' },
+          amber: { DEFAULT: '#D97706', light: '#F59E0B', dark: '#B45309' }
+        },
+        fontFamily: {
+          sans: ['DM Sans', 'sans-serif'],
+          serif: ['DM Serif Display', 'serif']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  [x-cloak] { display: none !important; }
+  body { font-family: 'DM Sans', sans-serif; background: #0C0A09; color: white; }
+  .card { background: #1C1917; border: 1px solid rgba(255,255,255,0.06); }
+  .card-warm { background: #231F1C; border: 1px solid rgba(255,255,255,0.06); }
+  .input-field { background: #0C0A09; border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; padding: 11px 14px; width: 100%; font-size: 14px; transition: border-color 0.2s; outline: none; font-family: 'DM Sans', sans-serif; }
+  .input-field:focus { border-color: #D97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.15); }
+  .input-field::placeholder { color: #57534E; }
+  select.input-field option { background: #1C1917; }
+  .btn-primary { background: #D97706; color: white; padding: 11px 22px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #B45309; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(217,119,6,0.35); }
+  .btn-ghost { background: transparent; color: #A8A29E; padding: 11px 22px; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', sans-serif; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.04); color: white; }
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; }
+  .badge-green { background: rgba(34,197,94,0.12); color: #4ADE80; }
+  .badge-yellow { background: rgba(234,179,8,0.12); color: #FDE047; }
+  .badge-amber { background: rgba(217,119,6,0.15); color: #F59E0B; }
+  .badge-blue { background: rgba(99,102,241,0.12); color: #818CF8; }
+  .badge-red { background: rgba(239,68,68,0.12); color: #FCA5A5; }
+  .progress-bar { height: 3px; background: #292524; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #D97706, #F59E0B); border-radius: 999px; transition: width 0.4s ease; }
+  .chip { padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: 1px solid rgba(255,255,255,0.1); color: #A8A29E; background: transparent; white-space: nowrap; }
+  .chip:hover { border-color: #D97706; color: #F59E0B; }
+  .chip.active { background: #D97706; color: white; border-color: #D97706; }
+  .section-card { background: #1C1917; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; margin-bottom: 12px; overflow: hidden; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; cursor: pointer; }
+  .section-header:hover { background: rgba(255,255,255,0.02); }
+  .score-ring { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; }
+  .confetti-piece { position: fixed; width: 8px; height: 8px; border-radius: 2px; animation: fall linear forwards; pointer-events: none; }
+  @keyframes fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+  .nav-tab { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; color: #78716C; transition: all 0.15s; }
+  .nav-tab:hover { color: #D6D3D1; }
+  .nav-tab.active { background: #292524; color: white; }
+  .range-track { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 999px; background: #44403C; outline: none; }
+  .range-track::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #D97706; cursor: pointer; border: 2px solid #0C0A09; }
+</style>
+</head>
+<body x-data="app()" x-init="init()">
+
+<!-- ===== LANDING ===== -->
+<div x-show="view==='landing'" x-cloak>
+  <!-- Nav -->
+  <nav style="border-bottom:1px solid rgba(255,255,255,0.05)" class="px-8 py-5 max-w-6xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#D97706">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      </div>
+      <span class="text-white font-semibold text-lg tracking-tight">BriefImmo</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-stone-500 text-sm cursor-pointer hover:text-white transition-colors" @click="view='dashboard'">Démo →</span>
+      <button class="btn-primary" @click="view='builder'">Essai gratuit</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="max-w-5xl mx-auto px-8 pt-20 pb-16">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center gap-2 text-amber-400 text-xs font-600 uppercase tracking-widest mb-6 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20" style="font-weight:600">
+        Pour agences immobilières
+      </div>
+      <h1 class="font-serif text-5xl md:text-6xl text-white leading-tight mb-6">
+        Qualifiez vos clients<br/><span style="color:#D97706">avant le rendez-vous.</span>
+      </h1>
+      <p class="text-stone-400 text-xl leading-relaxed mb-10 max-w-xl">
+        Vos agents passent 45 min à collecter les critères de chaque acheteur par téléphone. Envoyez un lien — ils remplissent tout en 5 minutes.
+      </p>
+      <div class="flex flex-wrap items-center gap-4 mb-16">
+        <button class="btn-primary text-base px-8 py-3.5" @click="view='builder'">Créer mon formulaire →</button>
+        <button class="btn-ghost text-base px-8 py-3.5" @click="view='dashboard'">Voir la démo</button>
+      </div>
+
+      <!-- Social proof -->
+      <div class="flex items-center gap-3">
+        <div class="flex -space-x-2">
+          <div class="w-8 h-8 rounded-full bg-amber-600 border-2 border-stone-950 flex items-center justify-center text-xs font-700" style="font-weight:700">M</div>
+          <div class="w-8 h-8 rounded-full bg-stone-600 border-2 border-stone-950 flex items-center justify-center text-xs font-700" style="font-weight:700">S</div>
+          <div class="w-8 h-8 rounded-full bg-amber-800 border-2 border-stone-950 flex items-center justify-center text-xs font-700" style="font-weight:700">L</div>
+        </div>
+        <p class="text-stone-400 text-sm">Utilisé par <span class="text-white font-500" style="font-weight:500">240+ agents</span> en France</p>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="grid md:grid-cols-3 gap-5 mt-20">
+      <div class="card rounded-2xl p-6">
+        <div class="text-2xl mb-4">🎯</div>
+        <h3 class="text-white font-600 mb-2" style="font-weight:600">Score de qualification</h3>
+        <p class="text-stone-400 text-sm leading-relaxed">Chaque client reçoit un score automatique selon son budget, son financement et sa motivation. Priorisez les vrais acheteurs.</p>
+      </div>
+      <div class="card rounded-2xl p-6">
+        <div class="text-2xl mb-4">⚡</div>
+        <h3 class="text-white font-600 mb-2" style="font-weight:600">RDV 3× plus efficaces</h3>
+        <p class="text-stone-400 text-sm leading-relaxed">L'agent arrive au rendez-vous avec un dossier complet : budget, critères, financement. Zéro temps perdu à poser des questions basiques.</p>
+      </div>
+      <div class="card rounded-2xl p-6">
+        <div class="text-2xl mb-4">📋</div>
+        <h3 class="text-white font-600 mb-2" style="font-weight:600">Brief exportable</h3>
+        <p class="text-stone-400 text-sm leading-relaxed">Un clic pour exporter une fiche client propre à partager en interne ou à archiver dans votre CRM.</p>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="mt-20 flex flex-col md:flex-row gap-5 max-w-2xl">
+      <div class="card rounded-2xl p-7 flex-1">
+        <p class="text-stone-400 text-xs uppercase tracking-widest mb-1">Gratuit</p>
+        <p class="text-white text-3xl font-700 mb-1" style="font-weight:700">0€</p>
+        <p class="text-stone-500 text-sm mb-5">3 dossiers / mois</p>
+        <ul class="space-y-2 text-stone-400 text-sm">
+          <li>✓ Formulaire acheteur & vendeur</li>
+          <li>✓ Dashboard basique</li>
+          <li>✓ Score de qualification</li>
+        </ul>
+      </div>
+      <div class="rounded-2xl p-7 flex-1" style="background:#1C1917;border:1px solid #D97706">
+        <p class="text-amber-400 text-xs uppercase tracking-widest mb-1">Pro</p>
+        <p class="text-white text-3xl font-700 mb-1" style="font-weight:700">49€<span class="text-sm text-stone-400 font-normal">/mois</span></p>
+        <p class="text-stone-500 text-sm mb-5">Dossiers illimités</p>
+        <ul class="space-y-2 text-stone-400 text-sm">
+          <li>✓ Tout le plan gratuit</li>
+          <li>✓ Notifications email</li>
+          <li>✓ Export PDF & CRM</li>
+          <li>✓ Formulaire à votre marque</li>
+        </ul>
+        <button class="btn-primary w-full justify-center mt-5" @click="view='builder'">Commencer →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div x-show="view==='dashboard'" x-cloak>
+  <div class="max-w-5xl mx-auto px-6 py-7">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-7">
+      <div class="flex items-center gap-3">
+        <button class="text-stone-500 hover:text-white transition-colors" @click="view='landing'">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div>
+          <h1 class="text-white font-semibold">Tableau de bord</h1>
+          <p class="text-stone-500 text-xs">Agence Varela Immobilier</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex rounded-lg overflow-hidden border border-white/8">
+          <button class="nav-tab" :class="dashTab==='acheteurs'?'active':''" @click="dashTab='acheteurs'">Acheteurs</button>
+          <button class="nav-tab" :class="dashTab==='vendeurs'?'active':''" @click="dashTab='vendeurs'">Vendeurs</button>
+        </div>
+        <button class="btn-primary" @click="view='builder'">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nouveau dossier
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-4 gap-4 mb-7">
+      <div class="card rounded-xl p-4">
+        <p class="text-stone-500 text-xs uppercase tracking-wider mb-1.5">Dossiers actifs</p>
+        <p class="text-white text-2xl font-700" style="font-weight:700" x-text="allClients.length"></p>
+      </div>
+      <div class="card rounded-xl p-4">
+        <p class="text-stone-500 text-xs uppercase tracking-wider mb-1.5">Chauds 🔥</p>
+        <p class="text-2xl font-700 text-amber-400" style="font-weight:700" x-text="allClients.filter(c=>c.score>=75).length"></p>
+      </div>
+      <div class="card rounded-xl p-4">
+        <p class="text-stone-500 text-xs uppercase tracking-wider mb-1.5">En attente</p>
+        <p class="text-2xl font-700 text-yellow-400" style="font-weight:700" x-text="allClients.filter(c=>c.status==='En attente').length"></p>
+      </div>
+      <div class="card rounded-xl p-4">
+        <p class="text-stone-500 text-xs uppercase tracking-wider mb-1.5">Signés ce mois</p>
+        <p class="text-2xl font-700 text-green-400" style="font-weight:700" x-text="allClients.filter(c=>c.status==='Signé').length"></p>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div class="card rounded-2xl overflow-hidden">
+      <div class="px-6 py-4" style="border-bottom:1px solid rgba(255,255,255,0.05)">
+        <h2 class="text-white font-500" style="font-weight:500" x-text="dashTab==='acheteurs'?'Acheteurs qualifiés':'Mandats vendeurs'"></h2>
+      </div>
+      <div>
+        <template x-for="(c, i) in filteredClients" :key="i">
+          <div class="px-6 py-4 flex items-center justify-between hover:bg-white/1.5 transition-colors cursor-pointer group" style="border-bottom:1px solid rgba(255,255,255,0.04)" @click="openDetail(c)">
+            <div class="flex items-center gap-4">
+              <!-- Score ring -->
+              <div class="score-ring flex-shrink-0" :style="`background:${scoreColor(c.score)}18;color:${scoreColor(c.score)};font-size:13px`" x-text="c.score"></div>
+              <div>
+                <p class="text-white font-500 text-sm group-hover:text-amber-300 transition-colors" style="font-weight:500" x-text="c.name"></p>
+                <p class="text-stone-500 text-xs mt-0.5" x-text="c.detail"></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="hidden md:block text-right">
+                <p class="text-white text-sm font-500" style="font-weight:500" x-text="c.budget"></p>
+                <p class="text-stone-500 text-xs" x-text="c.type"></p>
+              </div>
+              <span class="badge" :class="c.status==='Signé'?'badge-green':c.status==='RDV planifié'?'badge-blue':c.status==='En cours'?'badge-amber':'badge-yellow'" x-text="c.status"></span>
+              <button class="opacity-0 group-hover:opacity-100 transition-opacity btn-ghost text-xs py-1.5 px-3" @click.stop="exportFiche(c)">Exporter</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BUILDER ===== -->
+<div x-show="view==='builder'" x-cloak>
+  <div class="max-w-2xl mx-auto px-6 py-8">
+    <div class="flex items-center gap-3 mb-8">
+      <button class="text-stone-500 hover:text-white transition-colors" @click="view='dashboard'">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div>
+        <h1 class="text-white font-700 text-lg" style="font-weight:700">Nouveau formulaire</h1>
+        <p class="text-stone-400 text-sm">Configurez et partagez le lien à votre client</p>
+      </div>
+    </div>
+
+    <!-- Agency info -->
+    <div class="card rounded-2xl p-6 mb-4">
+      <h3 class="text-white font-600 mb-4" style="font-weight:600">Votre agence</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-stone-400 text-xs uppercase tracking-wider mb-1.5 block">Nom de l'agence</label>
+          <input class="input-field" x-model="builder.agencyName" placeholder="Varela Immobilier" />
+        </div>
+        <div>
+          <label class="text-stone-400 text-xs uppercase tracking-wider mb-1.5 block">Agent responsable</label>
+          <input class="input-field" x-model="builder.agentName" placeholder="Sophie Martin" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Type -->
+    <div class="card rounded-2xl p-6 mb-4">
+      <h3 class="text-white font-600 mb-4" style="font-weight:600">Type de dossier</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <button class="p-4 rounded-xl text-left transition-all border-2" :class="builder.type==='acheteur'?'border-amber-500 bg-amber-500/10':'border-white/8 hover:border-white/20'" @click="builder.type='acheteur'">
+          <p class="text-2xl mb-2">🔑</p>
+          <p class="text-white font-500 text-sm" style="font-weight:500">Acheteur / Locataire</p>
+          <p class="text-stone-400 text-xs mt-0.5">Critères de recherche, budget, financement</p>
+        </button>
+        <button class="p-4 rounded-xl text-left transition-all border-2" :class="builder.type==='vendeur'?'border-amber-500 bg-amber-500/10':'border-white/8 hover:border-white/20'" @click="builder.type='vendeur'">
+          <p class="text-2xl mb-2">🏠</p>
+          <p class="text-white font-500 text-sm" style="font-weight:500">Vendeur / Bailleur</p>
+          <p class="text-stone-400 text-xs mt-0.5">Détails du bien, prix souhaité, disponibilité</p>
+        </button>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <div class="card rounded-2xl p-6 mb-4">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h3 class="text-white font-600" style="font-weight:600">Lien client</h3>
+          <p class="text-stone-400 text-sm mt-0.5">Partagez ce lien par SMS ou email</p>
+        </div>
+        <button class="btn-primary" @click="generateLink()">Générer</button>
+      </div>
+      <template x-if="generatedLink">
+        <div class="bg-stone-950 rounded-xl p-3 flex items-center gap-3 mt-3">
+          <code class="text-amber-300 text-sm flex-1 truncate" x-text="generatedLink"></code>
+          <button class="text-stone-400 hover:text-amber-400 transition-colors" @click="copyLink()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+          <button class="btn-primary text-xs py-1.5 px-3" @click="goToClientForm()">Prévisualiser →</button>
+        </div>
+      </template>
+      <template x-if="copied"><p class="text-green-400 text-xs mt-2">✓ Copié !</p></template>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="text-stone-500 hover:text-amber-400 transition-colors text-sm" @click="goToClientForm()">→ Voir le formulaire côté client</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT FORM ===== -->
+<div x-show="view==='client'" x-cloak>
+  <div class="max-w-xl mx-auto px-6 py-8">
+    <!-- Progress -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-md flex items-center justify-center" style="background:#D97706">
+            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          </div>
+          <span class="text-white text-sm font-500" style="font-weight:500" x-text="builder.agencyName || 'Votre agence'"></span>
+        </div>
+        <span class="text-stone-400 text-xs" x-text="Math.round(progress)+'% complété'"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" :style="`width:${progress}%`"></div></div>
+    </div>
+
+    <!-- Welcome -->
+    <div class="card rounded-2xl p-6 mb-5">
+      <p class="text-amber-400 text-xs uppercase tracking-widest mb-2" x-text="builder.agentName ? 'Avec ' + builder.agentName : builder.agencyName"></p>
+      <h1 class="font-serif text-2xl text-white mb-2" x-text="builder.type==='vendeur' ? 'Parlez-nous de votre bien' : 'Votre projet immobilier'"></h1>
+      <p class="text-stone-400 text-sm leading-relaxed">Ce formulaire nous permet de préparer votre dossier avant notre rendez-vous. Comptez 5 à 8 minutes.</p>
+    </div>
+
+    <!-- ===== ACHETEUR SECTIONS ===== -->
+    <template x-if="builder.type==='acheteur'">
+      <div>
+
+        <!-- Identité -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('id')">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">👤</span>
+              <div><p class="text-white text-sm font-500" style="font-weight:500">Vos coordonnées</p><p class="text-stone-500 text-xs">Nom, email, téléphone</p></div>
+            </div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.id?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.id" class="px-5 pb-5 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div><label class="text-stone-400 text-xs block mb-1.5">Prénom & nom</label><input class="input-field" x-model="form.name" placeholder="Marie Dupont" @input="calcProgress()" /></div>
+              <div><label class="text-stone-400 text-xs block mb-1.5">Téléphone</label><input class="input-field" x-model="form.phone" placeholder="06 12 34 56 78" @input="calcProgress()" /></div>
+            </div>
+            <div><label class="text-stone-400 text-xs block mb-1.5">Email</label><input class="input-field" x-model="form.email" placeholder="marie@email.com" @input="calcProgress()" /></div>
+          </div>
+        </div>
+
+        <!-- Critères de recherche -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('search')">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🔍</span>
+              <div><p class="text-white text-sm font-500" style="font-weight:500">Critères de recherche</p><p class="text-stone-500 text-xs">Type de bien, localisation, surface</p></div>
+            </div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.search?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.search" class="px-5 pb-5 space-y-4">
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Type de bien recherché</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="t in ['Appartement','Maison','Villa','Studio','Loft','Terrain']">
+                  <button class="chip" :class="form.propertyType===t?'active':''" @click="form.propertyType=t; calcProgress()" x-text="t"></button>
+                </template>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Opération</label>
+              <div class="flex gap-2">
+                <template x-for="op in ['Achat','Location']">
+                  <button class="chip" :class="form.operation===op?'active':''" @click="form.operation=op; calcProgress()" x-text="op"></button>
+                </template>
+              </div>
+            </div>
+            <div><label class="text-stone-400 text-xs block mb-1.5">Ville(s) ou quartier(s) souhaités</label><input class="input-field" x-model="form.location" placeholder="ex: Paris 11e, Vincennes, Montreuil" @input="calcProgress()" /></div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-stone-400 text-xs block mb-1.5">Surface min (m²)</label>
+                <input class="input-field" type="number" x-model="form.surfaceMin" placeholder="45" @input="calcProgress()" />
+              </div>
+              <div>
+                <label class="text-stone-400 text-xs block mb-1.5">Nombre de pièces min</label>
+                <div class="flex gap-2">
+                  <template x-for="p in ['1','2','3','4','5+']">
+                    <button class="flex-1 py-2 rounded-lg text-xs font-500 transition-all border" style="font-weight:500"
+                      :class="form.rooms===p?'bg-amber-600 text-white border-amber-600':'bg-transparent text-stone-400 border-white/10 hover:border-amber-600/50'"
+                      @click="form.rooms=p; calcProgress()" x-text="p"></button>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Critères indispensables</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="c in ['Parking','Terrasse / Balcon','Cave','Gardien','Ascenseur','Jardin','Vue dégagée','Calme','Proche métro','Dernier étage']">
+                  <button class="chip text-xs" :class="form.musts.includes(c)?'active':''" @click="toggleArray('musts',c); calcProgress()" x-text="c"></button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget & financement -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('budget')">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">💰</span>
+              <div><p class="text-white text-sm font-500" style="font-weight:500">Budget & financement</p><p class="text-stone-500 text-xs">Enveloppe et situation financière</p></div>
+            </div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.budget?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.budget" class="px-5 pb-5 space-y-4">
+            <div>
+              <label class="text-stone-400 text-xs block mb-3">Budget maximum : <span class="text-white font-600" style="font-weight:600" x-text="Number(form.budget).toLocaleString('fr-FR') + ' €'"></span></label>
+              <input type="range" class="range-track" min="50000" max="2000000" step="10000" x-model="form.budget" @input="calcProgress()" />
+              <div class="flex justify-between text-stone-600 text-xs mt-1"><span>50 000 €</span><span>2 000 000 €</span></div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Situation de financement</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="f in ['Comptant','Accord de principe','Simulation en cours','Pas encore démarré']">
+                  <button class="chip text-xs" :class="form.financing===f?'active':''" @click="form.financing=f; calcProgress()" x-text="f"></button>
+                </template>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Avez-vous un bien à vendre ?</label>
+              <div class="flex gap-2">
+                <template x-for="r in ['Non','Oui, déjà vendu','Oui, en cours de vente','Oui, pas encore mis en vente']">
+                  <button class="chip text-xs" :class="form.toSell===r?'active':''" @click="form.toSell=r; calcProgress()" x-text="r"></button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motivation & timing -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('timing')">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">📅</span>
+              <div><p class="text-white text-sm font-500" style="font-weight:500">Motivation & délai</p><p class="text-stone-500 text-xs">Urgence et raison du projet</p></div>
+            </div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.timing?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.timing" class="px-5 pb-5 space-y-4">
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Dans quel délai souhaitez-vous acheter ?</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="d in ['Dès que possible','1 à 3 mois','3 à 6 mois','6 mois à 1 an','Pas de délai précis']">
+                  <button class="chip text-xs" :class="form.delay===d?'active':''" @click="form.delay=d; calcProgress()" x-text="d"></button>
+                </template>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Raison principale de ce projet</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="m in ['Résidence principale','Investissement locatif','Résidence secondaire','Retraite','Divorce / séparation','Agrandissement famille']">
+                  <button class="chip text-xs" :class="form.motivation===m?'active':''" @click="form.motivation=m; calcProgress()" x-text="m"></button>
+                </template>
+              </div>
+            </div>
+            <div><label class="text-stone-400 text-xs block mb-1.5">Agences déjà consultées ?</label><input class="input-field" x-model="form.otherAgencies" placeholder="ex: oui, 2 autres agences" @input="calcProgress()" /></div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('notes')">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">💬</span>
+              <div><p class="text-white text-sm font-500" style="font-weight:500">Remarques libres</p><p class="text-stone-500 text-xs">Ce que vous voulez nous dire</p></div>
+            </div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.notes?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.notes" class="px-5 pb-5">
+            <textarea class="input-field" rows="3" x-model="form.notes" placeholder="Exigences particulières, situation familiale, contraintes..." @input="calcProgress()"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    <!-- ===== VENDEUR SECTIONS ===== -->
+    <template x-if="builder.type==='vendeur'">
+      <div>
+
+        <!-- Coordonnées -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('id')">
+            <div class="flex items-center gap-3"><span class="text-xl">👤</span><div><p class="text-white text-sm font-500" style="font-weight:500">Vos coordonnées</p></div></div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.id?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.id" class="px-5 pb-5 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div><label class="text-stone-400 text-xs block mb-1.5">Prénom & nom</label><input class="input-field" x-model="form.name" placeholder="Jean Martin" @input="calcProgress()" /></div>
+              <div><label class="text-stone-400 text-xs block mb-1.5">Téléphone</label><input class="input-field" x-model="form.phone" placeholder="06 12 34 56 78" @input="calcProgress()" /></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Le bien -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('property')">
+            <div class="flex items-center gap-3"><span class="text-xl">🏠</span><div><p class="text-white text-sm font-500" style="font-weight:500">Le bien à vendre</p><p class="text-stone-500 text-xs">Type, surface, localisation</p></div></div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.property?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.property" class="px-5 pb-5 space-y-4">
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Type de bien</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="t in ['Appartement','Maison','Villa','Studio','Loft','Immeuble','Terrain']">
+                  <button class="chip" :class="form.sellType===t?'active':''" @click="form.sellType=t; calcProgress()" x-text="t"></button>
+                </template>
+              </div>
+            </div>
+            <div><label class="text-stone-400 text-xs block mb-1.5">Adresse du bien</label><input class="input-field" x-model="form.address" placeholder="12 rue des Lilas, Paris 75011" @input="calcProgress()" /></div>
+            <div class="grid grid-cols-3 gap-3">
+              <div><label class="text-stone-400 text-xs block mb-1.5">Surface (m²)</label><input class="input-field" type="number" x-model="form.surface" placeholder="75" @input="calcProgress()" /></div>
+              <div><label class="text-stone-400 text-xs block mb-1.5">Pièces</label><input class="input-field" type="number" x-model="form.sellRooms" placeholder="3" @input="calcProgress()" /></div>
+              <div><label class="text-stone-400 text-xs block mb-1.5">Étage</label><input class="input-field" x-model="form.floor" placeholder="3/6" @input="calcProgress()" /></div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Points forts du bien</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="f in ['Parking','Terrasse','Cave','Gardien','Ascenseur','Jardin','Vue dégagée','Calme','Lumineux','Récemment rénové','DPE A/B','Double vitrage']">
+                  <button class="chip text-xs" :class="form.strengths.includes(f)?'active':''" @click="toggleArray('strengths',f); calcProgress()" x-text="f"></button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prix & dispo -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('price')">
+            <div class="flex items-center gap-3"><span class="text-xl">💶</span><div><p class="text-white text-sm font-500" style="font-weight:500">Prix & disponibilité</p></div></div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.price?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.price" class="px-5 pb-5 space-y-4">
+            <div>
+              <label class="text-stone-400 text-xs block mb-3">Prix de vente souhaité : <span class="text-white font-600" style="font-weight:600" x-text="Number(form.sellPrice).toLocaleString('fr-FR') + ' €'"></span></label>
+              <input type="range" class="range-track" min="50000" max="3000000" step="10000" x-model="form.sellPrice" @input="calcProgress()" />
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Délai de vente souhaité</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="d in ['Le plus vite possible','Sous 3 mois','3 à 6 mois','Pas de délai précis']">
+                  <button class="chip text-xs" :class="form.sellDelay===d?'active':''" @click="form.sellDelay=d; calcProgress()" x-text="d"></button>
+                </template>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Disponibilité pour visites</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="d in ['Semaine','Week-end','Les deux','Sur RDV uniquement']">
+                  <button class="chip text-xs" :class="form.visitAvail===d?'active':''" @click="form.visitAvail=d; calcProgress()" x-text="d"></button>
+                </template>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Raison de la vente</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="r in ['Achat d\'un autre bien','Déménagement','Divorce / séparation','Succession','Investissement','Retraite']">
+                  <button class="chip text-xs" :class="form.sellReason===r?'active':''" @click="form.sellReason=r; calcProgress()" x-text="r"></button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandat -->
+        <div class="section-card">
+          <div class="section-header" @click="toggle('mandat')">
+            <div class="flex items-center gap-3"><span class="text-xl">📝</span><div><p class="text-white text-sm font-500" style="font-weight:500">Situation actuelle</p></div></div>
+            <svg class="w-4 h-4 text-stone-400 transition-transform" :class="open.mandat?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div x-show="open.mandat" class="px-5 pb-5 space-y-4">
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Le bien est-il déjà en vente ?</label>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="s in ['Non, première mise en vente','Oui, avec une autre agence','Oui, en vente directe','Déjà en vente depuis + de 6 mois']">
+                  <button class="chip text-xs" :class="form.alreadySelling===s?'active':''" @click="form.alreadySelling=s; calcProgress()" x-text="s"></button>
+                </template>
+              </div>
+            </div>
+            <div>
+              <label class="text-stone-400 text-xs block mb-2">Crédit immobilier en cours ?</label>
+              <div class="flex gap-2">
+                <template x-for="c in ['Non','Oui','Capital restant dû important']">
+                  <button class="chip text-xs" :class="form.mortgage===c?'active':''" @click="form.mortgage=c; calcProgress()" x-text="c"></button>
+                </template>
+              </div>
+            </div>
+            <div><label class="text-stone-400 text-xs block mb-1.5">Informations complémentaires</label><textarea class="input-field" rows="2" x-model="form.notes" placeholder="Travaux effectués, diagnostics réalisés, copropriété..." @input="calcProgress()"></textarea></div>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    <!-- Submit -->
+    <div class="mt-8">
+      <button class="btn-primary w-full justify-center py-3.5 text-base" @click="submitForm()">Envoyer mon dossier →</button>
+      <p class="text-stone-600 text-xs text-center mt-3">Vos réponses sont sauvegardées automatiquement</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUCCESS ===== -->
+<div x-show="view==='success'" x-cloak>
+  <div id="confetti-container"></div>
+  <div class="max-w-md mx-auto px-6 py-24 text-center">
+    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:rgba(34,197,94,0.12)">
+      <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <h1 class="font-serif text-3xl text-white mb-3">Dossier envoyé !</h1>
+    <p class="text-stone-400 mb-2">Votre dossier a bien été transmis à</p>
+    <p class="text-amber-300 font-600 mb-8" style="font-weight:600" x-text="builder.agencyName || 'votre agence'"></p>
+    <div class="card rounded-2xl p-5 text-left">
+      <p class="text-stone-400 text-xs uppercase tracking-wider mb-3">Prochaines étapes</p>
+      <div class="space-y-3">
+        <div class="flex items-start gap-3"><span class="w-5 h-5 rounded-full text-amber-400 text-xs flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(217,119,6,0.15)">1</span><p class="text-stone-300 text-sm">Votre agent analyse votre dossier</p></div>
+        <div class="flex items-start gap-3"><span class="w-5 h-5 rounded-full text-amber-400 text-xs flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(217,119,6,0.15)">2</span><p class="text-stone-300 text-sm">Il vous rappelle sous 24h pour confirmer le RDV</p></div>
+        <div class="flex items-start gap-3"><span class="w-5 h-5 rounded-full text-amber-400 text-xs flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(217,119,6,0.15)">3</span><p class="text-stone-300 text-sm">Votre projet démarre 🏡</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DETAIL MODAL ===== -->
+<div x-show="detailOpen" x-cloak class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="detailOpen=false"></div>
+  <div class="relative card rounded-2xl w-full max-w-xl z-10 p-8" x-show="selected">
+    <button class="absolute top-4 right-4 text-stone-500 hover:text-white" @click="detailOpen=false">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <template x-if="selected">
+      <div>
+        <div class="flex items-center gap-4 mb-6">
+          <div class="score-ring" :style="`background:${scoreColor(selected.score)}18;color:${scoreColor(selected.score)}`" x-text="selected.score"></div>
+          <div>
+            <h2 class="text-white text-xl font-700" style="font-weight:700" x-text="selected.name"></h2>
+            <p class="text-stone-400 text-sm" x-text="selected.detail"></p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="badge" :class="selected.status==='Signé'?'badge-green':selected.status==='RDV planifié'?'badge-blue':selected.status==='En cours'?'badge-amber':'badge-yellow'" x-text="selected.status"></span>
+              <span class="text-stone-500 text-xs">Score de qualification</span>
+              <span class="text-xs font-700" :style="`color:${scoreColor(selected.score)}`" style="font-weight:700" x-text="selected.score+'/100'"></span>
+            </div>
+          </div>
+        </div>
+        <template x-for="(section, key) in selected.data">
+          <div class="mb-5">
+            <p class="text-stone-500 text-xs uppercase tracking-widest mb-3 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.05)" x-text="key"></p>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-2">
+              <template x-for="(val, field) in section">
+                <div x-show="val">
+                  <p class="text-stone-500 text-xs" x-text="field"></p>
+                  <p class="text-white text-sm font-500" style="font-weight:500" x-text="val"></p>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+        <div class="flex gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)">
+          <button class="btn-primary" @click="exportFiche(selected)">Exporter la fiche</button>
+          <button class="btn-ghost" @click="detailOpen=false">Fermer</button>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<script>
+function app() {
+  return {
+    view: 'landing',
+    dashTab: 'acheteurs',
+    detailOpen: false,
+    selected: null,
+    generatedLink: null,
+    copied: false,
+    progress: 0,
+
+    builder: { agencyName: 'Varela Immobilier', agentName: 'Sophie Martin', type: 'acheteur' },
+
+    open: { id: true, search: false, budget: false, timing: false, notes: false, property: false, price: false, mandat: false },
+
+    form: {
+      name:'', phone:'', email:'',
+      propertyType:'', operation:'', location:'', surfaceMin:'', rooms:'', musts:[],
+      budget: 350000, financing:'', toSell:'',
+      delay:'', motivation:'', otherAgencies:'',
+      // vendeur
+      sellType:'', address:'', surface:'', sellRooms:'', floor:'', strengths:[],
+      sellPrice: 400000, sellDelay:'', visitAvail:'', sellReason:'', alreadySelling:'', mortgage:'',
+      notes:''
+    },
+
+    allClients: [
+      { name:'Céline & Marc Fontaine', detail:'Apt 3P · Paris 11e-20e · Achat', budget:'420 000 €', type:'Acheteur', status:'RDV planifié', score:91, tab:'acheteurs',
+        data:{
+          'Identité': { 'Téléphone':'06 12 34 56 78', 'Email':'celine.fontaine@email.com' },
+          'Recherche': { 'Type':'Appartement', 'Opération':'Achat', 'Localisation':'Paris 11e, 12e, 20e', 'Surface min':'65 m²', 'Pièces':'3', 'Critères':'Parking, Balcon, Calme' },
+          'Budget': { 'Budget max':'420 000 €', 'Financement':'Accord de principe', 'Bien à vendre':'Non' },
+          'Motivation': { 'Délai':'1 à 3 mois', 'Raison':'Résidence principale', 'Autres agences':'1 autre agence' }
+        }
+      },
+      { name:'Thomas Béranger', detail:'Maison · Banlieue ouest · Location', budget:'2 200 €/mois', type:'Locataire', status:'En cours', score:74, tab:'acheteurs',
+        data:{
+          'Identité': { 'Téléphone':'07 55 66 77 88' },
+          'Recherche': { 'Type':'Maison', 'Opération':'Location', 'Localisation':'Versailles, Saint-Germain-en-Laye', 'Surface min':'120 m²', 'Pièces':'4', 'Critères':'Jardin, Garage, Calme' },
+          'Budget': { 'Budget max':'2 200 €/mois', 'Financement':'N/A' },
+          'Motivation': { 'Délai':'3 à 6 mois', 'Raison':'Agrandissement famille' }
+        }
+      },
+      { name:'Isabelle Moreau', detail:'Studio · Paris intramuros · Achat', budget:'180 000 €', type:'Acheteur', status:'En attente', score:45, tab:'acheteurs',
+        data:{
+          'Identité': { 'Email':'i.moreau@gmail.com' },
+          'Recherche': { 'Type':'Studio', 'Opération':'Achat', 'Localisation':'Paris (arrondissements non précisés)', 'Pièces':'1' },
+          'Budget': { 'Budget max':'180 000 €', 'Financement':'Pas encore démarré' },
+          'Motivation': { 'Délai':'Pas de délai précis', 'Raison':'Investissement locatif' }
+        }
+      },
+      { name:'Pierre & Nathalie Chevalier', detail:'Apt T4 · 95m² · Paris 16e', budget:'780 000 €', type:'Vendeur', status:'Signé', score:88, tab:'vendeurs',
+        data:{
+          'Le bien': { 'Type':'Appartement', 'Adresse':'34 av. Victor Hugo, Paris 75016', 'Surface':'95 m²', 'Pièces':'4', 'Étage':'5/6' },
+          'Atouts': { 'Points forts':'Ascenseur, Parking, Vue dégagée, Double vitrage, Lumineux' },
+          'Prix': { 'Prix souhaité':'780 000 €', 'Délai':'Sous 3 mois', 'Visites':'Week-end', 'Raison':'Achat d\'un autre bien' },
+          'Situation': { 'Déjà en vente':'Non, première mise en vente', 'Crédit':'Oui' }
+        }
+      },
+      { name:'Famille Kowalski', detail:'Maison · 145m² · Vincennes', budget:'650 000 €', type:'Vendeur', status:'En attente', score:62, tab:'vendeurs',
+        data:{
+          'Le bien': { 'Type':'Maison', 'Adresse':'8 rue des Marronniers, Vincennes', 'Surface':'145 m²', 'Pièces':'5' },
+          'Prix': { 'Prix souhaité':'650 000 €', 'Délai':'3 à 6 mois', 'Raison':'Déménagement' },
+          'Situation': { 'Déjà en vente':'Oui, avec une autre agence depuis + de 6 mois', 'Crédit':'Capital restant dû important' }
+        }
+      }
+    ],
+
+    get filteredClients() {
+      return this.allClients.filter(c => c.tab === this.dashTab);
+    },
+
+    init() {
+      const saved = localStorage.getItem('briefimmo_form');
+      if (saved) { try { this.form = { ...this.form, ...JSON.parse(saved) }; } catch(e){} }
+      this.calcProgress();
+    },
+
+    toggle(key) { this.open[key] = !this.open[key]; },
+
+    toggleArray(field, val) {
+      const idx = this.form[field].indexOf(val);
+      if (idx === -1) this.form[field].push(val);
+      else this.form[field].splice(idx, 1);
+    },
+
+    calcProgress() {
+      localStorage.setItem('briefimmo_form', JSON.stringify(this.form));
+      if (this.builder.type === 'acheteur') {
+        const fields = [this.form.name, this.form.phone, this.form.propertyType, this.form.location, this.form.rooms, this.form.financing, this.form.delay, this.form.motivation];
+        const budget = this.form.budget !== 350000;
+        const filled = fields.filter(f => f && f.trim?.() !== '').length + (budget ? 1 : 0);
+        this.progress = Math.round((filled / 9) * 100);
+      } else {
+        const fields = [this.form.name, this.form.phone, this.form.sellType, this.form.address, this.form.surface, this.form.sellDelay, this.form.sellReason];
+        const price = this.form.sellPrice !== 400000;
+        const filled = fields.filter(f => f && f.trim?.() !== '').length + (price ? 1 : 0);
+        this.progress = Math.round((filled / 8) * 100);
+      }
+    },
+
+    scoreColor(s) {
+      if (s >= 80) return '#4ADE80';
+      if (s >= 60) return '#F59E0B';
+      return '#FCA5A5';
+    },
+
+    generateLink() {
+      const cfg = btoa(JSON.stringify({ agency: this.builder.agencyName, agent: this.builder.agentName, type: this.builder.type }));
+      this.generatedLink = `${location.origin}${location.pathname}#brief/${cfg}`;
+    },
+
+    copyLink() {
+      if (!this.generatedLink) return;
+      navigator.clipboard.writeText(this.generatedLink).then(() => { this.copied = true; setTimeout(() => this.copied = false, 2000); });
+    },
+
+    goToClientForm() { this.view = 'client'; },
+
+    submitForm() {
+      const isAcheteur = this.builder.type === 'acheteur';
+      const score = Math.min(100, Math.max(10, this.progress + (isAcheteur && this.form.financing === 'Accord de principe' ? 15 : 0) + (isAcheteur && this.form.delay === 'Dès que possible' ? 10 : 0)));
+      const entry = {
+        name: this.form.name || 'Nouveau client',
+        detail: isAcheteur
+          ? `${this.form.propertyType || 'Bien'} · ${this.form.location || '—'} · ${this.form.operation || 'Achat'}`
+          : `${this.form.sellType || 'Bien'} · ${this.form.surface ? this.form.surface+'m²' : '—'} · ${this.form.address?.split(',')[1]?.trim() || '—'}`,
+        budget: isAcheteur
+          ? Number(this.form.budget).toLocaleString('fr-FR') + ' €'
+          : Number(this.form.sellPrice).toLocaleString('fr-FR') + ' €',
+        type: isAcheteur ? (this.form.operation || 'Acheteur') : 'Vendeur',
+        status: 'En attente',
+        score,
+        tab: isAcheteur ? 'acheteurs' : 'vendeurs',
+        data: isAcheteur ? {
+          'Identité': { 'Téléphone': this.form.phone, 'Email': this.form.email },
+          'Recherche': { 'Type': this.form.propertyType, 'Localisation': this.form.location, 'Surface min': this.form.surfaceMin ? this.form.surfaceMin+' m²' : '', 'Pièces': this.form.rooms, 'Critères': this.form.musts.join(', ') },
+          'Budget': { 'Budget max': Number(this.form.budget).toLocaleString('fr-FR')+' €', 'Financement': this.form.financing },
+          'Motivation': { 'Délai': this.form.delay, 'Raison': this.form.motivation }
+        } : {
+          'Le bien': { 'Type': this.form.sellType, 'Adresse': this.form.address, 'Surface': this.form.surface ? this.form.surface+' m²' : '', 'Pièces': this.form.sellRooms },
+          'Prix': { 'Prix souhaité': Number(this.form.sellPrice).toLocaleString('fr-FR')+' €', 'Délai': this.form.sellDelay, 'Raison': this.form.sellReason },
+          'Situation': { 'Déjà en vente': this.form.alreadySelling, 'Crédit': this.form.mortgage }
+        }
+      };
+      this.allClients.unshift(entry);
+      this.view = 'success';
+      setTimeout(() => this.confetti(), 150);
+    },
+
+    confetti() {
+      const colors = ['#D97706','#F59E0B','#4ADE80','#38BDF8','#FDE047','#F472B6'];
+      const c = document.getElementById('confetti-container');
+      if (!c) return;
+      for (let i = 0; i < 55; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.cssText = `left:${Math.random()*100}vw;top:-20px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.8}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'}`;
+        c.appendChild(p);
+        setTimeout(() => p.remove(), 4000);
+      }
+    },
+
+    openDetail(c) { this.selected = c; this.detailOpen = true; },
+
+    exportFiche(c) {
+      let t = `FICHE CLIENT — ${c.name}\nType: ${c.type} | Budget: ${c.budget} | Score: ${c.score}/100\nStatut: ${c.status}\n`;
+      if (c.data) {
+        for (const [s, fields] of Object.entries(c.data)) {
+          t += `\n--- ${s.toUpperCase()} ---\n`;
+          for (const [f, v] of Object.entries(fields)) { if (v) t += `${f}: ${v}\n`; }
+        }
+      }
+      navigator.clipboard.writeText(t).then(() => alert('Fiche copiée dans le presse-papiers !'));
+    }
+  }
+}
+</script>
+</body>
+</html>

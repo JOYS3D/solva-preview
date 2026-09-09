@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>RestoPilot — Gestion de salle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F0E8;--dark:#1B3A2D;--dark2:#254d3c;--gold:#C9963A;--gold-l:#f0d08a;
+  --blanc:#fff;--gris:#6B6560;--gris-c:#A8A09A;
+  --libre:#3DAA6E;--occupe:#E07B20;--addition:#D94040;--reserve:#2E7DC4;--sale:#9E9E9E;
+  --libre-bg:rgba(61,170,110,0.13);--occupe-bg:rgba(224,123,32,0.13);
+  --addition-bg:rgba(217,64,64,0.14);--reserve-bg:rgba(46,125,196,0.12);
+  --shadow:0 4px 20px -6px rgba(27,58,45,0.15);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --r:12px;--sans:'Inter',system-ui,sans-serif;--serif:'Playfair Display',Georgia,serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--dark);-webkit-font-smoothing:antialiased;touch-action:manipulation;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;flex-shrink:0;background:var(--dark);display:flex;flex-direction:column;height:100vh;}
+.sb-brand{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sb-logo{font-family:var(--serif);font-size:22px;color:var(--gold);display:block;line-height:1;}
+.sb-sub{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:3px;display:block;}
+.sb-nav{flex:1;padding:12px 10px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.5);margin-bottom:2px;transition:all .18s var(--ease);user-select:none;}
+.sb-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9);}
+.sb-item.active{background:rgba(201,150,58,0.22);color:var(--blanc);}
+.sb-item.active .sb-icon{color:var(--gold);}
+.sb-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sb-lbl{flex:1;}
+.sb-badge{background:var(--addition);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;min-width:20px;text-align:center;}
+.sb-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.07);}
+.service-info{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.8;}
+.service-name{font-weight:600;color:var(--gold);font-size:13px;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:58px;background:var(--blanc);border-bottom:1px solid rgba(27,58,45,0.09);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;gap:16px;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.tb-title{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--dark);}
+.tb-time{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--dark);letter-spacing:-.5px;}
+.tb-date{font-size:11px;color:var(--gris);font-weight:500;}
+.tb-pills{display:flex;gap:8px;}
+.tb-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+.pill-libre{background:var(--libre-bg);color:var(--libre);}
+.pill-occupe{background:var(--occupe-bg);color:var(--occupe);}
+.pill-addition{background:var(--addition-bg);color:var(--addition);}
+.content{flex:1;overflow-y:auto;padding:0;}
+
+/* ── FLOOR PLAN ── */
+.salle-wrap{display:flex;flex-direction:column;height:100%;}
+.salle-zones{display:flex;gap:0;padding:16px 20px 10px;align-items:center;border-bottom:1px solid rgba(27,58,45,0.08);}
+.zone-btn{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .18s;background:none;font-family:var(--sans);}
+.zone-btn.active{background:var(--dark);color:var(--blanc);border-color:var(--dark);}
+.zone-btn:not(.active){color:var(--gris);border-color:rgba(27,58,45,0.18);}
+.zone-btn:not(.active):hover{border-color:var(--dark);color:var(--dark);}
+.floor-plan{flex:1;position:relative;background:var(--blanc);margin:16px 20px;border-radius:16px;box-shadow:var(--shadow);border:1px solid rgba(27,58,45,0.08);overflow:hidden;min-height:400px;}
+.floor-bg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(27,58,45,0.04) 39px,rgba(27,58,45,0.04) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(27,58,45,0.04) 39px,rgba(27,58,45,0.04) 40px);}
+.zone-label{position:absolute;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:rgba(27,58,45,0.2);pointer-events:none;}
+
+/* ── TABLES ── */
+.table-el{position:absolute;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .18s var(--ease),box-shadow .18s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.table-el:hover{transform:scale(1.07);z-index:10;}
+.table-el:active{transform:scale(.96);}
+.table-el.round .table-body{border-radius:50%;}
+.table-el.square .table-body{border-radius:10px;}
+.table-body{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2.5px solid;transition:all .2s;position:relative;}
+.table-num{font-weight:700;font-size:16px;line-height:1;}
+.table-covers{font-size:10px;font-weight:500;margin-top:2px;opacity:.8;}
+.table-timer{font-size:9px;font-weight:600;margin-top:1px;opacity:.7;}
+.table-total{position:absolute;bottom:-20px;font-size:10px;font-weight:700;white-space:nowrap;}
+/* Status colors */
+.status-libre .table-body{background:var(--libre-bg);border-color:var(--libre);color:var(--libre);}
+.status-occupe .table-body{background:var(--occupe-bg);border-color:var(--occupe);color:var(--occupe);}
+.status-addition .table-body{background:var(--addition-bg);border-color:var(--addition);color:var(--addition);animation:pulse-add 1.5s ease-in-out infinite;}
+.status-reserve .table-body{background:var(--reserve-bg);border-color:var(--reserve);color:var(--reserve);}
+.status-sale .table-body{background:#f5f5f5;border-color:var(--sale);color:var(--sale);}
+@keyframes pulse-add{0%,100%{box-shadow:0 0 0 0 rgba(217,64,64,0.3)}50%{box-shadow:0 0 0 8px rgba(217,64,64,0)}}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:16px;padding:10px 20px 14px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--gris);}
+.leg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* ── COMMANDES VIEW ── */
+.cmd-view{padding:20px;}
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.cmd-card{background:var(--blanc);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);border:1px solid rgba(27,58,45,0.07);border-left:4px solid var(--occupe);transition:transform .18s,box-shadow .18s;}
+.cmd-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px -8px rgba(27,58,45,0.15);}
+.cmd-card.addition{border-left-color:var(--addition);}
+.cmd-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.cmd-table{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--dark);}
+.cmd-meta{font-size:11px;color:var(--gris-c);}
+.cmd-items{font-size:12.5px;color:var(--dark);}
+.cmd-item-row{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid rgba(27,58,45,0.05);}
+.cmd-item-row:last-child{border-bottom:none;}
+.cmd-qty{font-weight:700;color:var(--dark2);min-width:20px;}
+.cmd-name{flex:1;}
+.cmd-price{font-weight:600;color:var(--gris);}
+.cmd-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(27,58,45,0.08);}
+.cmd-total{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--dark);}
+.btn-sm{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s;}
+.btn-addition{background:var(--addition-bg);color:var(--addition);}
+.btn-addition:hover{background:var(--addition);color:#fff;}
+.btn-paye{background:var(--libre-bg);color:var(--libre);}
+.btn-paye:hover{background:var(--libre);color:#fff;}
+.btn-voir{background:rgba(27,58,45,0.07);color:var(--dark);}
+.btn-voir:hover{background:var(--dark);color:#fff;}
+
+/* ── MENU VIEW ── */
+.menu-view{padding:20px;}
+.menu-cats{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.cat-tab{padding:7px 18px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .18s;background:none;font-family:var(--sans);}
+.cat-tab.active{background:var(--dark);color:#fff;}
+.cat-tab:not(.active){color:var(--gris);border-color:rgba(27,58,45,0.18);}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.menu-item-card{background:var(--blanc);border-radius:10px;padding:14px 16px;box-shadow:0 2px 10px -4px rgba(27,58,45,0.1);border:1px solid rgba(27,58,45,0.07);display:flex;align-items:center;gap:12px;transition:all .18s;}
+.menu-item-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+.menu-item-card.unavailable{opacity:.45;}
+.mic-info{flex:1;}
+.mic-name{font-size:13.5px;font-weight:600;color:var(--dark);}
+.mic-price{font-size:15px;font-weight:700;color:var(--dark);font-family:var(--serif);}
+.mic-actions{display:flex;gap:6px;}
+.toggle-avail{width:32px;height:18px;border-radius:9px;background:var(--gris-c);border:none;cursor:pointer;position:relative;transition:background .2s;}
+.toggle-avail.on{background:var(--libre);}
+.toggle-avail::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;}
+.toggle-avail.on::after{transform:translateX(14px);}
+
+/* ── RESERVATIONS ── */
+.resa-view{padding:20px;}
+.resa-day-tabs{display:flex;gap:8px;margin-bottom:18px;}
+.resa-day{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid rgba(27,58,45,0.18);background:none;color:var(--gris);font-family:var(--sans);transition:all .18s;}
+.resa-day.active{background:var(--dark);color:#fff;border-color:var(--dark);}
+.resa-list{display:flex;flex-direction:column;gap:10px;}
+.resa-card{background:var(--blanc);border-radius:var(--r);padding:14px 18px;box-shadow:var(--shadow);border:1px solid rgba(27,58,45,0.07);display:flex;align-items:center;gap:16px;transition:all .18s;}
+.resa-card:hover{transform:translateX(3px);}
+.resa-time{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--dark);min-width:64px;}
+.resa-info{flex:1;}
+.resa-name{font-size:15px;font-weight:700;color:var(--dark);}
+.resa-meta{font-size:12px;color:var(--gris-c);margin-top:2px;}
+.resa-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-confirmed{background:var(--reserve-bg);color:var(--reserve);}
+.badge-arrived{background:var(--libre-bg);color:var(--libre);}
+.badge-cancelled{background:rgba(0,0,0,0.06);color:var(--gris-c);}
+.badge-noshow{background:var(--addition-bg);color:var(--addition);}
+.resa-actions{display:flex;gap:6px;}
+
+/* ── CAISSE VIEW ── */
+.caisse-view{padding:20px;}
+.caisse-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+.kpi-box{background:var(--blanc);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);border:1px solid rgba(27,58,45,0.07);position:relative;overflow:hidden;}
+.kpi-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);}
+.kpi-lbl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);font-weight:600;margin-bottom:8px;}
+.kpi-val{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--dark);line-height:1;}
+.kpi-sub{font-size:11.5px;color:var(--gris-c);margin-top:4px;}
+.section-title{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--dark);margin-bottom:14px;}
+.ticket-list{background:var(--blanc);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid rgba(27,58,45,0.07);overflow:hidden;}
+.ticket-row{display:grid;grid-template-columns:60px 1fr 80px 100px 90px 80px;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(27,58,45,0.06);font-size:13px;align-items:center;}
+.ticket-row.head{background:var(--bg);font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--gris);}
+.ticket-row:last-child{border-bottom:none;}
+.ticket-row .amount{font-weight:700;font-family:var(--serif);}
+
+/* ── MODAL BASE ── */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(27,58,45,0.5);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:16px;}
+.overlay.hidden{display:none;}
+.modal{background:var(--blanc);border-radius:18px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px -16px rgba(27,58,45,0.35);}
+.modal-big{max-width:700px;}
+.modal-hd{padding:22px 24px 0;display:flex;justify-content:space-between;align-items:center;}
+.modal-hd-title{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--dark);}
+.modal-close{width:30px;height:30px;border-radius:7px;border:1px solid rgba(27,58,45,0.14);background:none;cursor:pointer;font-size:15px;color:var(--gris);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.modal-close:hover{border-color:var(--dark);color:var(--dark);}
+.modal-body{padding:20px 24px;}
+.modal-ft{padding:14px 24px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid rgba(27,58,45,0.08);}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .18s;}
+.btn-primary{background:var(--dark);color:#fff;}
+.btn-primary:hover{background:var(--dark2);}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-gold:hover{background:#b88430;}
+.btn-danger{background:var(--addition);color:#fff;}
+.btn-danger:hover{background:#c03030;}
+.btn-ghost{background:none;border:1px solid rgba(27,58,45,0.16);color:var(--gris);}
+.btn-ghost:hover{border-color:var(--dark);color:var(--dark);}
+.btn-success{background:var(--libre);color:#fff;}
+.btn-success:hover{background:#2e9060;}
+
+/* ── TABLE MODAL ── */
+.table-modal-status{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin-bottom:16px;font-weight:600;font-size:14px;}
+.table-modal-status.libre{background:var(--libre-bg);color:var(--libre);}
+.table-modal-status.occupe{background:var(--occupe-bg);color:var(--occupe);}
+.table-modal-status.addition{background:var(--addition-bg);color:var(--addition);}
+.table-modal-status.reserve{background:var(--reserve-bg);color:var(--reserve);}
+.covers-input{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.covers-input label{font-size:13px;font-weight:600;color:var(--dark);flex:1;}
+.covers-ctrl{display:flex;align-items:center;gap:8px;}
+.covers-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(27,58,45,0.2);background:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--dark);}
+.covers-btn:hover{background:var(--dark);color:#fff;border-color:var(--dark);}
+.covers-num{font-size:22px;font-weight:700;color:var(--dark);min-width:36px;text-align:center;}
+
+/* ── ORDER MODAL ── */
+.order-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:380px;}
+.order-left{border-right:1px solid rgba(27,58,45,0.09);padding-right:16px;}
+.order-right{padding-left:16px;}
+.order-section-title{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gris);margin-bottom:10px;}
+.menu-cats-sm{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.cat-sm{padding:4px 12px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;background:none;font-family:var(--sans);}
+.cat-sm.active{background:var(--dark);color:#fff;}
+.cat-sm:not(.active){color:var(--gris);border-color:rgba(27,58,45,0.16);}
+.menu-items-list{display:flex;flex-direction:column;gap:4px;max-height:280px;overflow-y:auto;}
+.menu-add-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:background .12s;}
+.menu-add-row:hover{background:var(--bg);}
+.mar-name{flex:1;font-size:13px;font-weight:500;color:var(--dark);}
+.mar-price{font-size:12px;font-weight:600;color:var(--gris);min-width:44px;text-align:right;}
+.mar-add{width:26px;height:26px;border-radius:6px;background:var(--dark);color:#fff;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;}
+.mar-add:hover{background:var(--dark2);}
+.order-items-list{display:flex;flex-direction:column;gap:4px;max-height:240px;overflow-y:auto;margin-bottom:12px;}
+.oi-row{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:7px;background:var(--bg);}
+.oi-qty-ctrl{display:flex;align-items:center;gap:4px;}
+.oi-qty-btn{width:22px;height:22px;border-radius:5px;border:1px solid rgba(27,58,45,0.18);background:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .12s;color:var(--dark);}
+.oi-qty-btn:hover{background:var(--dark);color:#fff;}
+.oi-qty{font-size:13px;font-weight:700;min-width:18px;text-align:center;}
+.oi-name{flex:1;font-size:12.5px;font-weight:500;}
+.oi-price{font-size:12px;font-weight:600;color:var(--gris);}
+.oi-del{width:20px;height:20px;border-radius:5px;border:none;background:none;cursor:pointer;color:var(--gris-c);font-size:13px;transition:all .12s;display:flex;align-items:center;justify-content:center;}
+.oi-del:hover{background:var(--addition-bg);color:var(--addition);}
+.order-total-line{display:flex;justify-content:space-between;align-items:center;padding:10px 8px;border-top:2px solid rgba(27,58,45,0.1);}
+.order-total-label{font-size:13px;font-weight:600;color:var(--gris);}
+.order-total-val{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--dark);}
+
+/* ── BILL MODAL ── */
+.bill{font-family:'Courier New',monospace;font-size:13px;background:var(--bg);border-radius:10px;padding:20px;border:1px solid rgba(27,58,45,0.1);}
+.bill-header{text-align:center;margin-bottom:16px;}
+.bill-resto{font-size:18px;font-weight:700;letter-spacing:.1em;}
+.bill-line{display:flex;justify-content:space-between;padding:3px 0;}
+.bill-sep{border:none;border-top:1px dashed rgba(27,58,45,0.2);margin:10px 0;}
+.bill-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:6px 0;}
+
+/* ── FORM ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-row.full{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);}
+.fg input,.fg select,.fg textarea{padding:8px 11px;border:1.5px solid rgba(27,58,45,0.16);border-radius:7px;font-family:var(--sans);font-size:13px;color:var(--dark);background:var(--blanc);transition:all .18s;width:100%;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--dark);box-shadow:0 0 0 3px rgba(27,58,45,0.09);}
+
+/* ── UTILS ── */
+.empty{text-align:center;padding:48px 20px;color:var(--gris-c);}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.3;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s var(--ease) both;}
+.sep{border:none;border-top:1px solid rgba(27,58,45,0.08);margin:14px 0;}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .sidebar{width:56px;}
+  .sb-brand .sb-sub,.sb-lbl,.service-info,.sb-badge{display:none;}
+  .sb-item{justify-content:center;padding:12px 0;}
+  .order-layout{grid-template-columns:1fr;}
+  .order-left{border-right:none;padding-right:0;border-bottom:1px solid rgba(27,58,45,0.09);padding-bottom:16px;margin-bottom:16px;}
+  .order-right{padding-left:0;}
+  .ticket-row{grid-template-columns:50px 1fr 70px 80px;}
+  .ticket-row :nth-child(5),.ticket-row :nth-child(6){display:none;}
+  .tb-pills{display:none;}
+}
+@media(max-width:600px){
+  .caisse-kpis{grid-template-columns:1fr 1fr;}
+  .cmd-grid{grid-template-columns:1fr;}
+  .resa-card{flex-wrap:wrap;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <span class="sb-logo">🍽 Salle</span>
+      <span class="sb-sub">RestoPilot v1</span>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-item active" data-tab="salle" onclick="setTab('salle')"><span class="sb-icon">🗺</span><span class="sb-lbl">Plan de salle</span></div>
+      <div class="sb-item" data-tab="commandes" onclick="setTab('commandes')"><span class="sb-icon">📋</span><span class="sb-lbl">Commandes</span><span class="sb-badge" id="nb-cmd" style="display:none">0</span></div>
+      <div class="sb-item" data-tab="reservations" onclick="setTab('reservations')"><span class="sb-icon">📅</span><span class="sb-lbl">Réservations</span></div>
+      <div class="sb-item" data-tab="menu" onclick="setTab('menu')"><span class="sb-icon">🍴</span><span class="sb-lbl">Carte & Menu</span></div>
+      <div class="sb-item" data-tab="caisse" onclick="setTab('caisse')"><span class="sb-icon">💰</span><span class="sb-lbl">Caisse</span></div>
+    </nav>
+    <div class="sb-footer">
+      <div class="service-name" id="service-name">Service midi</div>
+      <div class="service-info" id="service-info">Ouvert · 12 couverts</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="tb-title" id="tb-title">Plan de salle</div>
+        <div>
+          <div class="tb-time" id="tb-time">--:--</div>
+          <div class="tb-date" id="tb-date"></div>
+        </div>
+      </div>
+      <div class="tb-pills">
+        <div class="tb-pill pill-libre" id="pill-libre">● 0 libres</div>
+        <div class="tb-pill pill-occupe" id="pill-occupe">● 0 occupées</div>
+        <div class="tb-pill pill-addition" id="pill-add">● 0 addition</div>
+      </div>
+      <button class="btn btn-primary" id="btn-add" onclick="openAddModal()" style="display:none">
+        + <span id="btn-add-label">Ajouter</span>
+      </button>
+    </div>
+    <div class="content" id="main-content"></div>
+  </div>
+</div>
+
+<!-- ── MODAL TABLE ── -->
+<div class="overlay hidden" id="modal-table">
+  <div class="modal" id="modal-table-body"></div>
+</div>
+
+<!-- ── MODAL ORDER ── -->
+<div class="overlay hidden" id="modal-order">
+  <div class="modal modal-big" id="modal-order-body"></div>
+</div>
+
+<!-- ── MODAL BILL ── -->
+<div class="overlay hidden" id="modal-bill">
+  <div class="modal" id="modal-bill-body"></div>
+</div>
+
+<!-- ── MODAL FORM ── -->
+<div class="overlay hidden" id="modal-form" onclick="handleFormOverlay(event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-hd-title" id="form-title">Ajouter</div>
+      <button class="modal-close" onclick="closeForm()">✕</button>
+    </div>
+    <div class="modal-body" id="form-body"></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeForm()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveForm()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── UTILS ── */
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function nowStr(){return new Date().toISOString();}
+function fmt(n){return isNaN(Number(n))?'—':new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+' €';}
+function fmtInt(n){return new Intl.NumberFormat('fr-FR').format(n)+' €';}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function elapsed(iso){
+  const diff=Math.floor((Date.now()-new Date(iso))/60000);
+  if(diff<60)return diff+'min';
+  return Math.floor(diff/60)+'h'+String(diff%60).padStart(2,'0');
+}
+
+/* ── DEFAULT DATA ── */
+const DEFAULT={
+  tables:[
+    {id:'t1',number:1,seats:2,shape:'round',x:6,y:12,zone:'salle'},
+    {id:'t2',number:2,seats:2,shape:'round',x:6,y:38,zone:'salle'},
+    {id:'t3',number:3,seats:2,shape:'round',x:6,y:64,zone:'salle'},
+    {id:'t4',number:4,seats:4,shape:'square',x:22,y:10,zone:'salle'},
+    {id:'t5',number:5,seats:4,shape:'square',x:22,y:48,zone:'salle'},
+    {id:'t6',number:6,seats:4,shape:'square',x:43,y:10,zone:'salle'},
+    {id:'t7',number:7,seats:4,shape:'square',x:43,y:48,zone:'salle'},
+    {id:'t8',number:8,seats:6,shape:'round',x:65,y:18,zone:'salle'},
+    {id:'t9',number:9,seats:6,shape:'round',x:65,y:55,zone:'salle'},
+    {id:'t10',number:10,seats:2,shape:'round',x:84,y:12,zone:'salle'},
+    {id:'t11',number:11,seats:2,shape:'round',x:84,y:42,zone:'salle'},
+    {id:'t12',number:12,seats:4,shape:'square',x:20,y:20,zone:'terrasse'},
+    {id:'t13',number:13,seats:4,shape:'square',x:48,y:20,zone:'terrasse'},
+    {id:'t14',number:14,seats:6,shape:'round',x:75,y:20,zone:'terrasse'},
+  ],
+  categories:[
+    {id:'ent',name:'Entrées',emoji:'🥗'},
+    {id:'plat',name:'Plats',emoji:'🍽'},
+    {id:'des',name:'Desserts',emoji:'🍮'},
+    {id:'boi',name:'Boissons',emoji:'🥂'},
+  ],
+  menu:[
+    {id:uid(),category:'ent',name:'Foie gras maison',price:18,available:true},
+    {id:uid(),category:'ent',name:'Salade César',price:12,available:true},
+    {id:uid(),category:'ent',name:'Soupe à l\'oignon',price:9,available:true},
+    {id:uid(),category:'ent',name:'Tartare de saumon',price:14,available:true},
+    {id:uid(),category:'plat',name:'Entrecôte 300g',price:28,available:true},
+    {id:uid(),category:'plat',name:'Saumon mi-cuit',price:24,available:true},
+    {id:uid(),category:'plat',name:'Risotto champignons',price:19,available:true},
+    {id:uid(),category:'plat',name:'Magret de canard',price:26,available:true},
+    {id:uid(),category:'plat',name:'Burger maison',price:18,available:true},
+    {id:uid(),category:'des',name:'Crème brûlée',price:9,available:true},
+    {id:uid(),category:'des',name:'Fondant chocolat',price:10,available:true},
+    {id:uid(),category:'des',name:'Tarte tatin',price:9,available:true},
+    {id:uid(),category:'boi',name:'Eau plate 75cl',price:5,available:true},
+    {id:uid(),category:'boi',name:'Eau gazeuse 75cl',price:5,available:true},
+    {id:uid(),category:'boi',name:'Coca-Cola',price:4,available:true},
+    {id:uid(),category:'boi',name:'Vin rouge — pichet 50cl',price:15,available:true},
+    {id:uid(),category:'boi',name:'Vin blanc — pichet 50cl',price:15,available:true},
+    {id:uid(),category:'boi',name:'Café',price:3,available:true},
+    {id:uid(),category:'boi',name:'Bière pression',price:5,available:true},
+  ],
+  orders:[],
+  reservations:[
+    {id:uid(),name:'Famille Dupont',phone:'06 12 34 56 78',date:todayStr(),time:'12:30',covers:4,tableId:'t6',status:'confirmed',notes:'Anniversaire enfant'},
+    {id:uid(),name:'Martin',phone:'',date:todayStr(),time:'12:45',covers:2,tableId:'t1',status:'confirmed',notes:''},
+    {id:uid(),name:'Leblanc',phone:'06 98 76 54 32',date:todayStr(),time:'19:30',covers:6,tableId:'t9',status:'confirmed',notes:'Menu dégustation'},
+    {id:uid(),name:'Société Riviera',phone:'04 93 00 11 22',date:todayStr(),time:'20:00',covers:4,tableId:'t5',status:'confirmed',notes:'Repas d\'affaires'},
+  ]
+};
+
+/* ── STATE ── */
+let S={tables:[],categories:[],menu:[],orders:[],reservations:[]};
+let activeTab='salle',activeZone='salle',activeMenuCat='ent',activeResaDay=todayStr();
+let editingId=null,formTab=null;
+let orderMenuCat='ent',currentTableId=null;
+
+function load(){
+  try{
+    const r=localStorage.getItem('restopilot_v1');
+    S=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT));
+    ['tables','categories','menu','orders','reservations'].forEach(k=>{if(!S[k])S[k]=[];});
+    if(!r)save();
+  }catch(e){S=JSON.parse(JSON.stringify(DEFAULT));}
+}
+function save(){localStorage.setItem('restopilot_v1',JSON.stringify(S));}
+
+/* ── TABLE HELPERS ── */
+function getActiveOrder(tableId){return S.orders.find(o=>o.tableId===tableId&&o.status==='open');}
+function getTableStatus(t){
+  const resaToday=S.reservations.find(r=>r.tableId===t.id&&r.date===todayStr()&&r.status==='confirmed');
+  const order=getActiveOrder(t.id);
+  if(order){return order.billRequested?'addition':'occupe';}
+  if(resaToday){return'reserve';}
+  return'libre';
+}
+function orderTotal(order){
+  return order.items.reduce((s,i)=>s+i.price*i.qty,0);
+}
+function getTodayCA(){
+  return S.orders.filter(o=>o.status==='paid'&&o.paidAt&&o.paidAt.startsWith(todayStr())).reduce((s,o)=>s+orderTotal(o),0);
+}
+
+/* ── CLOCK ── */
+function updateClock(){
+  const now=new Date();
+  document.getElementById('tb-time').textContent=now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('tb-date').textContent=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const h=now.getHours();
+  const svc=h>=10&&h<15?'Service midi':h>=18?'Service soir':'Hors service';
+  document.getElementById('service-name').textContent=svc;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* ── TOP PILLS ── */
+function updatePills(){
+  const all=S.tables;
+  const libres=all.filter(t=>getTableStatus(t)==='libre').length;
+  const occupees=all.filter(t=>['occupe','addition'].includes(getTableStatus(t))).length;
+  const add=all.filter(t=>getTableStatus(t)==='addition').length;
+  document.getElementById('pill-libre').textContent=`● ${libres} libre${libres>1?'s':''}`;
+  document.getElementById('pill-occupe').textContent=`● ${occupees} occupée${occupees>1?'s':''}`;
+  document.getElementById('pill-add').textContent=`● ${add} addition`;
+  const openOrders=S.orders.filter(o=>o.status==='open').length;
+  const nb=document.getElementById('nb-cmd');
+  nb.textContent=openOrders;nb.style.display=openOrders>0?'':'none';
+  const serviceTxt=`${occupees} table${occupees>1?'s':''} occupée${occupees>1?'s':''}`;
+  document.getElementById('service-info').textContent=serviceTxt;
+}
+
+/* ── TABS ── */
+const TAB_TITLES={salle:'Plan de salle',commandes:'Commandes actives',reservations:'Réservations',menu:'Carte & Menu',caisse:'Caisse du jour'};
+const ADD_LABELS={reservations:'Réservation',menu:'Plat',caisse:'',salle:'',commandes:''};
+function setTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.toggle('active',el.dataset.tab===tab));
+  document.getElementById('tb-title').textContent=TAB_TITLES[tab];
+  const ba=document.getElementById('btn-add');
+  const showAdd=['reservations','menu'].includes(tab);
+  ba.style.display=showAdd?'':'none';
+  if(showAdd)document.getElementById('btn-add-label').textContent=ADD_LABELS[tab];
+  renderTab();updatePills();
+}
+function renderTab(){
+  const r={salle:renderSalle,commandes:renderCommandes,reservations:renderResaView,menu:renderMenuView,caisse:renderCaisse};
+  document.getElementById('main-content').innerHTML=(r[activeTab]||(() =>''))();
+  setTimeout(()=>{document.querySelectorAll('.fade-in').forEach((el,i)=>{el.style.animationDelay=i*0.03+'s';});},10);
+}
+
+/* ── RENDER SALLE ── */
+function renderSalle(){
+  const tables=S.tables.filter(t=>t.zone===activeZone);
+  const zones=[...new Set(S.tables.map(t=>t.zone))];
+  const zoneTabs=zones.map(z=>`<button class="zone-btn${z===activeZone?' active':''}" onclick="setZone('${z}')">${z.charAt(0).toUpperCase()+z.slice(1)}</button>`).join('');
+  const tableEls=tables.map(t=>{
+    const status=getTableStatus(t);
+    const order=getActiveOrder(t.id);
+    const resa=S.reservations.find(r=>r.tableId===t.id&&r.date===todayStr()&&r.status==='confirmed');
+    const sz=t.seats<=2?64:t.seats<=4?76:90;
+    let sub='';
+    if(status==='occupe'||status==='addition'){
+      sub=`<div class="table-covers">${order?.covers||'?'}cvts</div>`;
+      if(order)sub+=`<div class="table-timer">${elapsed(order.openedAt)}</div>`;
+    } else if(status==='reserve'){
+      sub=`<div class="table-covers">${resa?.time||''}</div>`;
+    } else {
+      sub=`<div class="table-covers">${t.seats} places</div>`;
+    }
+    const total=order?`<div class="table-total" style="color:${status==='addition'?'var(--addition)':'var(--occupe)'}">${fmtInt(orderTotal(order))}</div>`:'';
+    return`<div class="table-el ${t.shape} status-${status}" style="left:${t.x}%;top:${t.y}%;width:${sz}px;height:${sz}px;margin-left:-${sz/2}px;margin-top:-${sz/2}px" onclick="clickTable('${t.id}')">
+      <div class="table-body"><div class="table-num">${t.number}</div>${sub}</div>${total}
+    </div>`;
+  }).join('');
+
+  const legend=`<div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--libre)"></div>Libre</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--occupe)"></div>Occupée</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--addition)"></div>Addition</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--reserve)"></div>Réservée</div>
+  </div>`;
+
+  return`<div class="salle-wrap">
+    <div class="salle-zones">${zoneTabs}${legend}</div>
+    <div class="floor-plan">
+      <div class="floor-bg"></div>
+      <div class="zone-label" style="top:12px;right:16px">${activeZone.toUpperCase()}</div>
+      ${tableEls}
+    </div>
+  </div>`;
+}
+function setZone(z){activeZone=z;renderTab();}
+
+/* ── RENDER COMMANDES ── */
+function renderCommandes(){
+  const open=S.orders.filter(o=>o.status==='open').sort((a,b)=>a.openedAt.localeCompare(b.openedAt));
+  if(!open.length)return`<div class="cmd-view"><div class="empty"><div class="empty-icon">📋</div><p>Aucune commande active</p></div></div>`;
+  const cards=open.map(o=>{
+    const t=S.tables.find(x=>x.id===o.tableId);
+    const total=orderTotal(o);
+    const isAdd=o.billRequested;
+    const itemsHtml=o.items.slice(0,4).map(i=>`<div class="cmd-item-row"><span class="cmd-qty">${i.qty}×</span><span class="cmd-name">${esc(i.name)}</span><span class="cmd-price">${fmt(i.price*i.qty)}</span></div>`).join('');
+    const more=o.items.length>4?`<div class="cmd-item-row" style="color:var(--gris-c);font-size:11px">+${o.items.length-4} autres articles...</div>`:'';
+    return`<div class="cmd-card${isAdd?' addition':''} fade-in">
+      <div class="cmd-header">
+        <div><div class="cmd-table">Table ${t?.number||'?'}</div><div class="cmd-meta">${o.covers} couverts · ${elapsed(o.openedAt)} · ${esc(o.serveur||'')}</div></div>
+        ${isAdd?'<span class="badge badge-cancelled" style="background:var(--addition-bg);color:var(--addition)">Addition</span>':''}
+      </div>
+      <div class="cmd-items">${itemsHtml}${more}</div>
+      <div class="cmd-footer">
+        <div class="cmd-total">${fmt(total)}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-sm btn-voir" onclick="clickTable('${o.tableId}')">Gérer</button>
+          ${!isAdd?`<button class="btn-sm btn-addition" onclick="requestBill('${o.id}')">Addition</button>`:''}
+          ${isAdd?`<button class="btn-sm btn-paye" onclick="markPaid('${o.id}')">✓ Payé</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return`<div class="cmd-view"><div class="cmd-grid">${cards}</div></div>`;
+}
+
+/* ── RENDER MENU ── */
+function renderMenuView(){
+  const cats=S.categories;
+  const catTabs=cats.map(c=>`<button class="cat-tab${c.id===activeMenuCat?' active':''}" onclick="setMenuCat('${c.id}')">${c.emoji} ${c.name}</button>`).join('');
+  const items=S.menu.filter(m=>m.category===activeMenuCat);
+  const grid=items.length?items.map(m=>`
+    <div class="menu-item-card${m.available?'':' unavailable'} fade-in">
+      <div class="mic-info"><div class="mic-name">${esc(m.name)}</div><div class="mic-price">${fmt(m.price)}</div></div>
+      <div class="mic-actions">
+        <button class="toggle-avail${m.available?' on':''}" onclick="toggleAvail('${m.id}')" title="${m.available?'Disponible':'Indisponible'}"></button>
+        <button class="btn-icon" onclick="editMenuItem('${m.id}')" style="width:28px;height:28px;border-radius:6px;border:1px solid rgba(27,58,45,0.14);background:none;cursor:pointer;font-size:12px;color:var(--gris)">✏</button>
+        <button class="btn-icon del" onclick="deleteItem('menu','${m.id}')" style="width:28px;height:28px;border-radius:6px;border:1px solid rgba(27,58,45,0.14);background:none;cursor:pointer;font-size:12px;color:var(--gris)">✕</button>
+      </div>
+    </div>`).join(''):`<div class="empty"><div class="empty-icon">🍴</div><p>Aucun plat dans cette catégorie</p></div>`;
+  return`<div class="menu-view"><div class="menu-cats">${catTabs}</div><div class="menu-grid">${grid}</div></div>`;
+}
+function setMenuCat(c){activeMenuCat=c;renderTab();}
+function toggleAvail(id){const m=S.menu.find(x=>x.id===id);if(m){m.available=!m.available;save();renderTab();}}
+
+/* ── RENDER RESERVATIONS ── */
+function renderResaView(){
+  const days=[];
+  for(let i=0;i<4;i++){const d=new Date();d.setDate(d.getDate()+i);days.push(d.toISOString().slice(0,10));}
+  const dayTabs=days.map(d=>{
+    const label=d===todayStr()?'Aujourd\'hui':new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+    return`<button class="resa-day${d===activeResaDay?' active':''}" onclick="setResaDay('${d}')">${label}</button>`;
+  }).join('');
+  const resas=S.reservations.filter(r=>r.date===activeResaDay).sort((a,b)=>a.time.localeCompare(b.time));
+  const statusMap={confirmed:['badge-confirmed','Confirmée'],arrived:['badge-arrived','Arrivée'],cancelled:['badge-cancelled','Annulée'],noshow:['badge-noshow','No-show']};
+  const list=resas.length?resas.map(r=>{
+    const t=S.tables.find(x=>x.id===r.tableId);
+    const[bc,bl]=statusMap[r.status]||['badge-confirmed','—'];
+    return`<div class="resa-card fade-in">
+      <div class="resa-time">${r.time}</div>
+      <div class="resa-info">
+        <div class="resa-name">${esc(r.name)}</div>
+        <div class="resa-meta">${r.covers} couvert${r.covers>1?'s':''} · Table ${t?.number||'?'}${r.notes?` · ${esc(r.notes)}`:''}</div>
+        ${r.phone?`<div class="resa-meta" style="margin-top:2px">📞 ${esc(r.phone)}</div>`:''}
+      </div>
+      <div class="resa-status">
+        <span class="badge ${bc}">${bl}</span>
+        <div class="resa-actions">
+          ${r.status==='confirmed'?`<button class="btn-sm btn-paye" onclick="resaStatus('${r.id}','arrived')">Arrivée</button>`:''}
+          ${r.status==='confirmed'?`<button class="btn-sm btn-addition" onclick="resaStatus('${r.id}','noshow')">No-show</button>`:''}
+          <button class="btn-sm btn-voir" onclick="editResa('${r.id}')">✏</button>
+          <button class="btn-sm" style="background:rgba(217,64,64,0.1);color:var(--addition)" onclick="deleteItem('reservations','${r.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):emptyHTML('📅','Aucune réservation pour ce jour');
+  return`<div class="resa-view"><div class="resa-day-tabs">${dayTabs}</div><div class="resa-list">${list}</div></div>`;
+}
+function setResaDay(d){activeResaDay=d;renderTab();}
+function resaStatus(id,s){const r=S.reservations.find(x=>x.id===id);if(r){r.status=s;save();renderTab();}}
+function emptyHTML(icon,msg){return`<div class="empty"><div class="empty-icon">${icon}</div><p>${msg}</p></div>`;}
+
+/* ── RENDER CAISSE ── */
+function renderCaisse(){
+  const paid=S.orders.filter(o=>o.status==='paid'&&o.paidAt&&o.paidAt.startsWith(todayStr()));
+  const ca=paid.reduce((s,o)=>s+orderTotal(o),0);
+  const covers=paid.reduce((s,o)=>s+(o.covers||0),0);
+  const avg=paid.length?ca/paid.length:0;
+  const open=S.orders.filter(o=>o.status==='open');
+  const caOpen=open.reduce((s,o)=>s+orderTotal(o),0);
+  const rows=paid.map(o=>{
+    const t=S.tables.find(x=>x.id===o.tableId);
+    const dur=o.paidAt&&o.openedAt?Math.round((new Date(o.paidAt)-new Date(o.openedAt))/60000):0;
+    return`<div class="ticket-row fade-in">
+      <div>Table ${t?.number||'?'}</div>
+      <div>${esc(o.serveur||'—')}</div>
+      <div>${o.covers} cvts</div>
+      <div>${o.paidAt?o.paidAt.slice(11,16):'—'}</div>
+      <div>${dur}min</div>
+      <div class="amount">${fmt(orderTotal(o))}</div>
+    </div>`;
+  }).join('');
+  return`<div class="caisse-view">
+    <div class="caisse-kpis">
+      <div class="kpi-box fade-in"><div class="kpi-lbl">CA du jour</div><div class="kpi-val">${fmtInt(ca)}</div><div class="kpi-sub">${paid.length} ticket${paid.length>1?'s':''} encaissés</div></div>
+      <div class="kpi-box fade-in" style="--c:var(--libre)"><div class="kpi-lbl">En cours</div><div class="kpi-val" style="color:var(--occupe)">${fmtInt(caOpen)}</div><div class="kpi-sub">${open.length} table${open.length>1?'s':''} ouvertes</div></div>
+      <div class="kpi-box fade-in"><div class="kpi-lbl">Couverts</div><div class="kpi-val">${covers}</div><div class="kpi-sub">Moy. ${fmtInt(avg)} / table</div></div>
+      <div class="kpi-box fade-in"><div class="kpi-lbl">Panier moyen</div><div class="kpi-val">${covers?fmt(ca/covers):'—'}</div><div class="kpi-sub">Par couvert</div></div>
+    </div>
+    <div class="section-title">Tickets encaissés</div>
+    ${paid.length?`<div class="ticket-list">
+      <div class="ticket-row head"><div>Table</div><div>Serveur</div><div>Cvts</div><div>Heure</div><div>Durée</div><div>Total</div></div>
+      ${rows}
+    </div>`:emptyHTML('💰','Aucun ticket encaissé aujourd\'hui')}
+  </div>`;
+}
+
+/* ── CLICK TABLE ── */
+function clickTable(tableId){
+  currentTableId=tableId;
+  const t=S.tables.find(x=>x.id===tableId);
+  const status=getTableStatus(t);
+  const order=getActiveOrder(tableId);
+  const resa=S.reservations.find(r=>r.tableId===tableId&&r.date===todayStr()&&r.status==='confirmed');
+
+  if(status==='libre'||status==='reserve'){
+    openTableModal(t,status,resa);
+  } else if(status==='occupe'){
+    openOrderModal(t,order);
+  } else if(status==='addition'){
+    openBillModal(t,order);
+  }
+}
+
+function openTableModal(t,status,resa){
+  let covers=2,serveur='';
+  const statusHtml=status==='reserve'?
+    `<div class="table-modal-status reserve">📅 Réservée — ${esc(resa?.name||'')} · ${resa?.covers||''} couverts à ${resa?.time||''}</div>`:
+    `<div class="table-modal-status libre">✅ Table libre — ${t.seats} places</div>`;
+  document.getElementById('modal-table-body').innerHTML=`
+    <div class="modal-hd"><div class="modal-hd-title">Table ${t.number}</div><button class="modal-close" onclick="closeTableModal()">✕</button></div>
+    <div class="modal-body">
+      ${statusHtml}
+      <div class="covers-input">
+        <label>Nombre de couverts</label>
+        <div class="covers-ctrl">
+          <button class="covers-btn" onclick="adjCovers(-1)">−</button>
+          <div class="covers-num" id="covers-num">${resa?.covers||covers}</div>
+          <button class="covers-btn" onclick="adjCovers(1)">+</button>
+        </div>
+      </div>
+      <div class="form-row full"><div class="fg"><label>Serveur / Serveuse</label><input type="text" id="inp-serveur" placeholder="Prénom" value=""></div></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeTableModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="openTable('${t.id}')">Ouvrir la table →</button>
+    </div>`;
+  document.getElementById('modal-table').classList.remove('hidden');
+}
+let _covers=2;
+function adjCovers(d){_covers=Math.max(1,(_covers||parseInt(document.getElementById('covers-num').textContent)||2)+d);document.getElementById('covers-num').textContent=_covers;}
+function closeTableModal(){document.getElementById('modal-table').classList.add('hidden');}
+function openTable(tableId){
+  const covers=parseInt(document.getElementById('covers-num').textContent)||2;
+  const serveur=document.getElementById('inp-serveur').value.trim()||'—';
+  S.orders.push({id:uid(),tableId,serveur,covers,openedAt:nowStr(),status:'open',billRequested:false,items:[],paidAt:null});
+  save();closeTableModal();
+  const t=S.tables.find(x=>x.id===tableId);
+  const order=getActiveOrder(tableId);
+  openOrderModal(t,order);
+  renderTab();updatePills();
+}
+
+/* ── ORDER MODAL ── */
+function openOrderModal(t,order){
+  currentTableId=t.id;
+  renderOrderModal(t,order);
+  document.getElementById('modal-order').classList.remove('hidden');
+}
+function renderOrderModal(t,order){
+  const cats=S.categories;
+  const catTabs=cats.map(c=>`<button class="cat-sm${c.id===orderMenuCat?' active':''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`).join('');
+  const menuItems=S.menu.filter(m=>m.category===orderMenuCat&&m.available);
+  const menuList=menuItems.map(m=>`
+    <div class="menu-add-row" onclick="addToOrder('${order.id}','${m.id}')">
+      <span class="mar-name">${esc(m.name)}</span>
+      <span class="mar-price">${fmt(m.price)}</span>
+      <button class="mar-add">+</button>
+    </div>`).join('');
+  const orderItems=order.items.map(i=>`
+    <div class="oi-row">
+      <div class="oi-qty-ctrl">
+        <button class="oi-qty-btn" onclick="changeQty('${order.id}','${i.id}',-1)">−</button>
+        <div class="oi-qty">${i.qty}</div>
+        <button class="oi-qty-btn" onclick="changeQty('${order.id}','${i.id}',1)">+</button>
+      </div>
+      <span class="oi-name">${esc(i.name)}</span>
+      <span class="oi-price">${fmt(i.price*i.qty)}</span>
+      <button class="oi-del" onclick="removeFromOrder('${order.id}','${i.id}')">✕</button>
+    </div>`).join('');
+  const total=orderTotal(order);
+  document.getElementById('modal-order-body').innerHTML=`
+    <div class="modal-hd">
+      <div class="modal-hd-title">Table ${t.number} · ${order.covers} couverts · ${esc(order.serveur)}</div>
+      <button class="modal-close" onclick="closeOrderModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="order-layout">
+        <div class="order-left">
+          <div class="order-section-title">Ajouter à la commande</div>
+          <div class="menu-cats-sm">${catTabs}</div>
+          <div class="menu-items-list">${menuList||'<div class="empty" style="padding:20px"><p>Aucun plat disponible</p></div>'}</div>
+        </div>
+        <div class="order-right">
+          <div class="order-section-title">Commande en cours (${elapsed(order.openedAt)})</div>
+          <div class="order-items-list">${orderItems||'<div style="padding:12px;color:var(--gris-c);font-size:13px;text-align:center">Aucun article</div>'}</div>
+          <div class="order-total-line"><span class="order-total-label">Total</span><span class="order-total-val">${fmt(total)}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeOrderModal()">Fermer</button>
+      <button class="btn btn-danger" onclick="requestBillFromModal('${order.id}')">🧾 Addition</button>
+    </div>`;
+}
+function closeOrderModal(){document.getElementById('modal-order').classList.add('hidden');renderTab();updatePills();}
+function setOrderCat(c){orderMenuCat=c;const t=S.tables.find(x=>x.id===currentTableId);const o=getActiveOrder(currentTableId);if(t&&o)renderOrderModal(t,o);}
+function addToOrder(orderId,menuId){
+  const o=S.orders.find(x=>x.id===orderId);const m=S.menu.find(x=>x.id===menuId);if(!o||!m)return;
+  const ex=o.items.find(i=>i.menuItemId===menuId);
+  if(ex){ex.qty++;}else{o.items.push({id:uid(),menuItemId:menuId,name:m.name,price:m.price,qty:1});}
+  save();const t=S.tables.find(x=>x.id===o.tableId);renderOrderModal(t,o);updatePills();
+}
+function changeQty(orderId,itemId,d){
+  const o=S.orders.find(x=>x.id===orderId);if(!o)return;
+  const i=o.items.find(x=>x.id===itemId);if(!i)return;
+  i.qty=Math.max(1,i.qty+d);
+  save();const t=S.tables.find(x=>x.id===o.tableId);renderOrderModal(t,o);
+}
+function removeFromOrder(orderId,itemId){
+  const o=S.orders.find(x=>x.id===orderId);if(!o)return;
+  o.items=o.items.filter(x=>x.id!==itemId);
+  save();const t=S.tables.find(x=>x.id===o.tableId);renderOrderModal(t,o);
+}
+function requestBill(orderId){const o=S.orders.find(x=>x.id===orderId);if(o){o.billRequested=true;save();renderTab();updatePills();}}
+function requestBillFromModal(orderId){requestBill(orderId);closeOrderModal();const t=S.tables.find(x=>x.id===currentTableId);const o=S.orders.find(x=>x.id===orderId);if(t&&o)openBillModal(t,o);}
+function markPaid(orderId){
+  const o=S.orders.find(x=>x.id===orderId);
+  if(o){o.status='paid';o.paidAt=nowStr();save();renderTab();updatePills();}
+}
+
+/* ── BILL MODAL ── */
+function openBillModal(t,order){
+  const total=orderTotal(order);
+  const itemLines=order.items.map(i=>`<div class="bill-line"><span>${i.qty}× ${esc(i.name)}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('');
+  document.getElementById('modal-bill-body').innerHTML=`
+    <div class="modal-hd"><div class="modal-hd-title">Addition — Table ${t.number}</div><button class="modal-close" onclick="closeBillModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="bill">
+        <div class="bill-header"><div class="bill-resto">🍽 RESTAURANT</div><div style="font-size:11px;margin-top:4px">Table ${t.number} · ${order.covers} couvert${order.covers>1?'s':''} · ${esc(order.serveur)}</div><div style="font-size:11px">${new Date(order.openedAt).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} → ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div></div>
+        <hr class="bill-sep">
+        ${itemLines}
+        <hr class="bill-sep">
+        <div class="bill-total"><span>TOTAL</span><span>${fmt(total)}</span></div>
+        <div style="font-size:10px;color:#888;text-align:center;margin-top:10px">Merci de votre visite · Bonne journée</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeBillModal()">Fermer</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Imprimer</button>
+      <button class="btn btn-success" onclick="markPaid('${order.id}');closeBillModal()">✓ Encaisser ${fmt(total)}</button>
+    </div>`;
+  document.getElementById('modal-bill').classList.remove('hidden');
+}
+function closeBillModal(){document.getElementById('modal-bill').classList.add('hidden');renderTab();updatePills();}
+
+/* ── ADD/EDIT MODALS ── */
+function openAddModal(){
+  editingId=null;formTab=activeTab;
+  if(activeTab==='menu')openMenuForm(null);
+  else if(activeTab==='reservations')openResaForm(null);
+}
+function editMenuItem(id){editingId=id;formTab='menu';openMenuForm(S.menu.find(x=>x.id===id));}
+function editResa(id){editingId=id;formTab='reservations';openResaForm(S.reservations.find(x=>x.id===id));}
+function deleteItem(collection,id){if(!confirm('Supprimer ?'))return;S[collection]=S[collection].filter(x=>x.id!==id);save();renderTab();}
+
+function openMenuForm(item){
+  const v=(k,d='')=>item?(item[k]??d):d;
+  const catOpts=S.categories.map(c=>`<option value="${c.id}"${v('category')===c.id?' selected':''}>${c.name}</option>`).join('');
+  document.getElementById('form-title').textContent=item?'Modifier le plat':'Nouveau plat';
+  document.getElementById('form-body').innerHTML=`
+    <div class="form-row full"><div class="fg"><label>Nom du plat</label><input type="text" id="fi-name" value="${esc(v('name'))}" placeholder="Ex: Entrecôte 300g"></div></div>
+    <div class="form-row">
+      <div class="fg"><label>Catégorie</label><select id="fi-cat">${catOpts}</select></div>
+      <div class="fg"><label>Prix (€)</label><input type="number" id="fi-price" value="${v('price',0)}" min="0" step="0.5"></div>
+    </div>`;
+  document.getElementById('modal-form').classList.remove('hidden');
+}
+function openResaForm(item){
+  const v=(k,d='')=>item?(item[k]??d):d;
+  const tableOpts=S.tables.map(t=>`<option value="${t.id}"${v('tableId')===t.id?' selected':''}>Table ${t.number} (${t.seats} places)</option>`).join('');
+  const statusOpts=[['confirmed','Confirmée'],['arrived','Arrivée'],['cancelled','Annulée']].map(([val,lbl])=>`<option value="${val}"${v('status','confirmed')===val?' selected':''}>${lbl}</option>`).join('');
+  document.getElementById('form-title').textContent=item?'Modifier la réservation':'Nouvelle réservation';
+  document.getElementById('form-body').innerHTML=`
+    <div class="form-row">
+      <div class="fg"><label>Nom</label><input type="text" id="fi-name" value="${esc(v('name'))}" placeholder="Nom du client"></div>
+      <div class="fg"><label>Téléphone</label><input type="text" id="fi-phone" value="${esc(v('phone'))}" placeholder="06 xx xx xx xx"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Date</label><input type="date" id="fi-date" value="${v('date',todayStr())}"></div>
+      <div class="fg"><label>Heure</label><input type="time" id="fi-time" value="${v('time','12:30')}"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Couverts</label><input type="number" id="fi-covers" value="${v('covers',2)}" min="1" max="20"></div>
+      <div class="fg"><label>Table</label><select id="fi-table">${tableOpts}</select></div>
+    </div>
+    <div class="form-row"><div class="fg"><label>Statut</label><select id="fi-status">${statusOpts}</select></div></div>
+    <div class="form-row full"><div class="fg"><label>Notes</label><input type="text" id="fi-notes" value="${esc(v('notes'))}" placeholder="Ex: Allergie, anniversaire..."></div></div>`;
+  document.getElementById('modal-form').classList.remove('hidden');
+}
+function closeForm(){document.getElementById('modal-form').classList.add('hidden');editingId=null;}
+function handleFormOverlay(e){if(e.target===document.getElementById('modal-form'))closeForm();}
+function saveForm(){
+  if(formTab==='menu'){
+    const name=document.getElementById('fi-name').value.trim();
+    const price=parseFloat(document.getElementById('fi-price').value)||0;
+    const category=document.getElementById('fi-cat').value;
+    if(!name)return;
+    if(editingId){const m=S.menu.find(x=>x.id===editingId);if(m){m.name=name;m.price=price;m.category=category;}}
+    else S.menu.push({id:uid(),name,price,category,available:true});
+  } else if(formTab==='reservations'){
+    const data={
+      name:document.getElementById('fi-name').value.trim(),
+      phone:document.getElementById('fi-phone').value.trim(),
+      date:document.getElementById('fi-date').value,
+      time:document.getElementById('fi-time').value,
+      covers:parseInt(document.getElementById('fi-covers').value)||2,
+      tableId:document.getElementById('fi-table').value,
+      status:document.getElementById('fi-status').value,
+      notes:document.getElementById('fi-notes').value.trim(),
+    };
+    if(!data.name)return;
+    if(editingId){const r=S.reservations.find(x=>x.id===editingId);if(r)Object.assign(r,data);}
+    else S.reservations.push({id:uid(),...data});
+  }
+  save();closeForm();renderTab();updatePills();
+}
+
+/* ── INIT ── */
+load();
+setTab('salle');
+</script>
+</body>
+</html>

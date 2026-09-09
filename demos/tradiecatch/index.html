@@ -1,0 +1,2025 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TradieCatch — Live Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { background: #0b1220; color: #e2e8f0; min-height: 100vh; }
+  .gradient-bg { background: radial-gradient(circle at 30% 0%, #1e3a5f 0%, #0b1220 60%); }
+
+  /* PHONE */
+  .phone { width: 380px; height: 760px; background:#fff; color:#0b1220;
+    border-radius: 44px; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 10px #1f2937, 0 0 0 12px #374151;
+    overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .notch { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:120px; height:28px; background:#000; border-radius:20px; z-index:50; }
+  .statusbar { padding: 18px 28px 6px; display:flex; justify-content:space-between; font-size:13px; font-weight:600; color:#0b1220; flex-shrink:0; }
+  .phone-screen { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .phone-screen::-webkit-scrollbar { width:0; }
+
+  /* SMS */
+  .sms-in { background:#e9e9eb; color:#000; border-radius: 18px 18px 18px 4px; padding:10px 14px; max-width:80%; }
+  .sms-out { background:#34c759; color:#fff; border-radius: 18px 18px 4px 18px; padding:10px 14px; max-width:80%; }
+  .wa-bubble { background:#dcf8c6; color:#000; border-radius: 12px; padding:10px 12px; cursor:pointer; }
+
+  .card { background:#fff; border-radius:16px; border:1px solid #eef0f4; }
+  .pill { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; }
+  .photo { aspect-ratio:1; background-size:cover; background-position:center; border-radius:8px; position:relative; overflow:hidden; }
+  .lead-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; cursor:pointer; transition:all .15s; }
+  .lead-card:hover { border-color:var(--accent); box-shadow: 0 6px 20px -4px var(--accent-shadow); transform: translateY(-2px); }
+  .lead-card.new { border-color:#10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.15); animation: pulseNew 2s ease infinite; }
+  @keyframes pulseNew { 0%,100% { box-shadow: 0 0 0 3px rgba(16,185,129,.15); } 50% { box-shadow: 0 0 0 8px rgba(16,185,129,.05); } }
+
+  .nav-item { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; font-size:14px; font-weight:500; color:#475569; cursor:pointer; transition:all .15s; }
+  .nav-item:hover { background:#f1f5f9; color:#0b1220; }
+  .nav-item.active { background:var(--accent); color:#fff; box-shadow: 0 4px 14px -4px var(--accent-shadow); }
+
+  .btn { padding:14px 16px; border-radius:14px; font-weight:600; transition:all .15s; cursor:pointer; }
+  .btn:active { transform: scale(.98); }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-success { background:#10b981; color:#fff; }
+  .btn-warning { background:#f59e0b; color:#fff; }
+  .btn-ghost { background:#f1f5f9; color:#0b1220; }
+
+  #toast { position:fixed; bottom:24px; left:50%; transform: translateX(-50%) translateY(100px);
+    background:#10b981; color:#fff; padding:14px 22px; border-radius:14px; font-weight:600;
+    box-shadow:0 10px 30px rgba(16,185,129,.4); transition: transform .3s; z-index:1000; }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  .role-card { background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:24px; cursor:pointer; transition: all .2s; }
+  .role-card:hover { background: rgba(255,255,255,.08); border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 40px -10px var(--accent-shadow); }
+
+  .input { width:100%; border:2px solid #e2e8f0; border-radius:12px; padding:12px 14px; font-size:15px; transition:border-color .15s; background:#fff; }
+  .input:focus { outline:none; border-color:var(--accent); }
+  .chip-btn { padding:14px; border-radius:12px; border:2px solid #e2e8f0; background:#fff; cursor:pointer; transition:all .15s; text-align:left; }
+  .chip-btn:hover { border-color:var(--accent); background:#f8fafc; }
+  .chip-btn.selected { border-color:var(--accent); background:var(--accent); color:#fff; }
+
+  #devbar { position:fixed; top:16px; right:16px; background: rgba(15,23,42,.95); backdrop-filter: blur(10px);
+    border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:8px; z-index:100; display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:calc(100vw - 32px); }
+  .devbtn { padding: 7px 12px; font-size:12px; font-weight:600; color:#cbd5e1; border-radius:8px; cursor:pointer; transition:all .15s; }
+  .devbtn:hover { background:rgba(255,255,255,.08); color:#fff; }
+  .devbtn.active { background:var(--accent); color:#fff; }
+  .devbtn.trade-btn { padding:5px 10px; font-size:11px; }
+  .divider { width:1px; height:20px; background:rgba(255,255,255,.15); }
+
+  .anim-fade { animation: fade .35s ease; }
+  @keyframes fade { from { opacity:0; transform: translateY(6px);} to { opacity:1; transform:none;} }
+  .ring { animation: ringpulse 1.2s infinite; }
+  @keyframes ringpulse { 0%,100%{ transform: rotate(-8deg);} 50% { transform: rotate(8deg);} }
+
+  .toggle { width:36px; height:20px; background:#e2e8f0; border-radius:999px; position:relative; cursor:pointer; transition:background .2s; }
+  .toggle.on { background:#10b981; }
+  .toggle::after { content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; background:#fff; border-radius:999px; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .toggle.on::after { left:18px; }
+
+  .bar { background: linear-gradient(180deg, var(--accent), var(--accent-dark)); border-radius: 6px 6px 0 0; transition:all .3s; }
+  .photo-fake { background-size: 200% 200%; background-position: center; }
+
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+
+  /* Trade colors */
+  body.trade-plumber { --accent:#0ea5e9; --accent-dark:#0369a1; --accent-shadow: rgba(14,165,233,.3); }
+  body.trade-hvac { --accent:#06b6d4; --accent-dark:#155e75; --accent-shadow: rgba(6,182,212,.3); }
+  body.trade-sparky { --accent:#eab308; --accent-dark:#a16207; --accent-shadow: rgba(234,179,8,.3); }
+  body.trade-pool { --accent:#0891b2; --accent-dark:#0e7490; --accent-shadow: rgba(8,145,178,.3); }
+  body { --accent:#0ea5e9; --accent-dark:#0369a1; --accent-shadow: rgba(14,165,233,.3); }
+
+  .trade-icon-plumber { background: linear-gradient(135deg, #38bdf8, #0369a1); }
+  .trade-icon-hvac { background: linear-gradient(135deg, #67e8f9, #155e75); }
+  .trade-icon-sparky { background: linear-gradient(135deg, #fcd34d, #a16207); }
+  .trade-icon-pool { background: linear-gradient(135deg, #67e8f9, #0e7490); }
+
+  .progress-step { width:32px; height:32px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; background:#e5e7eb; color:#6b7280; }
+  .progress-step.active { background: linear-gradient(135deg, #10b981, #047857); color:#fff; box-shadow:0 4px 12px rgba(16,185,129,.4); }
+  .progress-step.done { background:#10b981; color:#fff; }
+</style>
+</head>
+<body class="trade-plumber">
+
+<div id="devbar"></div>
+<div id="toast"></div>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   TRADES CONFIG — 4 verticales
+   ============================================================ */
+
+const TRADES = {
+  plumber: {
+    slug: 'plumber',
+    name: 'Plumber',
+    name_au: 'Plumber',
+    plural: 'Plumbers',
+    icon: '🔧',
+    colorClass: 'trade-plumber',
+    iconBg: 'trade-icon-plumber',
+    tagline: 'Stop losing $1k/week to missed call-outs',
+    pricing_label: '$497/mo + $1,500 setup',
+    business: { name: 'Bayside Plumbing', owner: 'Mark Reilly', suburb: 'Logan', phone: '+61 7 5555 0188', tracking: '+61 7 3040 8821', abn: '82 145 998 211' },
+    customer: { name: 'Sarah Mitchell', phone: '0412 845 392', address: '14 Beach Rd, Nerang QLD 4211', issue_default: 'Hot water unit leaking from bottom, started this morning. Gas one outside, pretty old.' },
+    issueTypes: [
+      { id: 'hotwater', icon: '🔥', label: 'Hot water issue' },
+      { id: 'leak', icon: '💧', label: 'Leak / burst pipe' },
+      { id: 'drain', icon: '🚽', label: 'Blocked drain' },
+      { id: 'tap', icon: '🚿', label: 'Tap / shower' },
+      { id: 'toilet', icon: '🚻', label: 'Toilet repair' },
+      { id: 'pipe', icon: '🔧', label: 'Pipework' },
+      { id: 'gas', icon: '⛽', label: 'Gas issue' },
+      { id: 'other', icon: '❓', label: 'Other' }
+    ],
+    aiQuotes: {
+      hotwater: { quote: 2400, confidence: 87, label: 'Hot water replacement', breakdown: [
+        { label: 'Callout fee', amount: 120 },
+        { label: 'Labor 3h × $110', amount: 330 },
+        { label: 'Rinnai Infinity 26 (Reece Logan)', amount: 1950 }
+      ], note: "Confirm gas pressure + copper fittings on site." },
+      leak: { quote: 380, confidence: 78, label: 'Leak repair', breakdown: [
+        { label: 'Callout', amount: 120 },
+        { label: 'Labor 1.5h', amount: 165 },
+        { label: 'Fittings + materials', amount: 95 }
+      ]},
+      drain: { quote: 280, confidence: 92, label: 'Blocked drain (basic)', breakdown: [
+        { label: 'Fixed price (your rule)', amount: 250 },
+        { label: 'Travel surcharge', amount: 30 }
+      ]},
+      tap: { quote: 180, confidence: 95, label: 'Tap repair', breakdown: [
+        { label: 'Fixed callout', amount: 120 },
+        { label: 'Tap washer + labor', amount: 60 }
+      ]},
+      toilet: { quote: 320, confidence: 80, label: 'Toilet repair', breakdown: [
+        { label: 'Callout', amount: 120 },
+        { label: 'Labor 1h', amount: 110 },
+        { label: 'Estimated parts', amount: 90 }
+      ]},
+      pipe: { quote: 480, confidence: 70, label: 'Pipework', breakdown: [
+        { label: 'Callout', amount: 120 },
+        { label: 'Estimated 2.5h labor', amount: 275 },
+        { label: 'Materials', amount: 85 }
+      ]},
+      gas: { quote: 420, confidence: 75, label: 'Gas service', breakdown: [
+        { label: 'Callout', amount: 120 },
+        { label: 'Labor 2h', amount: 220 },
+        { label: 'Compliance check', amount: 80 }
+      ]},
+      other: { quote: 280, confidence: 60, label: 'General', breakdown: [
+        { label: 'Callout', amount: 120 },
+        { label: 'Estimated 1.5h labor', amount: 165 }
+      ]}
+    },
+    pricing: { callout: 120, hourly: 110, weekend_pct: 75, after_hours_pct: 60, holiday_pct: 100,
+      catalog: [
+        { name: 'Blocked drain (basic)', price: '$250', time: '1.5h', type: 'Fixed' },
+        { name: 'Blocked drain (jetter)', price: '$450-650', time: '2-3h', type: 'Range' },
+        { name: 'Tap washer replacement', price: '$150', time: '45min', type: 'Fixed' },
+        { name: 'Hot water (electric)', price: '$1,800-2,400', time: '2.5h', type: 'Range' },
+        { name: 'Hot water (gas)', price: '$2,200-2,800', time: '3h', type: 'Range' },
+        { name: 'Burst pipe (visible)', price: '$300-500', time: '1.5h', type: 'Range' },
+        { name: 'Leak detection', price: '$350', time: '1h', type: 'Fixed' },
+        { name: 'Toilet replacement', price: '$650-850', time: '2h', type: 'Range' }
+      ]},
+    aiMemory: {
+      pricing: ['+$200 on installs &gt;10 years (copper fittings)', 'Weekend surcharge: +75% (not +50%)', 'Min charge for leak detection: $300', 'Hot water gas always 2 callouts (gas cert)'],
+      timing: ['Blocked drains: 1.5h avg (was 2h)', 'Hot water replacement: 3h avg', 'Tap washer: 30-45min', 'Pipe burst: 1.5h-2.5h'],
+      suppliers: ['Reece Logan — Rinnai Infinity 26: $1,950', 'Reece Logan — Bosch 26L: $1,890', 'Tradelink — copper pipe (15mm): $14/m'],
+      preferences: ['Refuse: jobs further than 30km', 'Refuse: roof plumbing (no insurance)', 'Prioritize: emergencies in 4127/4129/4131']
+    },
+    sampleLeads: [
+      { name: "Tony Reeves", suburb: "Beenleigh", issue: "Pipe burst", status: "new", price: 480, time: "12 min ago", urgent: true, ai_confidence: 78 },
+      { name: "Linda Foster", suburb: "Springwood", issue: "Tap repair", status: "new", price: 180, time: "1h ago", urgent: false, ai_confidence: 95 },
+      { name: "Tom Becker", suburb: "Underwood", issue: "Hot water replacement", status: "quoted", price: 2350, time: "Sent 2h ago" },
+      { name: "Rachel Quinn", suburb: "Loganholme", issue: "Blocked drain", status: "quoted", price: 280, time: "Viewed 3x" },
+      { name: "Mike Thompson", suburb: "Daisy Hill", issue: "Toilet repair", status: "booked", price: 320, time: "Today 2:30 PM", deposit: false },
+      { name: "Sophie Park", suburb: "Slacks Creek", issue: "Hot water service", status: "booked", price: 1850, time: "Today 4:00 PM", deposit: true },
+      { name: "David Park", suburb: "Cornubia", issue: "Pipe replacement", status: "completed", price: 1240 },
+      { name: "Anna Petrov", suburb: "Shailer Park", issue: "Leak detection", status: "completed", price: 350 }
+    ],
+    monthlyRev: 34820
+  },
+
+  hvac: {
+    slug: 'hvac',
+    name: 'HVAC',
+    name_au: 'Air-con guy',
+    plural: 'Air-con techs',
+    icon: '❄️',
+    colorClass: 'trade-hvac',
+    iconBg: 'trade-icon-hvac',
+    tagline: 'Don\'t miss the summer rush — every call is $4-12k',
+    pricing_label: '$697/mo + $2,000 setup (premium tier)',
+    business: { name: 'Coastal Cool', owner: 'Ben Carter', suburb: 'Surfers Paradise', phone: '+61 7 5555 0234', tracking: '+61 7 3040 8822', abn: '52 234 776 891' },
+    customer: { name: 'Tom Bennett', phone: '0438 271 994', address: '8 Palm Cove, Robina QLD 4226', issue_default: 'AC stopped cooling 2 days ago, blowing room temp air. Mitsubishi split, master bedroom. Already 32°C in here.' },
+    issueTypes: [
+      { id: 'notcooling', icon: '🌡️', label: 'AC not cooling' },
+      { id: 'notheating', icon: '🔥', label: 'Not heating' },
+      { id: 'noise', icon: '🔊', label: 'Strange noise' },
+      { id: 'leak', icon: '💧', label: 'Water leak' },
+      { id: 'install', icon: '🆕', label: 'Install new system' },
+      { id: 'service', icon: '🧹', label: 'Service / clean' },
+      { id: 'replace', icon: '🔄', label: 'Replace unit' },
+      { id: 'other', icon: '❓', label: 'Other' }
+    ],
+    aiQuotes: {
+      notcooling: { quote: 380, confidence: 82, label: 'AC diagnostic + likely gas recharge', breakdown: [
+        { label: 'Callout', amount: 80 },
+        { label: 'Diagnostic 1h', amount: 140 },
+        { label: 'Likely gas R32 recharge', amount: 160 }
+      ], note: "Could escalate to compressor replacement if leak confirmed." },
+      notheating: { quote: 320, confidence: 75, label: 'Heating mode diagnostic', breakdown: [
+        { label: 'Callout', amount: 80 },
+        { label: 'Labor 1.5h', amount: 210 },
+        { label: 'Misc parts', amount: 30 }
+      ]},
+      noise: { quote: 280, confidence: 70, label: 'Service + bearing check', breakdown: [
+        { label: 'Callout', amount: 80 },
+        { label: 'Labor 1.5h', amount: 200 }
+      ]},
+      leak: { quote: 240, confidence: 80, label: 'Drainage clean / repair', breakdown: [
+        { label: 'Callout', amount: 80 },
+        { label: 'Labor 1h', amount: 140 },
+        { label: 'Misc fittings', amount: 20 }
+      ]},
+      install: { quote: 4500, confidence: 88, label: 'Daikin Cora 5kW install', breakdown: [
+        { label: 'Daikin Cora 5kW (your supplier)', amount: 1890 },
+        { label: 'Labor 1.5 days @ $140/h', amount: 1680 },
+        { label: 'Materials (pipework, mounts)', amount: 480 },
+        { label: 'Compliance + commissioning', amount: 450 }
+      ], note: "2-day install per your rule. Confirm electrical capacity." },
+      service: { quote: 190, confidence: 95, label: 'Annual service', breakdown: [
+        { label: 'Fixed price service', amount: 190 }
+      ]},
+      replace: { quote: 5200, confidence: 80, label: 'Unit replacement', breakdown: [
+        { label: 'New unit estimate', amount: 2200 },
+        { label: 'Labor 2 days', amount: 2240 },
+        { label: 'Disposal old unit', amount: 280 },
+        { label: 'Reuse pipework + new fittings', amount: 480 }
+      ]},
+      other: { quote: 320, confidence: 60, label: 'General', breakdown: [
+        { label: 'Callout', amount: 80 },
+        { label: 'Estimated 1.5h labor', amount: 210 }
+      ]}
+    },
+    pricing: { callout: 80, hourly: 140, weekend_pct: 75, after_hours_pct: 60, holiday_pct: 100,
+      catalog: [
+        { name: 'Annual service', price: '$190', time: '1h', type: 'Fixed' },
+        { name: 'Diagnostic callout', price: '$220', time: '1.5h', type: 'Fixed' },
+        { name: 'Gas R32 recharge', price: '$280-450', time: '1h', type: 'Range' },
+        { name: 'Split system install (5kW)', price: '$2,800-4,500', time: '1.5 days', type: 'Range' },
+        { name: 'Split system install (7kW)', price: '$3,800-5,800', time: '1.5 days', type: 'Range' },
+        { name: 'Ducted system install', price: '$8,500-15,000', time: '3-5 days', type: 'Range' },
+        { name: 'Compressor replacement', price: '$1,200-2,400', time: '4h', type: 'Range' },
+        { name: 'Drainage clean', price: '$240', time: '1h', type: 'Fixed' }
+      ]},
+    aiMemory: {
+      pricing: ['Always quote 2 days for install (not 1)', 'Weekend surcharge: +75%', 'Summer (Oct-Mar): +$50 priority fee on emergencies', 'Min charge: $220'],
+      timing: ['Split install: 1.5 days', 'Service: 1h flat', 'Gas recharge: 1h', 'Diagnostic + small fix: avg 2h'],
+      suppliers: ['Beijer Ref Burleigh — Daikin Cora 5kW: $1,890', 'AC Direct Nerang — Mitsubishi 7kW: $2,340', 'Reece — copper pipe set: $180'],
+      preferences: ['Refuse: ducted in apartments (too complex)', 'Prioritize: install jobs (high margin)', 'Avoid: free quotes more than 30km away']
+    },
+    sampleLeads: [
+      { name: "Sarah O'Connell", suburb: "Mermaid Beach", issue: "AC not cooling", status: "new", price: 380, time: "8 min ago", urgent: true, ai_confidence: 82 },
+      { name: "Marcus Chen", suburb: "Robina", issue: "Install split system", status: "new", price: 4500, time: "32 min ago", urgent: false, ai_confidence: 88 },
+      { name: "Linda Foster", suburb: "Palm Beach", issue: "Annual service", status: "quoted", price: 190, time: "Sent 1h ago" },
+      { name: "Tom Becker", suburb: "Broadbeach", issue: "Ducted install", status: "quoted", price: 12500, time: "Site visit needed" },
+      { name: "Rachel Quinn", suburb: "Coomera", issue: "Compressor replacement", status: "booked", price: 1850, time: "Today 11:00 AM", deposit: true },
+      { name: "Mike Thompson", suburb: "Burleigh Heads", issue: "Service x3 units", status: "booked", price: 480, time: "Wed 9:00 AM", deposit: false },
+      { name: "Brad Williams", suburb: "Helensvale", issue: "Split system install", status: "booked", price: 4200, time: "Thu (2 days)", deposit: true },
+      { name: "Anna Petrov", suburb: "Broadbeach", issue: "AC service", status: "completed", price: 190 },
+      { name: "David Park", suburb: "Surfers Paradise", issue: "Ducted install", status: "completed", price: 14200 }
+    ],
+    monthlyRev: 58400
+  },
+
+  sparky: {
+    slug: 'sparky',
+    name: 'Electrician',
+    name_au: 'Sparky',
+    plural: 'Sparkies',
+    icon: '⚡',
+    colorClass: 'trade-sparky',
+    iconBg: 'trade-icon-sparky',
+    tagline: 'Stop losing call-outs to your competitor next door',
+    pricing_label: '$497/mo + $1,500 setup',
+    business: { name: 'Lightning Sparkies', owner: 'Ryan O\'Brien', suburb: 'Brisbane CBD', phone: '+61 7 5555 0398', tracking: '+61 7 3040 8823', abn: '78 998 213 445' },
+    customer: { name: 'Linda Park', phone: '0421 778 332', address: '24 Brunswick St, Fortitude Valley QLD 4006', issue_default: 'Whole kitchen lost power this morning. Tried flipping the switchboard but the safety switch keeps tripping when I reset it.' },
+    issueTypes: [
+      { id: 'powerout', icon: '⚡', label: 'Power out' },
+      { id: 'gpo', icon: '🔌', label: 'Power point / GPO' },
+      { id: 'light', icon: '💡', label: 'Light fitting' },
+      { id: 'switchboard', icon: '🔋', label: 'Switchboard upgrade' },
+      { id: 'safety', icon: '⚠️', label: 'Safety switch tripping' },
+      { id: 'hotwater', icon: '🔥', label: 'Hot water element' },
+      { id: 'solar', icon: '☀️', label: 'Solar issue' },
+      { id: 'other', icon: '❓', label: 'Other' }
+    ],
+    aiQuotes: {
+      powerout: { quote: 320, confidence: 80, label: 'Power fault diagnostic', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Diagnostic 1.5h', amount: 195 },
+        { label: 'Misc fittings', amount: 35 }
+      ], note: "If RCD is faulty, escalate to switchboard work." },
+      gpo: { quote: 220, confidence: 95, label: 'GPO replacement', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Labor 1h', amount: 130 }
+      ]},
+      light: { quote: 180, confidence: 90, label: 'Light fitting install', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Labor 45min', amount: 90 }
+      ]},
+      switchboard: { quote: 2400, confidence: 78, label: 'Switchboard upgrade', breakdown: [
+        { label: 'Hager switchboard kit', amount: 480 },
+        { label: 'Labor 6h × $130', amount: 780 },
+        { label: 'RCDs + circuit breakers', amount: 340 },
+        { label: 'Compliance certificate', amount: 200 },
+        { label: 'Energex shutdown', amount: 600 }
+      ], note: "Energex shutdown booking required." },
+      safety: { quote: 280, confidence: 82, label: 'Safety switch fault', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Diagnostic 1h', amount: 130 },
+        { label: 'New RCD + install', amount: 60 }
+      ]},
+      hotwater: { quote: 380, confidence: 85, label: 'Hot water element replacement', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Labor 1.5h', amount: 195 },
+        { label: 'Element + thermostat', amount: 95 }
+      ]},
+      solar: { quote: 480, confidence: 70, label: 'Solar diagnostic', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Labor 2h', amount: 260 },
+        { label: 'Estimated parts', amount: 130 }
+      ]},
+      other: { quote: 240, confidence: 65, label: 'General', breakdown: [
+        { label: 'Callout', amount: 90 },
+        { label: 'Estimated 1h labor', amount: 130 }
+      ]}
+    },
+    pricing: { callout: 90, hourly: 130, weekend_pct: 60, after_hours_pct: 50, holiday_pct: 100,
+      catalog: [
+        { name: 'GPO replacement', price: '$180', time: '45min', type: 'Fixed' },
+        { name: 'Light fitting install', price: '$180-280', time: '45-90min', type: 'Range' },
+        { name: 'Safety switch (RCD)', price: '$250-320', time: '1h', type: 'Range' },
+        { name: 'Switchboard upgrade', price: '$1,800-3,500', time: '6-8h', type: 'Range' },
+        { name: 'Power fault diagnostic', price: '$220-380', time: '1.5h', type: 'Range' },
+        { name: 'Hot water element', price: '$320-480', time: '1.5h', type: 'Range' },
+        { name: 'Solar inverter check', price: '$280', time: '1h', type: 'Fixed' },
+        { name: 'New circuit installation', price: '$580-980', time: '3h', type: 'Range' }
+      ]},
+    aiMemory: {
+      pricing: ['Switchboard work always includes Energex shutdown ($600)', 'Weekend surcharge: +60%', 'Min charge: $180', 'Solar work: always quote inspection separately'],
+      timing: ['GPO swap: 45min flat', 'Switchboard upgrade: 6-8h', 'Light fitting: 45min avg', 'Diagnostic + small fix: 1.5h avg'],
+      suppliers: ['MM Electrical CBD — Hager switchboard kit: $480', 'Lawrence & Hanson — Clipsal GPO: $18', 'TLE — RCD 30mA: $42'],
+      preferences: ['Refuse: jobs without compliance docs', 'Refuse: solar repairs from other installers (no warranty exposure)', 'Prioritize: switchboard upgrades']
+    },
+    sampleLeads: [
+      { name: "Sarah O'Connell", suburb: "New Farm", issue: "Safety switch tripping", status: "new", price: 280, time: "5 min ago", urgent: true, ai_confidence: 82 },
+      { name: "Marcus Chen", suburb: "Spring Hill", issue: "Switchboard upgrade", status: "new", price: 2400, time: "1h ago", urgent: false, ai_confidence: 78 },
+      { name: "Linda Foster", suburb: "Bowen Hills", issue: "GPO replacement x3", status: "quoted", price: 480, time: "Sent 2h ago" },
+      { name: "Tom Becker", suburb: "Teneriffe", issue: "Solar inverter issue", status: "quoted", price: 480, time: "Pending site visit" },
+      { name: "Rachel Quinn", suburb: "West End", issue: "Light fittings x6", status: "booked", price: 980, time: "Today 1:00 PM", deposit: true },
+      { name: "Mike Thompson", suburb: "Newstead", issue: "Hot water element", status: "booked", price: 380, time: "Today 4:00 PM", deposit: false },
+      { name: "Brad Williams", suburb: "Kelvin Grove", issue: "Switchboard upgrade", status: "booked", price: 2800, time: "Wed 8:00 AM", deposit: true },
+      { name: "Anna Petrov", suburb: "South Brisbane", issue: "Power fault", status: "completed", price: 320 },
+      { name: "David Park", suburb: "Paddington", issue: "Switchboard upgrade", status: "completed", price: 2950 }
+    ],
+    monthlyRev: 41200
+  },
+
+  pool: {
+    slug: 'pool',
+    name: 'Pool service',
+    name_au: 'Pool guy',
+    plural: 'Pool guys',
+    icon: '💧',
+    colorClass: 'trade-pool',
+    iconBg: 'trade-icon-pool',
+    tagline: 'Capture every pool emergency before your neighbour does',
+    pricing_label: '$397/mo + $1,200 setup',
+    business: { name: 'Clearwater Pools', owner: 'Dave Henderson', suburb: 'Burleigh Heads', phone: '+61 7 5555 0188', tracking: '+61 7 3040 8824', abn: '82 145 998 211' },
+    customer: { name: 'Emma Wilson', phone: '0412 845 392', address: '14 Albatross Ave, Mermaid Waters QLD 4218', issue_default: 'Pool went green over the weekend, smells funny too. Salt chlorinator is making a beeping noise.' },
+    issueTypes: [
+      { id: 'green', icon: '🌿', label: 'Green / algae' },
+      { id: 'cloudy', icon: '💧', label: 'Cloudy water' },
+      { id: 'pump', icon: '⚙️', label: 'Pump issues' },
+      { id: 'salt', icon: '🧂', label: 'Salt / chlorine' },
+      { id: 'leak', icon: '💦', label: 'Leak / loss' },
+      { id: 'clean', icon: '🧹', label: 'Regular clean' },
+      { id: 'equip', icon: '🔧', label: 'Equipment broken' },
+      { id: 'other', icon: '❓', label: 'Other' }
+    ],
+    aiQuotes: {
+      green: { quote: 480, confidence: 87, label: 'Green pool recovery', breakdown: [
+        { label: 'Initial visit + chemical shock', amount: 280 },
+        { label: 'Follow-up visit (3 days later)', amount: 120 },
+        { label: 'Final balance check', amount: 80 }
+      ], note: "Mermaid area: chlorine demand higher near canals (+1 visit possible)." },
+      cloudy: { quote: 220, confidence: 82, label: 'Cloudy water treatment', breakdown: [
+        { label: 'Callout', amount: 65 },
+        { label: 'Filter clean + balance', amount: 95 },
+        { label: 'Clarifier + algaecide', amount: 60 }
+      ]},
+      pump: { quote: 380, confidence: 75, label: 'Pump diagnostic + bearing', breakdown: [
+        { label: 'Diagnostic callout', amount: 95 },
+        { label: 'Likely bearing replacement', amount: 285 }
+      ]},
+      salt: { quote: 620, confidence: 90, label: 'Salt cell replacement', breakdown: [
+        { label: 'Hayward salt cell (Mr Pool Man)', amount: 385 },
+        { label: 'Labor 45min', amount: 95 },
+        { label: 'Calibration + balance', amount: 140 }
+      ]},
+      leak: { quote: 420, confidence: 70, label: 'Leak detection', breakdown: [
+        { label: 'Callout', amount: 65 },
+        { label: 'Detection 2h', amount: 290 },
+        { label: 'Misc dye/equipment', amount: 65 }
+      ]},
+      clean: { quote: 65, confidence: 100, label: 'Weekly clean', breakdown: [
+        { label: 'Standard clean (35min)', amount: 65 }
+      ]},
+      equip: { quote: 350, confidence: 70, label: 'Equipment service', breakdown: [
+        { label: 'Diagnostic + initial labor', amount: 200 },
+        { label: 'Estimated parts', amount: 150 }
+      ]},
+      other: { quote: 280, confidence: 60, label: 'General', breakdown: [
+        { label: 'Callout', amount: 65 },
+        { label: 'Estimated 2h labor', amount: 190 }
+      ]}
+    },
+    pricing: { callout: 65, hourly: 95, weekend_pct: 60, after_hours_pct: 50, holiday_pct: 100,
+      catalog: [
+        { name: 'Weekly clean (basic)', price: '$55-75', time: '35min', type: 'Range' },
+        { name: 'Monthly clean (full)', price: '$140-180', time: '1.5h', type: 'Range' },
+        { name: 'Green pool recovery', price: '$350-650', time: '2-4 visits', type: 'Range' },
+        { name: 'Salt cell replacement', price: '$420-780', time: '45min', type: 'Range' },
+        { name: 'Pump replacement', price: '$680-1,450', time: '2h', type: 'Range' },
+        { name: 'Heat pump install', price: '$4,800-8,500', time: '1.5 days', type: 'Range' },
+        { name: 'Leak detection', price: '$420', time: '2h', type: 'Fixed' },
+        { name: 'Acid wash', price: '$580-880', time: 'Half day', type: 'Range' }
+      ]},
+    aiMemory: {
+      pricing: ['+$80 on equipment installs &gt;5 years', 'Weekend surcharge: +60%', 'Min charge for green pool recovery: $350', 'Travel surcharge if &gt;25km: $50'],
+      timing: ['Weekly clean: 35 min', 'Green pool recovery: 2-4 visits over 1 week', 'Salt cell replacement: 45 min', 'Heat pump install: 1.5 days'],
+      suppliers: ['Mr Pool Man Burleigh — Hayward salt cell: $385', 'Pool Warehouse Nerang — Astralpool pump 1.5HP: $720', 'Reece Burleigh — cartridge filter: $480'],
+      preferences: ['Refuse: jobs further than 30km from Burleigh', 'Prioritize: green pool recoveries (high margin)', 'Avoid: pool builds (out of scope)']
+    },
+    sampleLeads: [
+      { name: "Sarah O'Connell", suburb: "Mermaid Beach", issue: "Weekly clean", status: "in_progress", price: 65, time: "8:00 AM" },
+      { name: "Marcus Chen", suburb: "Robina", issue: "Pump making noise", status: "new", price: 380, time: "18 min ago", urgent: true, ai_confidence: 78 },
+      { name: "Linda Foster", suburb: "Palm Beach", issue: "Salt cell replacement", status: "new", price: 620, time: "42 min ago", ai_confidence: 92 },
+      { name: "Tom Becker", suburb: "Broadbeach", issue: "Heat pump install", status: "quoted", price: 6450, time: "Sent 2h ago" },
+      { name: "Rachel Quinn", suburb: "Coomera", issue: "Filter replacement", status: "quoted", price: 1280, time: "Viewed 3x" },
+      { name: "Mike Thompson", suburb: "Burleigh Heads", issue: "Tile cleaning", status: "booked", price: 380, time: "Today 2:30 PM", deposit: false },
+      { name: "Sophie Park", suburb: "Robina", issue: "Green pool recovery", status: "booked", price: 480, time: "Today 4:00 PM", deposit: true },
+      { name: "David Park", suburb: "Surfers Paradise", issue: "Heat pump install", status: "completed", price: 7200 },
+      { name: "Anna Petrov", suburb: "Broadbeach", issue: "Salt cell", status: "completed", price: 720 }
+    ],
+    monthlyRev: 28940
+  }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+const initialState = () => ({
+  currentTrade: 'plumber',
+  formStep: 1,
+  newLeadDraft: { address: '', suburb: '', issue_type: '', issue_label: '', description: '', photos: [], urgency: '', availability: [] },
+  newLeadStatus: 'idle',
+  newLeadQuote: null,
+  newLeadFinalQuote: null,
+  newLeadFeedback: '',
+  smsThread: [],
+  referralCount: 2,
+  referralEarnings: 497,
+  referrals: [
+    { name: 'Tony Mitchell', business: 'Mitchell Plumbing', suburb: 'Logan', date: '12 Apr 2026', status: 'signed', reward: '$497 free month' },
+    { name: 'Steve Davies', business: 'Davies Sparkies', suburb: 'Brisbane CBD', date: '28 Apr 2026', status: 'signed', reward: '$497 free month' },
+    { name: 'Brad Wilson', business: 'BW Plumbing', suburb: 'Beenleigh', date: '5 May 2026', status: 'demo', reward: 'pending' },
+    { name: 'Jake Harper', business: 'Harper HVAC', suburb: 'Robina', date: '8 May 2026', status: 'pending', reward: 'pending' }
+  ]
+});
+
+const Store = {
+  data: {},
+  load() {
+    const saved = localStorage.getItem('tradiecatch_v1');
+    if (saved) { try { this.data = JSON.parse(saved); } catch { this.data = initialState(); } }
+    else { this.data = initialState(); }
+  },
+  save() { localStorage.setItem('tradiecatch_v1', JSON.stringify(this.data)); },
+  reset() { this.data = initialState(); this.save(); }
+};
+Store.load();
+
+function getTrade() { return TRADES[Store.data.currentTrade]; }
+
+function setTrade(slug) {
+  Store.data.currentTrade = slug;
+  // Reset trade-specific state when switching
+  Store.data.formStep = 1;
+  Store.data.newLeadDraft = { address: '', suburb: '', issue_type: '', issue_label: '', description: '', photos: [], urgency: '', availability: [] };
+  Store.data.newLeadStatus = 'idle';
+  Store.data.newLeadQuote = null;
+  Store.data.newLeadFinalQuote = null;
+  Store.data.newLeadFeedback = '';
+  Store.data.smsThread = [];
+  Store.save();
+  applyTradeColor();
+}
+
+function applyTradeColor() {
+  document.body.className = getTrade().colorClass;
+}
+
+function resetDemo() {
+  if (confirm("Reset all demo data?")) {
+    Store.reset();
+    applyTradeColor();
+    showToast("Demo reset ✓");
+    go('home');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ============================================================
+   ROUTER + DEVBAR
+   ============================================================ */
+function go(view) {
+  window.location.hash = view;
+  render();
+}
+
+window.addEventListener('hashchange', render);
+window.addEventListener('load', () => { applyTradeColor(); render(); });
+
+function renderDevbar() {
+  const t = getTrade();
+  document.getElementById('devbar').innerHTML = `
+    <div class="devbtn" onclick="go('home')">🏠 Home</div>
+    <div class="divider"></div>
+    ${Object.values(TRADES).map(tr => `
+      <div class="devbtn trade-btn ${tr.slug === Store.data.currentTrade ? 'active' : ''}" onclick="setTrade('${tr.slug}'); go('hub')">${tr.icon} ${tr.name}</div>
+    `).join('')}
+    <div class="divider"></div>
+    <div class="devbtn" onclick="go('client/call')">📱 Customer</div>
+    <div class="devbtn" onclick="go('tradie/inbox')">🔧 Tradie</div>
+    <div class="devbtn" onclick="go('dashboard/overview')">📊 Dashboard</div>
+    <div class="divider"></div>
+    <div class="devbtn" onclick="resetDemo()" style="color:#fbbf24;">↻ Reset</div>
+  `;
+}
+
+function render() {
+  renderDevbar();
+  const route = window.location.hash.replace('#','') || 'home';
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  if (route === 'home') return renderHome(app);
+  if (route === 'hub') return renderHub(app);
+  if (route.startsWith('client')) return renderClient(app, route);
+  if (route.startsWith('tradie')) return renderTradie(app, route);
+  if (route.startsWith('dashboard')) return renderDashboard(app, route);
+  if (route.startsWith('referral-landing')) return renderReferralLanding(app);
+
+  renderHome(app);
+}
+
+/* ============================================================
+   VIEW: HOME
+   ============================================================ */
+function renderHome(app) {
+  app.innerHTML = `
+    <div class="gradient-bg min-h-screen flex flex-col items-center justify-center px-6 py-16">
+      <div class="max-w-6xl w-full">
+
+        <div class="text-center mb-10 anim-fade">
+          <div class="inline-flex items-center gap-3 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center text-2xl">🎯</div>
+            <div class="text-left">
+              <div class="text-4xl font-extrabold tracking-tight">TradieCatch</div>
+              <div class="text-sm text-cyan-300">Live Demo • Multi-trade SaaS</div>
+            </div>
+          </div>
+          <h1 class="text-5xl font-extrabold mb-4 leading-tight">
+            One platform.<br/>
+            <span class="text-cyan-400">Built for every trade.</span>
+          </h1>
+          <p class="text-slate-300 text-lg max-w-3xl mx-auto">
+            Choisis ton métier ci-dessous → tu obtiens une <strong class="text-white">démo entièrement adaptée</strong> à ce métier (formulaires, devis IA, fournisseurs, posters QR, le tout). Switch entre les 4 métiers à tout moment via la toolbar.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-4 anim-fade mb-10">
+          ${Object.values(TRADES).map(t => `
+            <div class="role-card" onclick="setTrade('${t.slug}'); go('hub')">
+              <div class="w-14 h-14 rounded-2xl ${t.iconBg} flex items-center justify-center text-3xl mb-4">${t.icon}</div>
+              <div class="text-xl font-bold mb-1">${t.name}</div>
+              <div class="text-xs text-slate-400 mb-3">For ${t.plural.toLowerCase()} in QLD</div>
+              <p class="text-sm text-slate-300 mb-4 leading-snug">${t.tagline}</p>
+              <div class="text-xs text-cyan-400 font-bold">${t.pricing_label}</div>
+              <div class="mt-4 text-xs text-cyan-300 font-semibold">→ Try this trade's demo</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-5 anim-fade">
+          <div class="text-xs font-bold text-cyan-300 uppercase mb-2">⚡ How to test</div>
+          <ol class="text-sm text-slate-300 space-y-1 list-decimal pl-5">
+            <li><strong>Pick a trade</strong> above — the whole demo adapts to it.</li>
+            <li><strong>Customer flow</strong> : fill out the form (issue type, photos, time slots).</li>
+            <li><strong>Tradie phone</strong> : your lead arrives, AI suggests a quote with breakdown.</li>
+            <li><strong>Edit the quote</strong> + give feedback — the AI learns.</li>
+            <li><strong>Dashboard</strong> : see the lead in pipeline, calendar, AI memory.</li>
+            <li><strong>Referrals</strong> : share your unique link, earn free months.</li>
+            <li><strong>Switch trade</strong> via toolbar — explore the other 3 verticals.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   VIEW: TRADE HUB
+   ============================================================ */
+function renderHub(app) {
+  const t = getTrade();
+  app.innerHTML = `
+    <div class="gradient-bg min-h-screen flex flex-col items-center justify-center px-6 py-16 anim-fade">
+      <div class="max-w-5xl w-full">
+
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl ${t.iconBg} flex items-center justify-center text-2xl">${t.icon}</div>
+            <div class="text-left">
+              <div class="text-3xl font-extrabold tracking-tight">TradieCatch <span style="color:var(--accent);">for ${t.plural}</span></div>
+              <div class="text-sm text-slate-400">${t.business.name} • ${t.business.owner} • ${t.business.suburb}</div>
+            </div>
+          </div>
+          <p class="text-slate-300">Tout est configuré pour <strong>${t.name_au.toLowerCase()}s</strong>. Choisis quoi tester :</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-5">
+          <div class="role-card" onclick="go('client/call')">
+            <div class="text-4xl mb-3">📱</div>
+            <div class="text-xs font-bold text-pink-300 uppercase mb-1">CUSTOMER</div>
+            <div class="text-xl font-bold mb-2">${t.customer.name}</div>
+            <p class="text-sm text-slate-400 mb-3">A customer in ${t.customer.address.split(',')[1] || 'Gold Coast'} calls ${t.business.name}. Walk through her journey.</p>
+            <div class="text-xs text-cyan-300 font-semibold">→ Start customer journey</div>
+          </div>
+
+          <div class="role-card" onclick="go('tradie/inbox')">
+            <div class="text-4xl mb-3">🔧</div>
+            <div class="text-xs font-bold text-emerald-300 uppercase mb-1">TRADIE PHONE</div>
+            <div class="text-xl font-bold mb-2">${t.business.owner}'s phone</div>
+            <p class="text-sm text-slate-400 mb-3">Receives leads, opens dossier, validates quote with AI feedback loop.</p>
+            <div class="text-xs text-cyan-300 font-semibold">→ Open tradie phone</div>
+          </div>
+
+          <div class="role-card" onclick="go('dashboard/overview')">
+            <div class="text-4xl mb-3">📊</div>
+            <div class="text-xs font-bold text-amber-300 uppercase mb-1">DASHBOARD</div>
+            <div class="text-xl font-bold mb-2">Back-office</div>
+            <p class="text-sm text-slate-400 mb-3">KPIs, pipeline, AI memory, pricing, referrals — the full back-office.</p>
+            <div class="text-xs text-cyan-300 font-semibold">→ Open dashboard</div>
+          </div>
+        </div>
+
+        <div class="mt-8 text-center text-xs text-slate-500">
+          Switch metier any time via the toolbar at the top right ↗
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   PHONE FRAME
+   ============================================================ */
+function phoneFrame(label, color, screen) {
+  const colorClass = color === 'pink' ? 'bg-pink-500/20 text-pink-300' : 'bg-emerald-500/20 text-emerald-300';
+  return `
+    <div class="min-h-screen gradient-bg flex flex-col items-center justify-center py-10 px-4 anim-fade">
+      <div class="mb-4">
+        <div class="pill ${colorClass}">${label}</div>
+      </div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="statusbar">
+          <span>9:41</span>
+          <span>📶 5G  100%</span>
+        </div>
+        <div class="phone-screen">${screen}</div>
+      </div>
+      <div class="mt-6 text-xs text-slate-400">
+        Use the toolbar at the top to switch trades or views ↗
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   CLIENT VIEWS
+   ============================================================ */
+function renderClient(app, route) {
+  const sub = route.split('/')[1] || 'call';
+  const status = Store.data.newLeadStatus;
+  if (sub === 'thanks' && status === 'quoted') { window.location.hash = 'client/quote-received'; return; }
+
+  const screens = {
+    'call': clientCallScreen, 'sms': clientSmsScreen, 'form': clientFormScreen,
+    'thanks': clientThanksScreen, 'quote-received': clientQuoteReceivedScreen,
+    'payment': clientPaymentScreen, 'paid': clientPaidScreen
+  };
+  const screen = (screens[sub] || clientCallScreen)();
+  const t = getTrade();
+  app.innerHTML = phoneFrame(`📱 ${t.customer.name.toUpperCase()} — customer of ${t.business.name}`, 'pink', screen);
+}
+
+function clientCallScreen() {
+  const t = getTrade();
+  setTimeout(() => {
+    const tm = document.getElementById('call-timer');
+    let s = 0;
+    if (tm) { const id = setInterval(() => { s++; if (tm) tm.textContent = `0:${s.toString().padStart(2,'0')}`; else clearInterval(id); if (s >= 28) clearInterval(id); }, 1000); }
+  }, 100);
+
+  return `
+    <div class="text-center pt-16 px-6">
+      <div class="text-7xl mb-5 ring inline-block">📞</div>
+      <div class="text-2xl font-bold mb-1">${t.business.name}</div>
+      <div class="text-sm text-slate-500 mb-1">${t.business.suburb} • ${t.business.phone}</div>
+      <div id="call-timer" class="text-sm text-slate-400 mt-4 font-mono">0:00</div>
+
+      <div class="mt-12 mx-3 bg-rose-50 rounded-2xl p-4 text-sm text-rose-700 text-left">
+        <div class="font-semibold mb-1">📵 No answer</div>
+        <div class="text-xs leading-relaxed">
+          ${t.customer.name} has been trying to reach ${t.business.owner} for 3 minutes. He's on a job and can't pick up. About to call the next ${t.name_au.toLowerCase()} on Google.
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-full mt-6" onclick="simulateMissedCall()">⏭ Simulate missed call</button>
+    </div>
+  `;
+}
+
+function simulateMissedCall() {
+  const t = getTrade();
+  Store.data.smsThread = [
+    { from: 'business', text: `Hey, ${t.business.owner.split(' ')[0]} from ${t.business.name} 👋 Sorry I missed your call — I'm out at a job. Reply <strong>YES</strong> and I'll send you a quick form (60 sec) so I can come back to you with a quote and time slot. Cheers!`, time: 'Just now' }
+  ];
+  Store.save();
+  showToast("Auto-SMS sent in 30 seconds ⚡");
+  go('client/sms');
+}
+
+function clientSmsScreen() {
+  const t = getTrade();
+  const thread = Store.data.smsThread || [];
+  const messagesHtml = thread.map(m => {
+    if (m.from === 'business') return `<div><div class="sms-in">${m.text}</div><div class="text-[10px] text-slate-400 mt-1">${m.time}</div></div>`;
+    return `<div class="flex justify-end"><div><div class="sms-out">${m.text}</div><div class="text-[10px] text-slate-400 mt-1 text-right">${m.time}</div></div></div>`;
+  }).join('');
+
+  const userReplied = thread.some(m => m.from === 'user');
+  const linkSent = thread.some(m => m.from === 'business' && m.text.includes('tradiecatch'));
+
+  let actionButtons = '';
+  if (!userReplied) {
+    actionButtons = `<div class="border-t border-slate-200 p-3 bg-white"><div class="text-xs text-slate-400 mb-2 text-center">Quick reply</div><div class="flex gap-2"><button class="flex-1 btn btn-success" onclick="replyYes()">Reply YES</button><button class="flex-1 btn btn-ghost" onclick="alert('Demo: reply YES to continue')">No thanks</button></div></div>`;
+  } else if (linkSent) {
+    actionButtons = `<div class="border-t border-slate-200 p-3 bg-white"><button class="btn btn-primary w-full" onclick="go('client/form')">📝 Open form (tradiecatch.app/r/aB3xK9)</button></div>`;
+  }
+
+  return `
+    <div class="bg-slate-100 px-3 py-2 text-xs text-slate-500 text-center">Messages</div>
+    <div class="px-4 pt-3 pb-2 border-b border-slate-100">
+      <div class="font-semibold text-base">${t.business.name}</div>
+      <div class="text-xs text-slate-500">${t.business.tracking}</div>
+    </div>
+    <div class="p-4 space-y-3 min-h-[480px]">${messagesHtml}</div>
+    ${actionButtons}
+  `;
+}
+
+function replyYes() {
+  Store.data.smsThread.push({ from: 'user', text: 'YES', time: 'Just now' });
+  Store.save();
+  render();
+  setTimeout(() => {
+    Store.data.smsThread.push({
+      from: 'business',
+      text: `Cheers! Here's your form — takes 60 seconds:<br/>👉 <span class="text-sky-600 underline">tradiecatch.app/r/aB3xK9</span><br/><br/>Photos help heaps, snap a couple if you can 📸`,
+      time: 'Just now'
+    });
+    Store.save();
+    render();
+  }, 1200);
+}
+
+function clientFormScreen() {
+  const t = getTrade();
+  const step = Store.data.formStep || 1;
+  const draft = Store.data.newLeadDraft;
+  let stepContent = '';
+
+  if (step === 1) {
+    stepContent = `
+      <label class="text-sm font-bold text-slate-700 block mb-2">📍 Where are you located?</label>
+      <input id="f-address" class="input" placeholder="${t.customer.address}" value="${draft.address || ''}" />
+      <div class="text-xs text-slate-500 mt-2">Suburb auto-fills from address</div>
+      <button class="btn btn-primary w-full mt-6" onclick="formNext(1)">Continue →</button>
+      <button class="btn btn-ghost w-full mt-2 text-sm" onclick="prefillForm()">⚡ Pre-fill demo data</button>
+    `;
+  } else if (step === 2) {
+    stepContent = `
+      <label class="text-sm font-bold text-slate-700 block mb-3">🔧 What's the issue?</label>
+      <div class="grid grid-cols-2 gap-2">
+        ${t.issueTypes.map(it => `
+          <button class="chip-btn ${draft.issue_type === it.id ? 'selected' : ''}" onclick="selectIssue('${it.id}', '${it.label}')">
+            <div class="text-xl mb-1">${it.icon}</div>
+            <div class="text-xs font-semibold">${it.label}</div>
+          </button>
+        `).join('')}
+      </div>
+      <button class="btn btn-primary w-full mt-6" onclick="formNext(2)" ${!draft.issue_type ? 'disabled style="opacity:.4"' : ''}>Continue →</button>
+    `;
+  } else if (step === 3) {
+    const photos = draft.photos || [];
+    stepContent = `
+      <label class="text-sm font-bold text-slate-700 block mb-2">📝 Tell ${t.business.owner.split(' ')[0]} what's happening</label>
+      <textarea id="f-desc" class="input" rows="4" placeholder="${t.customer.issue_default}">${draft.description || ''}</textarea>
+
+      <label class="text-sm font-bold text-slate-700 block mt-4 mb-2">📸 Photos (very helpful!)</label>
+      <div class="grid grid-cols-3 gap-2">
+        ${[0,1,2].map(i => {
+          if (photos[i]) return `<div class="photo" style="background: linear-gradient(135deg, ${getPhotoColor(draft.issue_type)});">${getPhotoIcon(draft.issue_type)}</div>`;
+          return `<button class="photo border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 text-2xl bg-slate-50" onclick="addPhoto(${i})">+</button>`;
+        }).join('')}
+      </div>
+      <div class="text-xs text-slate-500 mt-2">Tap "+" to simulate uploading a photo</div>
+
+      <button class="btn btn-primary w-full mt-6" onclick="formNext(3)">Continue →</button>
+    `;
+  } else if (step === 4) {
+    const urg = draft.urgency || '';
+    const slots = ['Tomorrow AM', 'Tomorrow PM', 'Wed AM', 'Wed PM', 'Thu AM', 'Thu PM'];
+    const selected = draft.availability || [];
+    stepContent = `
+      <label class="text-sm font-bold text-slate-700 block mb-2">⏰ How urgent?</label>
+      <div class="grid grid-cols-3 gap-2">
+        <button class="chip-btn text-center ${urg === 'now' ? 'selected' : ''}" onclick="selectUrgency('now')"><div class="text-lg">🔥</div><div class="text-xs font-semibold">Today</div></button>
+        <button class="chip-btn text-center ${urg === '24h' ? 'selected' : ''}" onclick="selectUrgency('24h')"><div class="text-lg">⏰</div><div class="text-xs font-semibold">24h</div></button>
+        <button class="chip-btn text-center ${urg === 'week' ? 'selected' : ''}" onclick="selectUrgency('week')"><div class="text-lg">📅</div><div class="text-xs font-semibold">This week</div></button>
+      </div>
+
+      <label class="text-sm font-bold text-slate-700 block mt-5 mb-2">🗓️ When can ${t.business.owner.split(' ')[0]} come?</label>
+      <div class="grid grid-cols-2 gap-2">
+        ${slots.map(s => `<button class="chip-btn text-center text-sm ${selected.includes(s) ? 'selected' : ''}" onclick="toggleAvail('${s}')">${s}</button>`).join('')}
+      </div>
+
+      <button class="btn btn-success w-full mt-6" onclick="submitForm()">Submit ✓</button>
+    `;
+  }
+
+  return `
+    <div style="background: var(--accent); opacity:.95;" class="px-4 py-3 text-white">
+      <div class="text-xs opacity-90">tradiecatch.app/r/aB3xK9 🔒</div>
+      <div class="text-sm font-bold">${t.business.name}</div>
+      <div class="text-xs opacity-90">Tell ${t.business.owner.split(' ')[0]} what you need</div>
+    </div>
+    <div class="px-5 py-4">
+      <div class="text-xs font-semibold text-slate-500 mb-2">Step ${step} of 4</div>
+      <div class="h-1.5 bg-slate-200 rounded-full mb-5">
+        <div class="h-1.5 rounded-full transition-all" style="width:${step * 25}%; background: var(--accent);"></div>
+      </div>
+      ${stepContent}
+    </div>
+  `;
+}
+
+function getPhotoColor(issue) {
+  const map = {
+    hotwater: '#fbbf24, #b45309',
+    leak: '#94a3b8, #475569',
+    drain: '#78716c, #292524',
+    notcooling: '#67e8f9, #155e75',
+    install: '#cbd5e1, #475569',
+    powerout: '#fde047, #a16207',
+    switchboard: '#94a3b8, #1e293b',
+    green: '#84cc16, #166534',
+    cloudy: '#94a3b8, #475569',
+    pump: '#64748b, #1e293b',
+    salt: '#67e8f9, #155e75'
+  };
+  return map[issue] || '#94a3b8, #475569';
+}
+
+function getPhotoIcon(issue) {
+  const icons = { hotwater:'🔥', leak:'💧', drain:'🚽', notcooling:'❄️', install:'🆕', powerout:'⚡', switchboard:'🔌', green:'🌿', cloudy:'💧', pump:'⚙️', salt:'🧂' };
+  const icon = icons[issue] || '🔧';
+  return `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;opacity:.7;">${icon}</div>`;
+}
+
+function prefillForm() {
+  const t = getTrade();
+  Store.data.newLeadDraft.address = t.customer.address;
+  Store.data.newLeadDraft.suburb = t.customer.address.split(',')[1].trim().split(' ')[0];
+  Store.save();
+  showToast("Prefilled ✓");
+  render();
+}
+
+function formNext(currentStep) {
+  if (currentStep === 1) {
+    const v = document.getElementById('f-address').value;
+    if (!v) { showToast("Address required"); return; }
+    Store.data.newLeadDraft.address = v;
+    const parts = v.split(',');
+    Store.data.newLeadDraft.suburb = parts.length > 1 ? parts[1].trim().split(' ')[0] : v;
+  }
+  if (currentStep === 2 && !Store.data.newLeadDraft.issue_type) { showToast("Pick an issue"); return; }
+  if (currentStep === 3) Store.data.newLeadDraft.description = document.getElementById('f-desc').value;
+  Store.data.formStep = currentStep + 1;
+  Store.save();
+  render();
+}
+
+function selectIssue(id, label) { Store.data.newLeadDraft.issue_type = id; Store.data.newLeadDraft.issue_label = label; Store.save(); render(); }
+function addPhoto(idx) { if (!Store.data.newLeadDraft.photos) Store.data.newLeadDraft.photos = []; Store.data.newLeadDraft.photos[idx] = true; Store.save(); render(); showToast("Photo uploaded ✓"); }
+function selectUrgency(u) { Store.data.newLeadDraft.urgency = u; Store.save(); render(); }
+function toggleAvail(slot) { const a = Store.data.newLeadDraft.availability || []; const i = a.indexOf(slot); if (i >= 0) a.splice(i, 1); else a.push(slot); Store.data.newLeadDraft.availability = a; Store.save(); render(); }
+
+function submitForm() {
+  const t = getTrade();
+  const draft = Store.data.newLeadDraft;
+  if (!draft.urgency) { showToast("Pick urgency"); return; }
+  if (!draft.availability || draft.availability.length === 0) { showToast("Pick at least one slot"); return; }
+
+  const aiData = t.aiQuotes[draft.issue_type] || t.aiQuotes.other;
+  Store.data.newLeadStatus = 'submitted';
+  Store.data.newLeadQuote = { aiQuote: aiData.quote, confidence: aiData.confidence, label: aiData.label, breakdown: aiData.breakdown, note: aiData.note };
+  Store.data.formStep = 1;
+  Store.save();
+  showToast(`✅ Submitted! ${t.business.owner.split(' ')[0]} is notified.`);
+  setTimeout(() => go('client/thanks'), 800);
+}
+
+function clientThanksScreen() {
+  const t = getTrade();
+  const draft = Store.data.newLeadDraft;
+  return `
+    <div class="text-center pt-12 px-6">
+      <div class="w-20 h-20 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-5">
+        <svg class="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div class="text-2xl font-bold mb-2">Thanks ${t.customer.name.split(' ')[0]}! 🙌</div>
+      <p class="text-slate-600 leading-relaxed">${t.business.owner} has received everything.<br/><br/>He'll come back to you within the hour. ⏱️</p>
+
+      <div class="mt-8 mx-1 bg-slate-50 rounded-xl p-4 text-left text-sm">
+        <div class="text-xs font-bold text-slate-500 mb-2">YOUR REQUEST</div>
+        <div>📍 ${draft.address || '—'}</div>
+        <div>🔧 ${draft.issue_label || '—'}</div>
+        <div>⏰ Available: ${(draft.availability || []).join(', ') || '—'}</div>
+        <div>📸 ${(draft.photos || []).filter(Boolean).length} photo(s)</div>
+      </div>
+
+      <div class="mt-6 mx-1 p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800">
+        💡 <strong>Note (démo) :</strong> aucun prix montré au client. Le tradie reste en contrôle.
+      </div>
+
+      <button class="btn btn-primary w-full mt-6" onclick="go('tradie/inbox')">🔧 Switch to tradie view →</button>
+    </div>
+  `;
+}
+
+function clientQuoteReceivedScreen() {
+  const t = getTrade();
+  const draft = Store.data.newLeadDraft;
+  const finalQuote = Store.data.newLeadFinalQuote || Store.data.newLeadQuote.aiQuote;
+  const slot = (draft.availability && draft.availability[0]) || 'Tomorrow AM';
+
+  return `
+    <div class="bg-slate-100 px-3 py-2 text-xs text-slate-500 text-center">Messages</div>
+    <div class="px-4 pt-3 pb-2 border-b border-slate-100">
+      <div class="font-semibold text-base">${t.business.name}</div>
+      <div class="text-xs text-slate-500">${t.business.tracking}</div>
+    </div>
+    <div class="p-4 space-y-3">
+      <div class="text-xs text-center text-slate-400">A few minutes ago</div>
+      <div class="sms-in">
+        ${t.customer.name.split(' ')[0]} — sorted! Here's the plan:<br/><br/>
+        📅 <strong>${slot}</strong><br/>
+        💰 <strong>Quote: $${finalQuote.toLocaleString()}</strong><br/>
+        <span class="text-xs">(${draft.issue_label})</span><br/><br/>
+        Lock it in with a 20% deposit ($${Math.round(finalQuote * 0.2)}):<br/>
+        👉 <span class="text-sky-600 underline">tradiecatch.app/pay/xK9</span><br/><br/>
+        Any q's, just reply 👍
+      </div>
+    </div>
+    <div class="border-t border-slate-200 p-3 bg-white">
+      <button class="btn btn-primary w-full" onclick="go('client/payment')">💳 Pay deposit ($${Math.round(finalQuote * 0.2)})</button>
+    </div>
+  `;
+}
+
+function clientPaymentScreen() {
+  const t = getTrade();
+  const finalQuote = Store.data.newLeadFinalQuote || Store.data.newLeadQuote.aiQuote;
+  const deposit = Math.round(finalQuote * 0.2);
+  return `
+    <div class="px-5 py-5">
+      <div class="text-xs text-slate-400 mb-3">tradiecatch.app/pay/xK9 🔒</div>
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <div class="text-xs text-slate-400 mb-1">${t.business.name.toUpperCase()}</div>
+        <div class="text-3xl font-extrabold mb-1">$${deposit}.00</div>
+        <div class="text-xs text-slate-500 mb-5">Deposit • ${Store.data.newLeadDraft.issue_label}</div>
+        <div class="space-y-3">
+          <div><label class="text-xs font-bold text-slate-600">CARD NUMBER</label><input class="input mt-1" value="4242 4242 4242 4242" /></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="text-xs font-bold text-slate-600">EXP</label><input class="input mt-1" value="12/27" /></div>
+            <div><label class="text-xs font-bold text-slate-600">CVC</label><input class="input mt-1" value="123" /></div>
+          </div>
+        </div>
+        <button class="btn btn-success w-full mt-5" onclick="payNow()">Pay $${deposit} →</button>
+        <div class="text-xs text-center text-slate-400 mt-3">Powered by Stripe</div>
+      </div>
+    </div>
+  `;
+}
+
+function payNow() { Store.data.newLeadStatus = 'paid'; Store.save(); showToast("💸 Payment received!"); setTimeout(() => go('client/paid'), 600); }
+
+function clientPaidScreen() {
+  const t = getTrade();
+  const finalQuote = Store.data.newLeadFinalQuote || Store.data.newLeadQuote.aiQuote;
+  const deposit = Math.round(finalQuote * 0.2);
+  const slot = (Store.data.newLeadDraft.availability && Store.data.newLeadDraft.availability[0]) || 'Tomorrow AM';
+  return `
+    <div class="text-center pt-12 px-6">
+      <div class="w-20 h-20 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-5">💸</div>
+      <div class="text-2xl font-bold mb-2">Payment received!</div>
+      <p class="text-slate-600">Your booking is confirmed with ${t.business.owner.split(' ')[0]}.</p>
+      <div class="mt-6 mx-1 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left text-sm">
+        <div class="text-xs font-bold text-emerald-700 mb-2">CONFIRMED BOOKING</div>
+        <div>📅 ${slot}</div>
+        <div>💰 Total: $${finalQuote.toLocaleString()}</div>
+        <div>💳 Deposit paid: $${deposit}</div>
+        <div>💵 Balance on completion: $${(finalQuote - deposit).toLocaleString()}</div>
+      </div>
+      <div class="mt-6 text-xs text-slate-500">Calendar invite sent to your email. SMS reminder 1h before.</div>
+      <button class="btn btn-primary w-full mt-6" onclick="go('dashboard/overview')">📊 See it in ${t.business.owner.split(' ')[0]}'s dashboard →</button>
+    </div>
+  `;
+}
+
+/* ============================================================
+   TRADIE PHONE VIEWS
+   ============================================================ */
+function renderTradie(app, route) {
+  const t = getTrade();
+  const sub = route.split('/').slice(1).join('/') || 'inbox';
+  const screens = { 'inbox': tradieInboxScreen, 'dossier': tradieDossierScreen, 'edit': tradieEditScreen, 'sent': tradieSentScreen };
+  const screen = (screens[sub] || tradieInboxScreen)();
+  app.innerHTML = phoneFrame(`🔧 ${t.business.owner.toUpperCase()} — ${t.name_au.toLowerCase()}`, 'emerald', screen);
+}
+
+function tradieInboxScreen() {
+  const t = getTrade();
+  const status = Store.data.newLeadStatus;
+  const hasNew = status === 'submitted';
+
+  return `
+    <div class="bg-emerald-600 px-5 py-3 text-white">
+      <div class="text-xs opacity-90">WhatsApp</div>
+      <div class="font-bold">TradieCatch Bot</div>
+    </div>
+    <div class="bg-[#e5ddd5] px-3 py-4 min-h-[600px] space-y-3">
+
+      ${hasNew ? `
+        <div class="text-[10px] text-slate-500 text-center font-semibold">— TODAY —</div>
+        <div class="cursor-pointer" onclick="go('tradie/dossier')">
+          <div class="wa-bubble">
+            🚨 <strong>NEW LEAD — ${t.customer.name}</strong><br/>
+            📍 ${Store.data.newLeadDraft.suburb || t.customer.address.split(',')[1].trim().split(' ')[0]}<br/>
+            ${t.icon} <em>"${Store.data.newLeadDraft.issue_label}"</em><br/><br/>
+            ⏰ ${Store.data.newLeadDraft.urgency === 'now' ? 'TODAY' : Store.data.newLeadDraft.urgency === '24h' ? '24h' : 'This week'}<br/>
+            📸 ${(Store.data.newLeadDraft.photos || []).filter(Boolean).length} photo(s)<br/><br/>
+            💰 <strong>AI quote: $${Store.data.newLeadQuote?.aiQuote.toLocaleString()}</strong>
+            <span class="text-xs text-slate-700">(${Store.data.newLeadQuote?.confidence}% conf)</span><br/><br/>
+            👉 <span class="text-sky-700 underline font-semibold">Tap to open dossier</span>
+          </div>
+          <div class="text-[10px] text-slate-500 text-right mt-1">Just now</div>
+        </div>
+      ` : ''}
+
+      <div class="text-[10px] text-slate-500 text-center font-semibold">— EARLIER —</div>
+      ${t.sampleLeads.slice(0, 3).map(l => `
+        <div>
+          <div class="wa-bubble">${t.icon} <strong>${l.name} — ${l.suburb}</strong><br/>${l.issue}<br/>💰 ${l.price ? `$${l.price.toLocaleString()}` : '—'}</div>
+          <div class="text-[10px] text-slate-500 text-right mt-1">${l.time || 'recent'}</div>
+        </div>
+      `).join('')}
+
+      ${!hasNew ? `
+        <div class="mt-8 mx-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800">
+          💡 <strong>Demo tip:</strong> No new lead yet. Go to customer view (${t.customer.name.split(' ')[0]}) and submit the form to see a lead arrive here.
+          <button class="btn btn-warning w-full mt-3" onclick="go('client/call')">📱 Go to customer view</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function tradieDossierScreen() {
+  const t = getTrade();
+  if (Store.data.newLeadStatus !== 'submitted') {
+    return `<div class="p-5"><div class="text-sm">No new lead yet. <button onclick="go('client/call')" class="text-cyan-600 underline">Submit form first</button></div></div>`;
+  }
+  const draft = Store.data.newLeadDraft;
+  const quote = Store.data.newLeadQuote;
+  const photos = (draft.photos || []).filter(Boolean);
+
+  return `
+    <div style="background: var(--accent);" class="px-5 py-3 text-white">
+      <div class="text-xs opacity-80 cursor-pointer" onclick="go('tradie/inbox')">← Back</div>
+      <div class="font-bold text-lg">Lead — ${t.customer.name}</div>
+    </div>
+    <div class="px-5 py-4 space-y-4 pb-8">
+      <div class="bg-slate-50 rounded-xl p-3">
+        <div class="text-xs font-bold text-slate-500 mb-2">CONTACT</div>
+        <div class="text-sm font-semibold">${t.customer.name}</div>
+        <div class="text-sm">📞 ${t.customer.phone}</div>
+        <div class="text-sm">📍 ${draft.address}</div>
+      </div>
+
+      ${photos.length > 0 ? `
+        <div>
+          <div class="text-xs font-bold text-slate-500 mb-2">PHOTOS (${photos.length})</div>
+          <div class="grid grid-cols-${Math.min(photos.length, 3)} gap-2">
+            ${photos.map(() => `<div class="photo" style="background: linear-gradient(135deg, ${getPhotoColor(draft.issue_type)});">${getPhotoIcon(draft.issue_type)}</div>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="bg-slate-50 rounded-xl p-3">
+        <div class="text-xs font-bold text-slate-500 mb-1">DESCRIPTION</div>
+        <div class="text-sm italic">"${draft.description || draft.issue_label}"</div>
+      </div>
+
+      <div class="bg-slate-50 rounded-xl p-3 grid grid-cols-2 gap-2 text-xs">
+        <div><div class="font-bold text-slate-500">URGENCY</div><div>${draft.urgency === 'now' ? '🔥 Today' : draft.urgency === '24h' ? '⏰ 24h' : '📅 This week'}</div></div>
+        <div><div class="font-bold text-slate-500">AVAILABLE</div><div>${(draft.availability || []).join(', ')}</div></div>
+      </div>
+
+      <div class="border-2 rounded-xl p-4" style="border-color: var(--accent); background: rgba(14,165,233,.05);">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-xs font-bold" style="color: var(--accent-dark);">🤖 AI ANALYSIS</div>
+          <span class="pill" style="background: rgba(14,165,233,.15); color: var(--accent-dark);">${quote.confidence}% confidence</span>
+        </div>
+        <div class="text-sm font-semibold mb-1">${quote.label}</div>
+        <div class="text-3xl font-extrabold mb-3" style="color: var(--accent-dark);">$${quote.aiQuote.toLocaleString()}</div>
+        <div class="text-xs font-bold text-slate-500 mb-1">WHY THIS PRICE?</div>
+        <ul class="text-xs space-y-1 text-slate-700 mb-3">
+          ${quote.breakdown.map(b => `<li>• ${b.label}: <strong>$${b.amount.toLocaleString()}</strong></li>`).join('')}
+        </ul>
+        ${quote.note ? `<div class="bg-amber-100 text-amber-900 rounded-lg p-2 text-xs">⚠️ <strong>Note:</strong> ${quote.note}</div>` : ''}
+      </div>
+
+      <div class="space-y-2">
+        <button class="btn btn-success w-full" onclick="validateQuote()">✅ Validate & send to client</button>
+        <button class="btn btn-warning w-full" onclick="go('tradie/edit')">✏️ Adjust quote (teach AI)</button>
+        <button class="w-full btn btn-ghost" onclick="alert('Demo: would mark as refused')">❌ Refuse this lead</button>
+      </div>
+    </div>
+  `;
+}
+
+function validateQuote() {
+  Store.data.newLeadFinalQuote = Store.data.newLeadQuote.aiQuote;
+  Store.data.newLeadStatus = 'quoted';
+  Store.save();
+  showToast("✅ Quote sent to customer");
+  setTimeout(() => go('tradie/sent'), 500);
+}
+
+function tradieEditScreen() {
+  const t = getTrade();
+  const quote = Store.data.newLeadQuote;
+  return `
+    <div class="bg-amber-500 px-5 py-3 text-white">
+      <div class="text-xs opacity-90 cursor-pointer" onclick="go('tradie/dossier')">← Back to dossier</div>
+      <div class="font-bold text-lg">Adjust quote</div>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <div class="text-xs text-slate-500">AI suggested: <span class="line-through">$${quote.aiQuote.toLocaleString()}</span></div>
+      <div>
+        <label class="text-xs font-bold text-slate-600">YOUR FINAL PRICE</label>
+        <div class="flex items-center border-2 border-amber-400 rounded-xl px-3 py-3 mt-1">
+          <span class="text-2xl font-bold text-slate-500">$</span>
+          <input id="edit-price" type="number" class="flex-1 outline-none text-2xl font-bold ml-2" value="${quote.aiQuote}" />
+        </div>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+        <div class="text-xs font-bold text-amber-800 mb-1">📣 WHY ARE YOU CHANGING IT?</div>
+        <div class="text-xs text-amber-700 mb-2">Your AI will learn from this. Be specific about pricing rules, supplier costs, time estimates etc.</div>
+        <textarea id="edit-feedback" class="input text-sm" rows="4" placeholder="e.g. 'For ${t.name_au.toLowerCase()} jobs in this area I always add an extra hour because of access issues'"></textarea>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs">
+        <div class="font-bold text-emerald-800 mb-1">🧠 The AI will extract rules from your feedback</div>
+        <div class="text-emerald-700">It'll be added to your AI memory for future quotes.</div>
+      </div>
+      <button class="btn btn-success w-full" onclick="saveEdit()">💾 Save & send to client</button>
+    </div>
+  `;
+}
+
+function saveEdit() {
+  const newPrice = parseInt(document.getElementById('edit-price').value);
+  const feedback = document.getElementById('edit-feedback').value;
+  if (!newPrice) { showToast("Enter a price"); return; }
+  Store.data.newLeadFinalQuote = newPrice;
+  Store.data.newLeadFeedback = feedback;
+  Store.data.newLeadStatus = 'quoted';
+  if (feedback && feedback.trim().length > 10) {
+    const summary = feedback.length > 60 ? feedback.substring(0, 60) + '...' : feedback;
+    const t = getTrade();
+    if (!t.aiMemory.pricing.some(r => r.includes('NEW:'))) {
+      TRADES[Store.data.currentTrade].aiMemory.pricing.unshift(`✨ NEW: ${summary}`);
+    }
+  }
+  Store.save();
+  showToast("✅ Quote sent + AI updated");
+  setTimeout(() => go('tradie/sent'), 600);
+}
+
+function tradieSentScreen() {
+  const t = getTrade();
+  const finalQuote = Store.data.newLeadFinalQuote;
+  const slot = (Store.data.newLeadDraft.availability && Store.data.newLeadDraft.availability[0]) || 'Tomorrow AM';
+  return `
+    <div class="text-center pt-12 px-5">
+      <div class="w-20 h-20 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-5">
+        <svg class="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div class="text-xl font-bold mb-1">Quote sent to ${t.customer.name.split(' ')[0]}</div>
+      <div class="text-sm text-slate-500 mb-5">Waiting for confirmation</div>
+      <div class="mx-1 bg-slate-50 rounded-xl p-4 text-left text-sm space-y-1">
+        <div>📅 ${slot}</div>
+        <div>💰 $${finalQuote.toLocaleString()}</div>
+        <div>📍 ${Store.data.newLeadDraft.address}</div>
+      </div>
+      ${Store.data.newLeadFeedback ? `
+        <div class="mt-4 mx-1 bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-left text-xs">
+          <div class="font-bold text-emerald-800 mb-1">🧠 AI just learned:</div>
+          <div class="text-emerald-700 italic">"${Store.data.newLeadFeedback}"</div>
+        </div>
+      ` : ''}
+      <div class="mt-6 grid grid-cols-2 gap-2">
+        <button class="btn btn-ghost text-sm" onclick="go('client/quote-received')">📱 See client view</button>
+        <button class="btn btn-primary text-sm" onclick="go('dashboard/overview')">📊 Dashboard</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard(app, route) {
+  const t = getTrade();
+  const parts = route.split('/');
+  const page = parts[1] || 'overview';
+  const newLeadActive = Store.data.newLeadStatus !== 'idle';
+  const monthlyRev = t.monthlyRev + (Store.data.newLeadFinalQuote || 0);
+
+  const titles = { overview: 'Overview', leads: 'Leads pipeline', calendar: 'Calendar', ai: 'AI Memory', pricing: 'Pricing rules', referrals: 'Referrals 🎁', settings: 'Settings' };
+
+  app.innerHTML = `
+    <div style="background:#f6f7f9; min-height:100vh; color:#0b1220;" class="anim-fade">
+      <div class="flex">
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col p-4 sticky top-0 h-screen">
+          <div class="flex items-center gap-2 px-2 py-3 mb-2">
+            <div class="w-9 h-9 rounded-xl ${t.iconBg} flex items-center justify-center text-lg">${t.icon}</div>
+            <div>
+              <div class="font-extrabold text-base leading-none">TradieCatch</div>
+              <div class="text-[10px] font-semibold mt-0.5" style="color: var(--accent);">${t.name.toUpperCase()} • PRO</div>
+            </div>
+          </div>
+
+          <nav class="space-y-1 mt-2">
+            ${[
+              ['overview','📊','Overview'],
+              ['leads','📥','Leads'],
+              ['calendar','📅','Calendar'],
+              ['ai','🧠','AI Memory'],
+              ['pricing','💰','Pricing'],
+              ['referrals','🎁','Referrals'],
+              ['settings','⚙️','Settings']
+            ].map(([id, icon, name]) => `
+              <div class="nav-item ${page === id ? 'active' : ''}" onclick="go('dashboard/${id}')">
+                <span>${icon}</span><span>${name}</span>
+                ${id === 'leads' && newLeadActive ? `<span class="ml-auto pill bg-rose-100 text-rose-700">1 new</span>` : ''}
+                ${id === 'referrals' ? `<span class="ml-auto pill bg-emerald-100 text-emerald-700">+$${Store.data.referralEarnings}</span>` : ''}
+              </div>
+            `).join('')}
+          </nav>
+
+          <div class="mt-auto">
+            <div class="card p-3 mb-3" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color:#fff; border:none;">
+              <div class="text-xs font-semibold opacity-80 mb-1">THIS MONTH</div>
+              <div class="text-2xl font-extrabold">$${monthlyRev.toLocaleString()}</div>
+              <div class="text-xs opacity-90">recovered</div>
+            </div>
+            <div class="flex items-center gap-2 px-2 py-2 hover:bg-slate-100 rounded-lg cursor-pointer">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white" style="background: var(--accent);">${t.business.owner.split(' ').map(s => s[0]).join('')}</div>
+              <div class="flex-1">
+                <div class="text-sm font-semibold leading-none">${t.business.owner}</div>
+                <div class="text-[11px] text-slate-500 mt-1">${t.business.name}</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="flex-1 min-w-0">
+          <div style="backdrop-filter: blur(10px); background: rgba(255,255,255,.85);" class="sticky top-0 z-10 px-8 py-4 border-b border-slate-200 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500">G'day, ${t.business.owner.split(' ')[0]} 👋</div>
+              <h1 class="text-2xl font-extrabold tracking-tight">${titles[page]}</h1>
+            </div>
+            <div class="flex items-center gap-3">
+              <button class="px-3 py-2 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50" onclick="go('client/call')">📞 Test missed call</button>
+              <div class="relative">
+                <button class="w-10 h-10 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center">🔔</button>
+                ${newLeadActive ? `<div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">1</div>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <div class="px-8 py-6">${dashPage(page)}</div>
+        </main>
+      </div>
+    </div>
+  `;
+}
+
+function dashPage(page) {
+  const fns = { overview: dashOverview, leads: dashLeads, calendar: dashCalendar, ai: dashAI, pricing: dashPricing, referrals: dashReferrals, settings: dashSettings };
+  return (fns[page] || dashOverview)();
+}
+
+function dashOverview() {
+  const t = getTrade();
+  const newLeadActive = Store.data.newLeadStatus !== 'idle';
+  const monthlyRev = t.monthlyRev + (Store.data.newLeadFinalQuote || 0);
+  const baseLeads = t.sampleLeads.length;
+  const leadsThis = baseLeads + (newLeadActive ? 1 : 0);
+
+  const newAlert = newLeadActive ? `
+    <div class="card p-4 mb-5" style="border:2px solid #10b981; background: linear-gradient(135deg, #ecfdf5, #d1fae5);">
+      <div class="flex items-center gap-3">
+        <div class="text-2xl">🎉</div>
+        <div class="flex-1">
+          <div class="font-bold text-emerald-900">New lead just came in!</div>
+          <div class="text-sm text-emerald-700">${t.customer.name} — ${Store.data.newLeadDraft.suburb} • ${Store.data.newLeadDraft.issue_label}</div>
+        </div>
+        <button class="btn btn-success text-sm" onclick="go('tradie/dossier')">Open dossier →</button>
+      </div>
+    </div>
+  ` : '';
+
+  const todayJobs = t.sampleLeads.filter(l => l.status === 'in_progress' || l.status === 'booked').slice(0, 4);
+
+  return `
+    ${newAlert}
+
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-2">RECOVERED THIS MONTH</div>
+        <div class="flex items-end gap-2"><div class="text-3xl font-extrabold">$${monthlyRev.toLocaleString()}</div><div class="text-xs text-emerald-600 font-semibold pb-1">↑ 28%</div></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-2">LEADS CAPTURED</div>
+        <div class="flex items-end gap-2"><div class="text-3xl font-extrabold">${leadsThis * 3 + 8}</div><div class="text-xs text-emerald-600 font-semibold pb-1">↑ 18%</div></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-2">CONVERSION RATE</div>
+        <div class="flex items-end gap-2"><div class="text-3xl font-extrabold">86%</div><div class="text-xs text-emerald-600 font-semibold pb-1">↑ 5pts</div></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-2">AI ACCURACY</div>
+        <div class="flex items-end gap-2"><div class="text-3xl font-extrabold">87%</div><div class="text-xs text-emerald-600 font-semibold pb-1">↑ 8pts</div></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="card p-5 col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div><div class="text-xs font-bold text-slate-500">TODAY</div><div class="text-lg font-bold">Tuesday, 11 May 2026</div></div>
+        </div>
+        <div class="space-y-3">
+          ${todayJobs.map((l, i) => `
+            <div class="flex items-center gap-3 p-3 ${i === 0 ? 'bg-emerald-50 border border-emerald-100' : 'bg-white border border-slate-200'} rounded-xl">
+              <div class="text-center px-3 py-1 ${i === 0 ? 'bg-white' : 'bg-slate-100'} rounded-lg">
+                <div class="text-[10px] font-bold text-slate-500">${l.time || `${8 + i*2}:00 AM`}</div>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-sm">${l.issue} — ${l.name}</div>
+                <div class="text-xs text-slate-500">📍 ${l.suburb} • $${l.price.toLocaleString()}</div>
+              </div>
+              <span class="pill ${i === 0 ? 'bg-emerald-100 text-emerald-700' : i === 1 ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-700'}">${i === 0 ? 'In progress' : i === 1 ? 'Next' : 'Confirmed'}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="card p-5" style="background: linear-gradient(135deg, #0f172a, #1e293b); color:#fff; border:none;">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-xs font-bold text-cyan-300">🧠 AI INSIGHTS</div>
+          <span class="pill bg-emerald-500/20 text-emerald-300">87% accurate</span>
+        </div>
+        <div class="text-sm leading-relaxed space-y-3">
+          <div>
+            <div class="text-amber-300 text-xs font-bold mb-1">💡 SUGGESTION</div>
+            ${getInsight(t)}
+          </div>
+          <div class="border-t border-slate-700 pt-3">
+            <div class="text-amber-300 text-xs font-bold mb-1">📈 TREND</div>
+            ${t.business.suburb} area is your best zone — 12 leads this month.
+          </div>
+          <div class="border-t border-slate-700 pt-3">
+            <div class="text-amber-300 text-xs font-bold mb-1">⚠️ HEADS UP</div>
+            ${getWarning(t)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div class="card p-5 col-span-2">
+        <div class="text-xs font-bold text-slate-500 mb-1">$ RECOVERED — LAST 30 DAYS</div>
+        <div class="text-2xl font-extrabold mb-4">$${monthlyRev.toLocaleString()} <span class="text-xs text-emerald-600 font-semibold">↑ 28%</span></div>
+        <div class="flex items-end gap-1 h-40">
+          ${Array.from({length: 30}, (_, i) => {
+            const v = 30 + Math.sin(i / 3) * 25 + (i / 30) * 50;
+            const last = i === 29;
+            return `<div class="flex-1 bar" style="height:${Math.min(95, v)}%${last ? '; background: linear-gradient(180deg, #10b981, #047857);' : ''}"></div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-3">REFERRAL EARNINGS 🎁</div>
+        <div class="text-3xl font-extrabold text-emerald-600 mb-1">$${Store.data.referralEarnings}</div>
+        <div class="text-xs text-slate-500 mb-4">earned this year</div>
+        <div class="text-sm mb-3">${Store.data.referralCount} mates signed up. <strong>1 more</strong> to unlock $200 cash bonus!</div>
+        <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
+          <div class="h-2 bg-emerald-500 rounded-full" style="width:${(Store.data.referralCount/3)*100}%"></div>
+        </div>
+        <button class="btn btn-success w-full text-sm" onclick="go('dashboard/referrals')">🎁 Refer a mate →</button>
+      </div>
+    </div>
+  `;
+}
+
+function getInsight(t) {
+  const insights = {
+    plumber: 'You quoted 4 hot water jobs above $2,400 last week. Want to update default?',
+    hvac: 'Summer is here — 8 split installs this month. Stock up on Daikin Cora 5kW.',
+    sparky: 'Switchboard upgrades up 40% this month. Block more Tuesdays for them.',
+    pool: 'Green pool jobs trending — quote 4 in last 3 days. Stock chemicals.'
+  };
+  return insights[t.slug];
+}
+
+function getWarning(t) {
+  const warnings = {
+    plumber: 'Reece Logan low on Rinnai 26 stock. Order before weekend rush.',
+    hvac: 'Beijer Ref running low on Daikin units. Order ASAP for summer demand.',
+    sparky: 'MM Electrical CBD: Hager kit price up 8% this month.',
+    pool: 'Mr Pool Man Burleigh: Hayward salt cells low. Stock 5+.'
+  };
+  return warnings[t.slug];
+}
+
+function dashLeads() {
+  const t = getTrade();
+  const newLeadActive = Store.data.newLeadStatus !== 'idle';
+  const newCard = newLeadActive ? `
+    <div class="lead-card new" onclick="go('tradie/dossier')">
+      <div class="flex items-start justify-between mb-2">
+        <div class="font-semibold text-sm">${t.customer.name}</div>
+        <span class="pill bg-emerald-100 text-emerald-700">JUST NOW</span>
+      </div>
+      <div class="text-xs text-slate-500 mb-2">📍 ${Store.data.newLeadDraft.suburb} • ${Store.data.newLeadDraft.issue_label}</div>
+      ${(Store.data.newLeadDraft.photos || []).filter(Boolean).length > 0 ? `
+        <div class="flex gap-1 mb-2">
+          ${(Store.data.newLeadDraft.photos || []).filter(Boolean).slice(0,3).map(() => `<div class="photo w-10" style="background: linear-gradient(135deg, ${getPhotoColor(Store.data.newLeadDraft.issue_type)});">${getPhotoIcon(Store.data.newLeadDraft.issue_type)}</div>`).join('')}
+        </div>
+      ` : ''}
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-bold" style="color: var(--accent-dark);">$${Store.data.newLeadQuote?.aiQuote.toLocaleString()} (AI)</div>
+        <div class="text-xs text-slate-400">Just now</div>
+      </div>
+    </div>
+  ` : '';
+
+  const newLeads = t.sampleLeads.filter(l => l.status === 'new');
+  const quoted = t.sampleLeads.filter(l => l.status === 'quoted');
+  const booked = t.sampleLeads.filter(l => l.status === 'booked');
+  const completed = t.sampleLeads.filter(l => l.status === 'completed');
+
+  const renderLead = (l, color) => `
+    <div class="lead-card" style="border-left:4px solid ${color};">
+      <div class="font-semibold text-sm mb-1">${l.name}</div>
+      <div class="text-xs text-slate-500 mb-2">📍 ${l.suburb} • ${l.issue}</div>
+      ${l.time ? `<div class="text-xs text-slate-600 font-semibold mb-2">${l.time}</div>` : ''}
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-bold">$${l.price.toLocaleString()}</div>
+        ${l.deposit ? '<span class="pill bg-emerald-100 text-emerald-700">Deposit ✓</span>' : ''}
+      </div>
+    </div>
+  `;
+
+  return `
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <input type="text" placeholder="🔍 Search leads..." class="px-4 py-2 rounded-lg border border-slate-200 text-sm w-64 bg-white" />
+      </div>
+      <button class="px-4 py-2 text-sm font-semibold rounded-lg text-white" style="background: var(--accent);">+ Manual lead</button>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4">
+      <div>
+        <div class="font-bold text-sm flex items-center gap-2 mb-3">
+          <span style="width:8px;height:8px;border-radius:999px;background:#ef4444;"></span>
+          NEW <span class="text-slate-400 font-normal">(${newLeads.length + (newLeadActive ? 1 : 0)})</span>
+        </div>
+        <div class="space-y-3">${newCard}${newLeads.map(l => renderLead(l, '#ef4444')).join('')}</div>
+      </div>
+      <div>
+        <div class="font-bold text-sm flex items-center gap-2 mb-3">
+          <span style="width:8px;height:8px;border-radius:999px;background:#f59e0b;"></span>
+          QUOTED <span class="text-slate-400 font-normal">(${quoted.length + (Store.data.newLeadStatus === 'quoted' ? 1 : 0)})</span>
+        </div>
+        <div class="space-y-3">
+          ${Store.data.newLeadStatus === 'quoted' ? `
+            <div class="lead-card" style="border-left:4px solid #f59e0b;">
+              <div class="font-semibold text-sm mb-2">${t.customer.name}</div>
+              <div class="text-xs text-slate-500 mb-2">📍 ${Store.data.newLeadDraft.suburb} • ${Store.data.newLeadDraft.issue_label}</div>
+              <div class="text-xs text-slate-600 mb-2">⏳ Waiting for confirmation</div>
+              <div class="text-xs font-bold">$${Store.data.newLeadFinalQuote.toLocaleString()}</div>
+            </div>
+          ` : ''}
+          ${quoted.map(l => renderLead(l, '#f59e0b')).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="font-bold text-sm flex items-center gap-2 mb-3">
+          <span style="width:8px;height:8px;border-radius:999px;background:var(--accent);"></span>
+          BOOKED <span class="text-slate-400 font-normal">(${booked.length + (Store.data.newLeadStatus === 'paid' ? 1 : 0)})</span>
+        </div>
+        <div class="space-y-3">
+          ${Store.data.newLeadStatus === 'paid' ? `
+            <div class="lead-card new" style="border-left:4px solid var(--accent);">
+              <div class="font-semibold text-sm mb-1">${t.customer.name}</div>
+              <div class="text-xs text-slate-500 mb-2">📍 ${Store.data.newLeadDraft.suburb} • ${Store.data.newLeadDraft.issue_label}</div>
+              <div class="text-xs text-emerald-700 font-semibold mb-2">📅 ${(Store.data.newLeadDraft.availability || ['Tomorrow'])[0]}</div>
+              <div class="flex items-center justify-between"><div class="text-xs font-bold">$${Store.data.newLeadFinalQuote.toLocaleString()}</div><span class="pill bg-emerald-100 text-emerald-700">Deposit ✓</span></div>
+            </div>
+          ` : ''}
+          ${booked.map(l => renderLead(l, '#0ea5e9')).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="font-bold text-sm flex items-center gap-2 mb-3">
+          <span style="width:8px;height:8px;border-radius:999px;background:#10b981;"></span>
+          COMPLETED
+        </div>
+        <div class="space-y-3">
+          ${completed.map(l => `
+            <div class="lead-card opacity-90" style="border-left:4px solid #10b981;">
+              <div class="font-semibold text-sm mb-1">${l.name}</div>
+              <div class="text-xs text-slate-500 mb-2">📍 ${l.suburb}</div>
+              <div class="text-xs font-bold text-emerald-700">$${l.price.toLocaleString()} • Paid ✓</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function dashCalendar() {
+  const t = getTrade();
+  return `
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div><div class="text-xs font-bold text-slate-500">WEEK OF</div><div class="text-lg font-bold">May 11 — May 17, 2026</div></div>
+        <span class="text-xs text-slate-400">Synced with Google Calendar ✓</span>
+      </div>
+      <div class="grid grid-cols-7 gap-2 text-center">
+        ${['MON','TUE','WED','THU','FRI','SAT','SUN'].map((d, i) => `<div class="text-xs font-bold text-slate-500 pb-2">${d} ${11+i}</div>`).join('')}
+      </div>
+      <div class="grid grid-cols-7 gap-2 min-h-[400px]">
+        ${[0,1,2,3,4,5,6].map(d => {
+          const isToday = d === 1;
+          const isWeekend = d >= 5;
+          return `
+            <div class="border ${isToday ? 'border-2' : 'border-slate-100'} rounded-lg p-2 space-y-1 ${isWeekend ? 'bg-slate-50/30' : ''}" ${isToday ? 'style="border-color:var(--accent); background:rgba(14,165,233,.05)"' : ''}>
+              ${isWeekend ? '<div class="text-[10px] text-slate-400 text-center mt-2">Off</div>' :
+                t.sampleLeads.slice(d*2, d*2+3).map(l => `
+                  <div class="text-[10px] ${l.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'} rounded p-1">${l.time?.split(' ')[0] || '9:00'} — ${l.issue.substring(0,15)}</div>
+                `).join('')
+              }
+              ${isToday && Store.data.newLeadStatus === 'paid' ? `<div class="text-[10px] bg-amber-200 text-amber-800 rounded p-1 font-bold">NEW: ${t.customer.name.split(' ')[0]}</div>` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="mt-5 pt-5 border-t border-slate-100 grid grid-cols-4 gap-3 text-sm">
+        <div><div class="text-2xl font-bold">${t.sampleLeads.length}</div><div class="text-xs text-slate-500">jobs this week</div></div>
+        <div><div class="text-2xl font-bold">38h</div><div class="text-xs text-slate-500">scheduled</div></div>
+        <div><div class="text-2xl font-bold">$${(t.monthlyRev * 0.3 + (Store.data.newLeadFinalQuote || 0)).toLocaleString().split('.')[0]}</div><div class="text-xs text-slate-500">expected revenue</div></div>
+        <div><div class="text-2xl font-bold">3</div><div class="text-xs text-slate-500">slots open</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function dashAI() {
+  const t = getTrade();
+  const r = t.aiMemory;
+  const total = r.pricing.length + r.timing.length + r.suppliers.length + r.preferences.length;
+  return `
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="card p-5"><div class="text-xs font-bold text-slate-500 mb-2">RULES LEARNED</div><div class="text-3xl font-extrabold">${total}</div></div>
+      <div class="card p-5"><div class="text-xs font-bold text-slate-500 mb-2">QUOTE ACCURACY</div><div class="text-3xl font-extrabold text-emerald-600">87%</div></div>
+      <div class="card p-5"><div class="text-xs font-bold text-slate-500 mb-2">AVG ADJUSTMENT</div><div class="text-3xl font-extrabold">-$32</div></div>
+    </div>
+
+    <div class="card p-6 mb-6">
+      <div class="text-xs font-bold text-slate-500 mb-1">ACCURACY OVER TIME</div>
+      <div class="text-lg font-bold mb-4">Your AI is steadily learning</div>
+      <div class="flex items-end gap-3 h-44">
+        ${[{l:'M1',v:48},{l:'M2',v:65},{l:'M3',v:79},{l:'Now',v:87,green:true},{l:'Target',v:95,muted:true}].map(b => `
+          <div class="flex-1 flex flex-col items-center justify-end">
+            <div class="bar w-full" style="height:${b.v}%${b.green ? '; background: linear-gradient(180deg,#10b981,#047857);' : b.muted ? '; background: linear-gradient(180deg,#cbd5e1,#94a3b8); opacity:.4;' : ''}"></div>
+            <div class="text-[10px] text-slate-400 mt-1">${b.l}</div>
+            <div class="text-[10px] font-bold ${b.green ? 'text-emerald-700' : ''}">${b.v}%</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      ${[
+        ['💰', 'Pricing rules', r.pricing],
+        ['⏱️', 'Time estimates', r.timing],
+        ['🛒', 'Supplier prices', r.suppliers],
+        ['🚫', 'Job preferences', r.preferences]
+      ].map(([icon, name, rules]) => `
+        <div class="card p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">${icon}</span>
+            <div class="font-bold">${name}</div>
+            <span class="ml-auto pill bg-slate-100 text-slate-600">${rules.length}</span>
+          </div>
+          <div class="space-y-2 text-sm">
+            ${rules.map(rule => `
+              <div class="flex items-start gap-2 p-2 ${rule.startsWith('✨') ? 'bg-emerald-50 border border-emerald-200' : 'bg-slate-50'} rounded-lg">
+                <span class="${rule.startsWith('Refuse') || rule.startsWith('Avoid') ? 'text-rose-600' : 'text-emerald-600'} mt-0.5">${rule.startsWith('Refuse') || rule.startsWith('Avoid') ? '✗' : '✓'}</span>
+                <div class="flex-1 text-xs">${rule}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function dashPricing() {
+  const t = getTrade();
+  const p = t.pricing;
+  return `
+    <div class="card p-6 mb-4">
+      <div class="text-xs font-bold text-slate-500 mb-1">BASE RATES</div>
+      <div class="text-lg font-bold mb-4">Your default pricing — ${t.name}</div>
+      <div class="grid grid-cols-3 gap-4">
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">CALLOUT FEE</label><div class="flex items-center border border-slate-200 rounded-lg px-3 py-2 bg-white"><span class="text-slate-400 text-sm">$</span><input class="flex-1 outline-none text-sm font-semibold" value="${p.callout}" /></div></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">HOURLY RATE</label><div class="flex items-center border border-slate-200 rounded-lg px-3 py-2 bg-white"><span class="text-slate-400 text-sm">$</span><input class="flex-1 outline-none text-sm font-semibold" value="${p.hourly}" /></div></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">WEEKEND</label><div class="flex items-center border border-slate-200 rounded-lg px-3 py-2 bg-white"><input class="flex-1 outline-none text-sm font-semibold" value="${p.weekend_pct}" /><span class="text-slate-400 text-xs">% extra</span></div></div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div><div class="text-xs font-bold text-slate-500">JOB CATALOG</div><div class="text-lg font-bold">Common ${t.name.toLowerCase()} jobs</div></div>
+        <button class="px-3 py-2 text-sm font-semibold rounded-lg text-white" style="background: var(--accent);">+ Add job</button>
+      </div>
+      <table class="w-full text-sm">
+        <thead><tr class="text-xs text-slate-500 border-b border-slate-200"><th class="text-left py-2">JOB TYPE</th><th class="text-left">PRICE</th><th class="text-left">TIME</th><th class="text-left">TYPE</th></tr></thead>
+        <tbody class="divide-y divide-slate-100">
+          ${p.catalog.map(j => `
+            <tr><td class="py-3 font-semibold">${j.name}</td><td>${j.price}</td><td>${j.time}</td><td><span class="pill ${j.type === 'Fixed' ? 'bg-cyan-100 text-cyan-700' : 'bg-amber-100 text-amber-700'}">${j.type}</span></td></tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ============================================================
+   REFERRALS PAGE — the new one
+   ============================================================ */
+function dashReferrals() {
+  const t = getTrade();
+  const refCode = `${t.business.owner.replace(/[^A-Z]/gi, '').substring(0,4).toUpperCase()}${Math.floor(Math.random() * 9000 + 1000)}`;
+  const link = `tradiecatch.com.au/r/${refCode}`;
+  const count = Store.data.referralCount;
+  const earnings = Store.data.referralEarnings;
+
+  const tiers = [
+    { count: 1, reward: '1 free month', value: '$497', unlocked: count >= 1 },
+    { count: 3, reward: '3 free months + $200 cash', value: '$1,691', unlocked: count >= 3 },
+    { count: 5, reward: '6 free months + $500 cash + VIP support', value: '$3,482', unlocked: count >= 5 },
+    { count: 10, reward: 'Lifetime 20% off + $1,500 cash', value: '$5,000+', unlocked: count >= 10 }
+  ];
+
+  return `
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="card p-6 col-span-2" style="background: linear-gradient(135deg, #064e3b, #047857); color:#fff; border:none;">
+        <div class="text-xs font-bold text-emerald-200 mb-2">🎁 REFER A MATE PROGRAM</div>
+        <div class="text-3xl font-extrabold mb-2">Refer a tradie. Get free months + cash.</div>
+        <p class="text-emerald-100 text-sm mb-4">Every mate you refer who signs up = you get rewarded. They get $200 off setup as a thank-you.</p>
+
+        <div class="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/10">
+          <div class="text-xs font-bold text-emerald-200 mb-2">YOUR UNIQUE LINK</div>
+          <div class="flex items-center gap-2 mb-3">
+            <input class="flex-1 px-3 py-2 rounded-lg bg-white/10 text-white text-sm font-mono border border-white/20" value="${link}" id="ref-link" readonly />
+            <button class="px-4 py-2 rounded-lg bg-white text-emerald-700 font-bold text-sm" onclick="copyRefLink()">Copy</button>
+          </div>
+          <div class="grid grid-cols-4 gap-2">
+            <button class="py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold" onclick="shareRef('whatsapp')">📱 WhatsApp</button>
+            <button class="py-2 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold" onclick="shareRef('sms')">💬 SMS</button>
+            <button class="py-2 rounded-lg bg-purple-500 hover:bg-purple-400 text-white text-sm font-semibold" onclick="shareRef('email')">✉️ Email</button>
+            <button class="py-2 rounded-lg bg-slate-600 hover:bg-slate-500 text-white text-sm font-semibold" onclick="showReferralLanding()">👁️ Preview</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-2">YOUR EARNINGS</div>
+        <div class="text-4xl font-extrabold text-emerald-600 mb-2">$${earnings.toLocaleString()}</div>
+        <div class="text-xs text-slate-500 mb-4">earned this year via referrals</div>
+        <div class="border-t border-slate-100 pt-4">
+          <div class="flex items-baseline justify-between mb-1">
+            <div class="text-xs text-slate-500">Mates signed up</div>
+            <div class="text-2xl font-bold">${count}</div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <div class="text-xs text-slate-500">Pending</div>
+            <div class="text-lg font-semibold text-amber-600">${Store.data.referrals.filter(r => r.status !== 'signed').length}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6 mb-4">
+      <div class="text-xs font-bold text-slate-500 mb-1">REWARD TIERS</div>
+      <div class="text-lg font-bold mb-5">Climb the ladder, earn more</div>
+
+      <div class="space-y-3">
+        ${tiers.map((tier, i) => {
+          const progress = Math.min(100, (count / tier.count) * 100);
+          return `
+            <div class="border ${tier.unlocked ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white'} rounded-xl p-4">
+              <div class="flex items-center gap-4">
+                <div class="progress-step ${tier.unlocked ? 'done' : count >= tier.count - 1 ? 'active' : ''}">${tier.unlocked ? '✓' : tier.count}</div>
+                <div class="flex-1">
+                  <div class="flex items-baseline justify-between mb-1">
+                    <div class="font-bold ${tier.unlocked ? 'text-emerald-800' : ''}">${tier.count} mate${tier.count > 1 ? 's' : ''} → ${tier.reward}</div>
+                    <div class="text-sm text-slate-500">Value: <strong class="${tier.unlocked ? 'text-emerald-700' : 'text-slate-700'}">${tier.value}</strong></div>
+                  </div>
+                  <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-2 ${tier.unlocked ? 'bg-emerald-500' : 'bg-amber-400'} rounded-full transition-all" style="width:${progress}%"></div>
+                  </div>
+                  <div class="text-xs text-slate-500 mt-1">${tier.unlocked ? '✅ Unlocked!' : `${tier.count - count} more to go`}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-4">
+      <div class="card p-5 col-span-2">
+        <div class="text-xs font-bold text-slate-500 mb-1">YOUR REFERRALS</div>
+        <div class="text-lg font-bold mb-4">Mates you've referred</div>
+        <table class="w-full text-sm">
+          <thead><tr class="text-xs text-slate-500 border-b border-slate-200"><th class="text-left py-2">NAME</th><th class="text-left">BUSINESS</th><th class="text-left">DATE</th><th class="text-left">STATUS</th><th class="text-right">REWARD</th></tr></thead>
+          <tbody class="divide-y divide-slate-100">
+            ${Store.data.referrals.map(r => `
+              <tr>
+                <td class="py-3 font-semibold">${r.name}</td>
+                <td class="text-xs text-slate-600">${r.business} • ${r.suburb}</td>
+                <td class="text-xs text-slate-500">${r.date}</td>
+                <td><span class="pill ${r.status === 'signed' ? 'bg-emerald-100 text-emerald-700' : r.status === 'demo' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}">${r.status === 'signed' ? '✓ Signed up' : r.status === 'demo' ? '📅 Demo booked' : '⏳ Pending'}</span></td>
+                <td class="text-right text-xs font-semibold ${r.reward === 'pending' ? 'text-slate-400' : 'text-emerald-600'}">${r.reward === 'pending' ? '—' : r.reward}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card p-5">
+        <div class="text-xs font-bold text-slate-500 mb-3">📋 SHARE TEMPLATES</div>
+        <div class="text-xs text-slate-500 mb-3">Copy-paste ready messages</div>
+
+        <div class="space-y-3">
+          <div>
+            <div class="text-xs font-bold text-slate-700 mb-1">Quick WhatsApp</div>
+            <div class="bg-slate-50 rounded-lg p-2 text-xs leading-relaxed mb-1">Mate, you using TradieCatch? It catches every missed call and books the customer for you. I've recovered $8k this month. $200 off setup if you sign up via this link: ${link}</div>
+            <button class="text-xs text-emerald-600 font-semibold" onclick="navigator.clipboard.writeText('Mate, you using TradieCatch? It catches every missed call and books the customer for you. I have recovered \\$8k this month. \\$200 off setup if you sign up via this link: ${link}'); showToast('Copied!')">Copy</button>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-700 mb-1">Trade event pitch</div>
+            <div class="bg-slate-50 rounded-lg p-2 text-xs leading-relaxed mb-1">G'day mate — quick one. Stop losing missed calls. TradieCatch books em automatically. Scan this QR or hit ${link} → $200 off setup.</div>
+            <button class="text-xs text-emerald-600 font-semibold" onclick="showToast('Copied!')">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6 text-center" style="background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color:#fed7aa;">
+      <div class="text-xs font-bold text-orange-700 mb-2">🏆 LEADERBOARD — QLD THIS MONTH</div>
+      <div class="text-2xl font-extrabold text-orange-900 mb-3">You're #4 in Queensland 🥉</div>
+      <div class="grid grid-cols-5 gap-3 max-w-2xl mx-auto">
+        ${[
+          {pos:1, name:'Jake R.', biz:'Plumber Brisbane', count:8},
+          {pos:2, name:'Sam T.', biz:'Sparky GC', count:6},
+          {pos:3, name:'Mike L.', biz:'HVAC Brisbane', count:4},
+          {pos:4, name:'YOU', biz:t.business.name, count:2, you:true},
+          {pos:5, name:'Tom B.', biz:'Pool guy GC', count:2}
+        ].map(p => `
+          <div class="${p.you ? 'bg-orange-200 ring-2 ring-orange-500' : 'bg-white'} rounded-lg p-3">
+            <div class="text-xl font-extrabold ${p.you ? 'text-orange-900' : 'text-slate-700'}">#${p.pos}</div>
+            <div class="text-xs font-bold ${p.you ? 'text-orange-900' : ''}">${p.name}</div>
+            <div class="text-[10px] text-slate-600">${p.biz}</div>
+            <div class="text-sm font-bold mt-1">${p.count} refs</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="text-xs text-orange-700 mt-3">2 more refs and you'll be #2!</div>
+    </div>
+  `;
+}
+
+function copyRefLink() {
+  const link = document.getElementById('ref-link').value;
+  navigator.clipboard.writeText(link);
+  showToast("Link copied! 🎁");
+}
+
+function shareRef(channel) {
+  const link = document.getElementById('ref-link').value;
+  const t = getTrade();
+  const msg = `Mate, you using TradieCatch? It catches every missed call and books the customer for you. I've recovered \\$8k this month. \\$200 off setup if you sign up: ${link}`;
+  if (channel === 'whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  else if (channel === 'sms') window.open(`sms:?body=${encodeURIComponent(msg)}`, '_blank');
+  else if (channel === 'email') window.open(`mailto:?subject=${encodeURIComponent('Check this out — TradieCatch')}&body=${encodeURIComponent(msg)}`, '_blank');
+  else showToast('Shared!');
+}
+
+function showReferralLanding() {
+  go('referral-landing');
+}
+
+/* Public referral landing page */
+function renderReferralLanding(app) {
+  const t = getTrade();
+  app.innerHTML = `
+    <div class="min-h-screen flex items-center justify-center px-6 py-10" style="background: linear-gradient(135deg, #f0f9ff, #ecfdf5);">
+      <div class="max-w-3xl w-full anim-fade">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          <div style="background: linear-gradient(135deg, #047857, #065f46); color:#fff;" class="p-8 text-center">
+            <div class="text-xs font-bold opacity-80 mb-2">REFERRED BY A MATE</div>
+            <div class="w-20 h-20 mx-auto rounded-full bg-white/20 flex items-center justify-center text-3xl mb-4">🤝</div>
+            <div class="text-3xl font-extrabold mb-2">${t.business.owner} thinks you'd love TradieCatch</div>
+            <div class="text-emerald-100">${t.business.name} • ${t.business.suburb}</div>
+          </div>
+
+          <div class="p-8" style="color:#0b1220;">
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-6 text-center">
+              <div class="text-xs font-bold text-amber-700 mb-1">EXCLUSIVE OFFER VIA THIS LINK</div>
+              <div class="text-2xl font-extrabold text-amber-900">$200 OFF setup + 1 month free</div>
+              <div class="text-xs text-amber-700 mt-1">Normally $1,500 setup + $497/mo</div>
+            </div>
+
+            <div class="text-center mb-6">
+              <div class="text-2xl font-bold mb-2">Catch every missed call. Book it automatically.</div>
+              <p class="text-slate-600">TradieCatch is built for tradies who lose money to missed calls. Setup in 30 minutes. Works with your existing number.</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mb-6">
+              ${[
+                ['📞', 'SMS auto', 'Every missed call gets a text within 30s'],
+                ['🤖', 'AI quotes', 'Suggests prices based on YOUR rules'],
+                ['📅', 'Auto booking', 'Synced with your Google Calendar']
+              ].map(([icon, title, desc]) => `
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                  <div class="text-2xl mb-1">${icon}</div>
+                  <div class="text-sm font-bold mb-1">${title}</div>
+                  <div class="text-xs text-slate-500">${desc}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-6 text-sm">
+              <strong>${t.business.owner}</strong> recovered <strong>$8.4k in 3 weeks</strong> using TradieCatch. <span class="text-emerald-700">"Best decision I made this year, mate."</span>
+            </div>
+
+            <div class="text-center">
+              <button class="btn btn-success w-full text-lg py-4" onclick="showToast('Demo: would start signup'); setTimeout(() => go('dashboard/referrals'), 1500)">Get $200 OFF — Sign up now →</button>
+              <div class="text-xs text-slate-500 mt-2">No credit card required to start. 30-day free trial.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-6">
+          <button class="text-sm text-slate-500 hover:text-slate-700" onclick="go('dashboard/referrals')">← Back to dashboard</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function dashSettings() {
+  const t = getTrade();
+  return `
+    <div class="card p-6 mb-4">
+      <div class="font-bold text-lg mb-1">🏢 Business profile</div>
+      <div class="text-xs text-slate-500 mb-5">How you appear to customers</div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">BUSINESS NAME</label><input class="input" value="${t.business.name}" /></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">OWNER</label><input class="input" value="${t.business.owner}" /></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">SERVICE AREA</label><input class="input" value="${t.business.suburb} + 25km radius" /></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">ABN</label><input class="input" value="${t.business.abn}" /></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">TRADE</label><input class="input" value="${t.name}" disabled /></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">PLAN</label><input class="input" value="${t.pricing_label}" disabled /></div>
+      </div>
+    </div>
+
+    <div class="card p-6 mb-4">
+      <div class="font-bold text-lg mb-1">📞 Phone & SMS</div>
+      <div class="text-xs text-slate-500 mb-5">Where missed calls are captured</div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">YOUR BUSINESS NUMBER</label><div class="border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold bg-white">${t.business.phone}</div></div>
+        <div><label class="text-xs font-bold text-slate-600 block mb-1">TRADIECATCH TRACKING NUMBER</label><div class="border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold bg-white">${t.business.tracking} <span class="text-emerald-600 text-xs">●  Active</span></div></div>
+      </div>
+      <div class="mt-4 space-y-2">
+        <div class="flex items-center gap-3"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div class="text-sm">Auto-SMS after 3 rings missed</div></div>
+        <div class="flex items-center gap-3"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div class="text-sm">WhatsApp notifications</div></div>
+        <div class="flex items-center gap-3"><div class="toggle" onclick="this.classList.toggle('on')"></div><div class="text-sm">Voice AI to answer calls (premium)</div></div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="font-bold text-lg mb-1">🔌 Connections</div>
+      <div class="text-xs text-slate-500 mb-5">Integrations</div>
+      <div class="space-y-3">
+        ${[
+          ['📅','Google Calendar',`${t.business.owner.toLowerCase().replace(/[^a-z]/g,'.')}@${t.business.name.toLowerCase().replace(/[^a-z]/g,'')}.com.au`,'connected'],
+          ['💳','Stripe','Deposits & invoices','connected'],
+          ['💚','WhatsApp Business',t.business.tracking,'connected'],
+          ['📊','Xero','Auto-sync invoices','disconnected'],
+          ['⭐','Google Reviews','Auto-request after job','disconnected']
+        ].map(([icon,name,meta,status]) => `
+          <div class="flex items-center gap-3 p-3 border border-slate-100 rounded-lg">
+            <div class="text-2xl">${icon}</div>
+            <div class="flex-1"><div class="font-semibold text-sm">${name}</div><div class="text-xs text-slate-500">${meta}</div></div>
+            ${status === 'connected' ? '<span class="pill bg-emerald-100 text-emerald-700">Connected</span>' : '<button class="px-3 py-1 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-50">Connect</button>'}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
