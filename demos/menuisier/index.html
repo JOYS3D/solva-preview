@@ -1,0 +1,2803 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le Petit Menuisier — Atelier</title>
+<meta name="description" content="Gestion de chantiers, chiffrage, devis, facturation et provisions URSSAF pour menuisier artisan.">
+<meta name="theme-color" content="#0F2A47">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230F2A47'/%3E%3Cpath d='M26 68 L50 26 L74 68 Z' fill='none' stroke='%23E9A23B' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════
+   LE PETIT MENUISIER — Atelier
+   Bleu profond, ambre bois, profondeur réelle.
+   Aucune police à chasse fixe : ceci est un outil, pas un terminal.
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --page:#EEF2F8; --surface:#FFFFFF; --sunk:#F6F8FC; --raised:#FFFFFF;
+  --ink:#0D1B2A; --ink-2:#41556B; --ink-3:#6B7F96; --ink-4:#9AAABE;
+  --line:#DCE4EF; --line-2:#EAEFF6;
+  --navy:#0F2A47; --navy-2:#1B4570;
+  --blue:#2563EB; --blue-2:#1D4ED8; --blue-bg:#E8EFFE; --blue-soft:#F2F6FF;
+  --amber:#C87A21; --amber-2:#A66216; --amber-bg:#FDF1DF;
+  --green:#0F8A5F; --green-bg:#E3F5ED;
+  --red:#C4443A; --red-bg:#FCEBE9;
+  --violet:#6D4AC4; --violet-bg:#F0EBFC;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --r:14px; --r-s:10px; --r-l:20px;
+  --sh-1:0 1px 2px rgba(13,27,42,.06),0 1px 3px rgba(13,27,42,.04);
+  --sh-2:0 2px 4px rgba(13,27,42,.04),0 8px 20px -8px rgba(13,27,42,.12);
+  --sh-3:0 4px 8px rgba(13,27,42,.05),0 20px 44px -16px rgba(13,27,42,.22);
+  --sh-in:inset 0 1px 2px rgba(13,27,42,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#0A121C; --surface:#111E2E; --sunk:#0D1927; --raised:#16273A;
+  --ink:#EDF2F8; --ink-2:#AFC0D3; --ink-3:#8296AE; --ink-4:#5B6E86;
+  --line:#22384F; --line-2:#1A2C3F;
+  --navy:#0A1524; --navy-2:#132C48;
+  --blue:#5B8DEF; --blue-2:#3F73DC; --blue-bg:#152A47; --blue-soft:#121F31;
+  --amber:#E9A23B; --amber-2:#C87A21; --amber-bg:#2E2314;
+  --green:#3FBF8D; --green-bg:#102E24;
+  --red:#E8756A; --red-bg:#31191A;
+  --violet:#9B7DE8; --violet-bg:#211A38;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);
+  --sh-2:0 2px 4px rgba(0,0,0,.3),0 8px 20px -8px rgba(0,0,0,.6);
+  --sh-3:0 4px 8px rgba(0,0,0,.35),0 20px 44px -16px rgba(0,0,0,.7);
+  --sh-in:inset 0 1px 2px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  --page:#0A121C; --surface:#111E2E; --sunk:#0D1927; --raised:#16273A;
+  --ink:#EDF2F8; --ink-2:#AFC0D3; --ink-3:#8296AE; --ink-4:#5B6E86;
+  --line:#22384F; --line-2:#1A2C3F;
+  --navy:#0A1524; --navy-2:#132C48;
+  --blue:#5B8DEF; --blue-2:#3F73DC; --blue-bg:#152A47; --blue-soft:#121F31;
+  --amber:#E9A23B; --amber-2:#C87A21; --amber-bg:#2E2314;
+  --green:#3FBF8D; --green-bg:#102E24;
+  --red:#E8756A; --red-bg:#31191A;
+  --violet:#9B7DE8; --violet-bg:#211A38;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);
+  --sh-2:0 2px 4px rgba(0,0,0,.3),0 8px 20px -8px rgba(0,0,0,.6);
+  --sh-3:0 4px 8px rgba(0,0,0,.35),0 20px 44px -16px rgba(0,0,0,.7);
+  --sh-in:inset 0 1px 2px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  font-feature-settings:"cv11","ss01";}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+button,input,select,textarea{font:inherit;color:inherit}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+/* ─── Shell ─────────────────────────────────────────── */
+.app{display:grid;grid-template-columns:246px 1fr;min-height:100vh}
+@media(max-width:900px){.app{grid-template-columns:1fr}}
+
+aside{background:var(--navy);color:#DCE6F2;padding:1.4rem 1rem;
+  display:flex;flex-direction:column;gap:.2rem;position:sticky;top:0;height:100vh;overflow-y:auto}
+@media(max-width:900px){aside{position:static;height:auto;flex-direction:row;
+  overflow-x:auto;padding:.7rem;gap:.3rem;align-items:center}}
+
+.brand{display:flex;align-items:center;gap:.7rem;padding:.3rem .55rem 1.5rem}
+@media(max-width:900px){.brand{padding:0 .6rem 0 .3rem;flex-shrink:0}}
+.brand svg{flex-shrink:0}
+.brand b{font-size:.95rem;font-weight:600;letter-spacing:-.02em;color:#fff;display:block;line-height:1.25}
+.brand span{font-size:.72rem;color:#7E9AB8;display:block}
+@media(max-width:900px){.brand span{display:none}}
+
+nav.side{display:flex;flex-direction:column;gap:.15rem;flex:1}
+@media(max-width:900px){nav.side{flex-direction:row;flex:0 0 auto;gap:.25rem}}
+nav.side button{display:flex;align-items:center;gap:.65rem;width:100%;
+  background:transparent;border:0;color:#9FB6CE;padding:.6rem .6rem;border-radius:var(--r-s);
+  cursor:pointer;font-size:.875rem;font-weight:500;text-align:left;
+  transition:background .18s var(--ease),color .18s var(--ease);white-space:nowrap}
+nav.side button:hover{background:rgba(255,255,255,.06);color:#E6EEF7}
+nav.side button[aria-current="true"]{background:var(--blue);color:#fff;box-shadow:0 4px 12px -4px rgba(37,99,235,.7)}
+nav.side button svg{flex-shrink:0;opacity:.9}
+@media(max-width:900px){nav.side button span{display:none}
+  nav.side button{padding:.55rem .7rem}}
+
+.side-foot{padding-top:1rem;border-top:1px solid rgba(255,255,255,.09);margin-top:.6rem}
+@media(max-width:900px){.side-foot{display:none}}
+.side-foot small{color:#6F8CAA;font-size:.7rem;display:block;padding:0 .6rem;line-height:1.5}
+.side-foot a{color:#9FB6CE;text-decoration:none}
+.side-foot a:hover{color:#fff}
+
+main{padding:2rem 2.2rem 4rem;max-width:1240px;width:100%}
+@media(max-width:700px){main{padding:1.2rem 1rem 3rem}}
+
+.head{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:1.5rem;flex-wrap:wrap;margin-bottom:1.6rem}
+.head h1{font-size:1.6rem;letter-spacing:-.03em}
+.head p{margin:.25rem 0 0;color:var(--ink-3);font-size:.9rem;max-width:52ch}
+
+/* ─── Buttons ───────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);padding:.55rem .95rem;border-radius:var(--r-s);
+  font-size:.85rem;font-weight:500;cursor:pointer;box-shadow:var(--sh-1);
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease),background .16s}
+.btn:hover{box-shadow:var(--sh-2);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff;
+  box-shadow:0 2px 4px rgba(37,99,235,.2),0 8px 18px -6px rgba(37,99,235,.5)}
+.btn.pri:hover{background:var(--blue-2);box-shadow:0 4px 8px rgba(37,99,235,.24),0 14px 26px -8px rgba(37,99,235,.55)}
+.btn.gho{background:transparent;box-shadow:none;border-color:transparent;color:var(--ink-3)}
+.btn.gho:hover{background:var(--sunk);color:var(--ink);box-shadow:none;transform:none}
+.btn.dan{color:var(--red);border-color:var(--line)}
+.btn.dan:hover{background:var(--red-bg);border-color:var(--red)}
+.btn.sm{padding:.35rem .65rem;font-size:.78rem}
+
+/* ─── Cards ─────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--sh-1);padding:1.3rem}
+.card.pad0{padding:0;overflow:hidden}
+.card h3{font-size:.95rem;margin-bottom:.15rem}
+.card .sub{color:var(--ink-3);font-size:.8rem;margin:0 0 1rem}
+
+.grid{display:grid;gap:1rem}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1050px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.g3,.g2{grid-template-columns:1fr}}
+@media(max-width:560px){.g4{grid-template-columns:1fr}}
+
+/* ─── KPI ───────────────────────────────────────────── */
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:1.1rem 1.2rem;box-shadow:var(--sh-1);position:relative;overflow:hidden;
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
+.kpi::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--blue)}
+.kpi.k-green::before{background:var(--green)}
+.kpi.k-amber::before{background:var(--amber)}
+.kpi.k-violet::before{background:var(--violet)}
+.kpi .lbl{font-size:.78rem;color:var(--ink-3);font-weight:500;margin-bottom:.35rem;
+  display:flex;align-items:center;gap:.35rem}
+.kpi .val{font-size:1.75rem;font-weight:600;letter-spacing:-.035em;line-height:1.1}
+.kpi .foot{font-size:.76rem;color:var(--ink-3);margin-top:.35rem}
+.kpi .foot b{font-weight:600}
+.up{color:var(--green)} .down{color:var(--red)}
+
+/* ─── Tables ────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+thead th{text-align:left;font-weight:500;color:var(--ink-3);font-size:.78rem;
+  padding:.7rem 1rem;border-bottom:1px solid var(--line);background:var(--sunk);
+  position:sticky;top:0;z-index:1}
+tbody td{padding:.75rem 1rem;border-bottom:1px solid var(--line-2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{transition:background .14s}
+tbody tr.clik{cursor:pointer}
+tbody tr.clik:hover{background:var(--sunk)}
+td.r,th.r{text-align:right}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ─── Pills ─────────────────────────────────────────── */
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .6rem;
+  border-radius:999px;font-size:.74rem;font-weight:500;white-space:nowrap}
+.pill i{width:6px;height:6px;border-radius:50%;background:currentColor;font-style:normal;flex-shrink:0}
+.p-blue{background:var(--blue-bg);color:var(--blue-2)}
+.p-amber{background:var(--amber-bg);color:var(--amber-2)}
+.p-green{background:var(--green-bg);color:var(--green)}
+.p-red{background:var(--red-bg);color:var(--red)}
+.p-violet{background:var(--violet-bg);color:var(--violet)}
+.p-grey{background:var(--sunk);color:var(--ink-3)}
+
+/* ─── Forms ─────────────────────────────────────────── */
+label.f{display:block;font-size:.8rem;font-weight:500;color:var(--ink-2);margin-bottom:.3rem}
+label.f em{font-style:normal;color:var(--ink-4);font-weight:400}
+input[type=text],input[type=number],input[type=date],input[type=tel],select,textarea{
+  width:100%;padding:.55rem .7rem;border:1px solid var(--line);border-radius:var(--r-s);
+  background:var(--surface);box-shadow:var(--sh-in);transition:border-color .16s,box-shadow .16s;
+  font-size:.875rem}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);
+  box-shadow:0 0 0 3px var(--blue-bg);outline:none}
+textarea{resize:vertical;min-height:74px;line-height:1.5}
+.fr{margin-bottom:.9rem}
+.fgrid{display:grid;gap:.9rem}
+@media(min-width:640px){.fgrid.c2{grid-template-columns:1fr 1fr}
+  .fgrid.c3{grid-template-columns:1fr 1fr 1fr}}
+
+.seg{display:inline-flex;background:var(--sunk);border:1px solid var(--line);
+  border-radius:var(--r-s);padding:2px;gap:2px}
+.seg button{border:0;background:transparent;padding:.35rem .8rem;border-radius:8px;
+  font-size:.8rem;font-weight:500;color:var(--ink-3);cursor:pointer;transition:all .16s var(--ease)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--sh-1)}
+
+/* ─── Chiffrage ─────────────────────────────────────── */
+.calc-wrap{display:grid;gap:1.2rem;grid-template-columns:1fr 380px;align-items:start}
+@media(max-width:1080px){.calc-wrap{grid-template-columns:1fr}}
+.recap{position:sticky;top:1.4rem}
+@media(max-width:1080px){.recap{position:static}}
+
+.mat-row{display:grid;grid-template-columns:1fr 116px 74px 96px 34px;gap:.5rem;
+  align-items:center;margin-bottom:.5rem}
+@media(max-width:660px){.mat-row{grid-template-columns:1fr 1fr;gap:.4rem}}
+.mat-row input{padding:.45rem .6rem;font-size:.83rem}
+.mat-row .del{border:0;background:transparent;color:var(--ink-4);cursor:pointer;
+  padding:.3rem;border-radius:6px;line-height:0;transition:all .16s}
+.mat-row .del:hover{background:var(--red-bg);color:var(--red)}
+
+.build{background:var(--navy);border-radius:var(--r);padding:1.3rem;color:#DCE6F2;
+  box-shadow:var(--sh-3)}
+.build h4{color:#fff;font-size:.9rem;margin-bottom:1rem;display:flex;
+  align-items:center;justify-content:space-between}
+.brow{display:flex;justify-content:space-between;align-items:baseline;
+  padding:.5rem 0;font-size:.86rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.brow span{color:#9FB6CE}
+.brow b{font-weight:600;color:#fff}
+.brow.tot{border-bottom:0;border-top:1px solid rgba(255,255,255,.18);
+  margin-top:.4rem;padding-top:.75rem;font-size:1rem}
+.brow.tot b{font-size:1.35rem;letter-spacing:-.03em}
+.brow.sub-t{color:#C6D6E7}
+.marge-box{background:rgba(255,255,255,.07);border-radius:var(--r-s);
+  padding:.85rem 1rem;margin-top:1rem;border:1px solid rgba(255,255,255,.08)}
+.marge-box .mb-top{display:flex;justify-content:space-between;align-items:baseline}
+.marge-box .mb-l{font-size:.78rem;color:#9FB6CE}
+.marge-box .mb-v{font-size:1.5rem;font-weight:600;color:#4ADE9B;letter-spacing:-.03em}
+.marge-box .mb-v.neg{color:#F87171}
+.marge-box .mb-s{font-size:.74rem;color:#7E9AB8;margin-top:.3rem;line-height:1.45}
+.bar{height:7px;border-radius:99px;background:rgba(255,255,255,.12);
+  display:flex;overflow:hidden;margin-top:.7rem}
+.bar i{display:block;height:100%;transition:width .5s var(--ease)}
+
+.reste{background:var(--green-bg);border:1px solid var(--green);border-radius:var(--r);
+  padding:1rem 1.1rem;margin-top:1rem}
+.reste .rl{font-size:.78rem;color:var(--green);font-weight:500;margin-bottom:.2rem}
+.reste .rv{font-size:1.6rem;font-weight:600;color:var(--green);letter-spacing:-.035em}
+.reste .rs{font-size:.76rem;color:var(--ink-2);margin-top:.4rem;line-height:1.5}
+
+/* ─── Charts ────────────────────────────────────────── */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font-family:inherit;font-size:11px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
+.chart .gl{stroke:var(--line-2);stroke-width:1}
+.chart .bar-r{transition:opacity .18s}
+.chart .bar-r:hover{opacity:.75}
+.legend{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:.9rem;font-size:.78rem;color:var(--ink-3)}
+.legend b{display:inline-flex;align-items:center;gap:.4rem;font-weight:500}
+.legend i{width:9px;height:9px;border-radius:3px;font-style:normal}
+
+/* ─── Pipeline ──────────────────────────────────────── */
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:.55rem}
+.pstep{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-s);
+  padding:.75rem .8rem;box-shadow:var(--sh-1);position:relative;
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+.pstep:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
+.pstep .pn{font-size:.68rem;color:var(--ink-4);font-weight:600}
+.pstep .pt{font-size:.8rem;font-weight:500;margin:.15rem 0 .35rem;line-height:1.3}
+.pstep .pc{font-size:1.3rem;font-weight:600;letter-spacing:-.03em}
+.pstep.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg),var(--sh-1)}
+
+/* ─── Empty / misc ──────────────────────────────────── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--ink-3)}
+.empty svg{opacity:.35;margin-bottom:.8rem}
+.empty p{margin:.3rem 0 1rem;font-size:.88rem}
+.view{display:none;animation:in .32s var(--ease)}
+.view.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.note{background:var(--blue-soft);border:1px solid var(--line);border-left:3px solid var(--blue);
+  border-radius:var(--r-s);padding:.8rem 1rem;font-size:.83rem;color:var(--ink-2);line-height:1.55}
+.note b{color:var(--ink)}
+.warn{background:var(--amber-bg);border-left-color:var(--amber)}
+.gauge{height:9px;border-radius:99px;background:var(--sunk);overflow:hidden;
+  box-shadow:var(--sh-in);margin:.55rem 0 .4rem}
+.gauge i{display:block;height:100%;border-radius:99px;transition:width .6s var(--ease)}
+
+.toast{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%) translateY(140%);
+  background:var(--navy);color:#fff;padding:.75rem 1.3rem;border-radius:var(--r-s);
+  box-shadow:var(--sh-3);font-size:.86rem;z-index:99;transition:transform .4s var(--ease);
+  display:flex;align-items:center;gap:.55rem;max-width:calc(100vw - 2rem)}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* ─── Conception 3D ─────────────────────────────────── */
+.viewer{background:linear-gradient(170deg,var(--sunk),var(--page));
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;position:relative;
+  box-shadow:var(--sh-in);touch-action:none;cursor:grab;user-select:none}
+.viewer:active{cursor:grabbing}
+.viewer svg{display:block;width:100%;height:auto}
+.viewer .hint{position:absolute;bottom:.6rem;left:50%;transform:translateX(-50%);
+  font-size:.72rem;color:var(--ink-4);background:var(--surface);padding:.2rem .7rem;
+  border-radius:999px;box-shadow:var(--sh-1);pointer-events:none;white-space:nowrap;
+  opacity:.9;transition:opacity .3s}
+.viewer.moved .hint{opacity:0}
+/* En mode plan la pastille recouvrirait la ligne de cote du bas. */
+.viewer.plan .hint{display:none}
+.viewer.plan{cursor:default}
+.vtools{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.8rem}
+.vtools .sp{margin-left:auto;font-size:.8rem;color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;border-radius:99px;
+  background:var(--line);width:120px;padding:0;box-shadow:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--blue);border:2px solid var(--surface);box-shadow:var(--sh-1)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;
+  background:var(--blue);border:2px solid var(--surface);box-shadow:var(--sh-1)}
+
+.cut-r{display:grid;grid-template-columns:1fr 74px 96px 62px;gap:.5rem;font-size:.83rem;
+  padding:.5rem 0;border-bottom:1px solid var(--line-2);align-items:center}
+.cut-r.h{font-size:.76rem;color:var(--ink-3);font-weight:500;border-bottom:1px solid var(--line)}
+.cut-r b{font-weight:500}
+.cut-r .dim{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.cut-r em{font-style:normal;font-size:.74rem;color:var(--ink-4);display:block}
+.swatch{width:11px;height:11px;border-radius:3px;display:inline-block;
+  margin-right:.45rem;vertical-align:-1px;flex-shrink:0}
+
+/* ═══ POSTE DE TRAVAIL — mise en page type CAO ═══════
+   Rail d'outils · arbre du projet · vue · propriétés + Tanguirry.
+   C'est la disposition que tout menuisier reconnaît d'un logiciel sérieux. */
+:root{ --cube:#F2F0EC; --cube-on:var(--blue); --cube-l:#C9C6C0; --cote:#2563EB; }
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --cube:#1B2230; --cube-on:var(--blue); --cube-l:#2E3746; --cote:#5B8DEF; }}
+:root[data-theme="dark"]{ --cube:#1B2230; --cube-on:var(--blue); --cube-l:#2E3746; --cote:#5B8DEF; }
+
+.ws{display:grid;grid-template-columns:58px 208px minmax(0,1fr) 292px;
+  height:calc(100vh - 2px);background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-2)}
+@media(max-width:1180px){.ws{grid-template-columns:58px minmax(0,1fr) 268px}
+  .ws-tree{display:none}}
+@media(max-width:860px){.ws{grid-template-columns:1fr;height:auto;grid-template-rows:auto auto auto}
+  .ws-rail{flex-direction:row!important;height:auto;overflow-x:auto}
+  .ws-side{border-left:0!important;border-top:1px solid var(--line)}}
+
+.ws-rail{background:var(--sunk);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:.7rem .4rem}
+.ws-rail button{width:42px;height:44px;border:0;background:none;border-radius:var(--r-s);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;
+  cursor:pointer;color:var(--ink-3);transition:all .16s;flex-shrink:0}
+.ws-rail button:hover{background:var(--surface);color:var(--ink)}
+.ws-rail button[aria-current="true"]{background:var(--blue-bg);color:var(--blue)}
+.ws-rail em{font-style:normal;font-size:.56rem;font-weight:600;letter-spacing:.01em}
+
+.ws-tree{background:var(--surface);border-right:1px solid var(--line);
+  padding:.85rem .6rem;overflow-y:auto}
+.ws-tree h4{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-4);margin:0 0 .6rem .35rem;display:flex;align-items:center}
+.ws-tree h4 button{margin-left:auto;border:0;background:none;color:var(--ink-3);
+  cursor:pointer;padding:.1rem .25rem;border-radius:4px;line-height:0}
+.ws-tree h4 button:hover{background:var(--sunk);color:var(--ink)}
+.tn{display:flex;align-items:center;gap:.4rem;padding:.34rem .45rem;border-radius:6px;
+  font-size:.81rem;cursor:pointer;border:0;background:none;width:100%;text-align:left;
+  color:var(--ink-2);transition:background .14s}
+.tn:hover{background:var(--sunk);color:var(--ink)}
+.tn[aria-selected="true"]{background:var(--blue-bg);color:var(--blue);font-weight:600}
+.tn svg{flex-shrink:0;opacity:.65}
+.tn.d1{padding-left:1.2rem}.tn.d2{padding-left:2rem}.tn.d3{padding-left:2.8rem}
+.tn .lk{margin-left:auto;color:var(--blue);opacity:.7}
+
+.ws-view{display:flex;flex-direction:column;min-width:0;background:var(--page)}
+.ws-tabs{display:flex;align-items:center;gap:.15rem;padding:.5rem .8rem;
+  border-bottom:1px solid var(--line);background:var(--surface);
+  flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.ws-tabs::-webkit-scrollbar{display:none}
+.ws-tabs button{flex-shrink:0}
+.ws-tabs button{border:0;background:none;padding:.4rem .85rem;border-radius:7px;
+  font-size:.83rem;font-weight:500;color:var(--ink-3);cursor:pointer;transition:all .16s}
+.ws-tabs button:hover{background:var(--sunk);color:var(--ink)}
+.ws-tabs button[aria-current="true"]{background:var(--sunk);color:var(--ink);font-weight:600}
+.ws-tabs .ttl{margin-left:auto;font-size:.78rem;color:var(--ink-3);display:flex;
+  align-items:center;gap:.5rem;min-width:0;flex-shrink:1}
+.ws-tabs .ttl select{min-width:0;text-overflow:ellipsis}
+.ws-tabs .ttl b{color:var(--ink);font-weight:600}
+.tagc{font-size:.62rem;font-weight:700;letter-spacing:.08em;padding:.15rem .45rem;
+  border-radius:4px;background:var(--sunk);color:var(--ink-3);border:1px solid var(--line-2)}
+
+.ws-canvas{flex:1;position:relative;min-height:340px;display:grid;place-items:center;
+  background:linear-gradient(168deg,var(--surface),var(--sunk));overflow:hidden;
+  touch-action:none;cursor:grab;user-select:none}
+.ws-canvas:active{cursor:grabbing}
+.ws-canvas svg{width:100%;height:100%}
+.ws-canvas.plan{cursor:default}
+.ws-tools{position:absolute;bottom:.7rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.15rem;background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:10px;
+  padding:.22rem;box-shadow:var(--sh-2);z-index:3}
+.ws-tools button{border:0;background:none;padding:.36rem .6rem;border-radius:7px;
+  font-size:.7rem;font-weight:500;color:var(--ink-3);cursor:pointer;display:flex;
+  flex-direction:column;align-items:center;gap:.15rem;transition:all .16s;min-width:52px}
+.ws-tools button:hover{background:var(--sunk);color:var(--ink)}
+.ws-tools button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.ws-note{position:absolute;top:.7rem;left:.8rem;font-size:.68rem;color:var(--ink-4);z-index:3}
+
+/* Cotations dans la vue */
+.cote line{stroke:var(--cote);stroke-width:1.1;fill:none}
+.cote line.ext{stroke:var(--cote);opacity:.35;stroke-dasharray:2 2}
+.cote text{font-family:inherit;font-size:10.5px;font-weight:600;fill:var(--cote);
+  text-anchor:middle;font-variant-numeric:tabular-nums}
+.ref rect{fill:var(--blue);stroke:#fff;stroke-width:1.4}
+.ref text{font-family:inherit;font-size:10px;font-weight:700;fill:#fff}
+.cube-t{font-family:inherit;font-size:8.5px;font-weight:700;fill:#fff}
+
+/* Bandeau de la liste de débit */
+.ws-strip{border-top:1px solid var(--line);background:var(--surface);padding:.55rem .7rem}
+.ws-strip h5{margin:0 0 .45rem;font-size:.66rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-4);display:flex;align-items:center;gap:.5rem}
+.ws-strip h5 span{font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-3)}
+.strip{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.2rem}
+.pv{flex:0 0 auto;width:84px;border:1px solid var(--line);border-radius:8px;
+  background:var(--sunk);padding:.35rem;cursor:pointer;transition:all .16s;text-align:center}
+.pv:hover{border-color:var(--ink-4);transform:translateY(-2px)}
+.pv[aria-selected="true"]{border-color:var(--blue);background:var(--blue-bg);
+  box-shadow:0 0 0 2px var(--blue-bg)}
+.pv b{display:block;font-size:.6rem;font-weight:700;color:var(--ink-3);margin-bottom:.22rem}
+.pv[aria-selected="true"] b{color:var(--blue)}
+.pv .th{height:34px;display:grid;place-items:center;margin-bottom:.22rem}
+.pv .th u{display:block;background:var(--amber);border-radius:1px;text-decoration:none;
+  box-shadow:var(--sh-1)}
+.pv span{display:block;font-size:.55rem;color:var(--ink-4);font-variant-numeric:tabular-nums}
+
+/* Panneau de droite : propriétés + Tanguirry */
+.ws-side{background:var(--surface);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.ws-props{padding:.85rem .9rem;border-bottom:1px solid var(--line);overflow-y:auto;
+  max-height:44%}
+.ws-props h4{margin:0 0 .1rem;font-size:.95rem;letter-spacing:-.02em}
+.ws-props .sub2{font-size:.72rem;color:var(--ink-3);margin-bottom:.75rem}
+.prow{display:grid;grid-template-columns:5.9rem 1fr;gap:.5rem;padding:.32rem 0;
+  font-size:.79rem;align-items:baseline;border-bottom:1px solid var(--line-2)}
+.prow:last-child{border-bottom:0}
+.prow b{color:var(--ink-4);font-weight:500}
+.prow span{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.prow span.warn2{color:var(--amber);font-weight:600}
+.prow input{width:100%;padding:.22rem .4rem;font-size:.79rem;border-radius:5px}
+.pchk{display:inline-flex;align-items:center;gap:.28rem;font-size:.66rem;font-weight:600;
+  color:var(--amber);background:var(--amber-bg);padding:.12rem .45rem;border-radius:99px}
+
+.tg{flex:1;display:flex;flex-direction:column;min-height:0}
+.tg-h{display:flex;align-items:center;gap:.45rem;padding:.7rem .9rem .5rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3)}
+.tg-h i{width:20px;height:20px;border-radius:6px;background:var(--blue);color:#fff;
+  display:grid;place-items:center;font-style:normal;font-size:.62rem;font-weight:700;
+  letter-spacing:0;flex-shrink:0}
+.tg-h em{margin-left:auto;font-style:normal;font-size:.6rem;font-weight:600;
+  letter-spacing:.02em;text-transform:none;color:var(--blue);background:var(--blue-bg);
+  padding:.1rem .4rem;border-radius:99px}
+.tg-log{flex:1;overflow-y:auto;padding:.2rem .9rem .6rem;display:flex;
+  flex-direction:column;gap:.5rem;min-height:110px}
+.tgm{max-width:92%;font-size:.79rem;line-height:1.45;padding:.5rem .65rem;border-radius:11px}
+.tgm.moi{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.tgm.bot{align-self:flex-start;background:var(--sunk);border:1px solid var(--line-2);
+  border-bottom-left-radius:4px}
+.tgm ul{margin:.35rem 0 0;padding-left:1rem}
+.tgm .src{display:flex;align-items:center;gap:.3rem;font-size:.66rem;color:var(--ink-4);
+  margin-top:.4rem;padding-top:.35rem;border-top:1px solid var(--line-2)}
+.tgm .src u{text-decoration:underline;text-underline-offset:2px}
+.tgm .act{display:block;width:100%;margin-top:.45rem;background:var(--blue);color:#fff;
+  border:0;border-radius:7px;padding:.35rem;font-size:.72rem;font-weight:600;cursor:pointer}
+.tgm .act:hover{background:var(--blue-2)}
+.tg-in{display:flex;gap:.35rem;padding:.55rem .9rem .8rem;border-top:1px solid var(--line-2)}
+.tg-in input{flex:1;padding:.5rem .65rem;font-size:.8rem}
+
+/* ─── Chat de conception ────────────────────────────── */
+.chat{display:flex;flex-direction:column;height:340px}
+.chat-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.6rem;
+  padding:.2rem .1rem .6rem}
+.msg{max-width:86%;padding:.6rem .8rem;border-radius:13px;font-size:.85rem;
+  line-height:1.45;animation:msgin .3s var(--ease)}
+@keyframes msgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.moi{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:var(--sunk);border:1px solid var(--line-2);
+  border-bottom-left-radius:4px}
+.msg ul{margin:.4rem 0 0;padding-left:1.1rem}
+.msg li{margin:.12rem 0}
+.msg img{border-radius:9px;margin-top:.4rem;max-height:150px;width:auto}
+.chat-in{display:flex;gap:.45rem;align-items:flex-end;padding-top:.6rem;
+  border-top:1px solid var(--line-2)}
+.chat-in textarea{flex:1;min-height:40px;max-height:110px;padding:.55rem .7rem;
+  font-size:.86rem;resize:none;line-height:1.4}
+.icb{width:40px;height:40px;flex-shrink:0;border:1px solid var(--line);background:var(--surface);
+  border-radius:var(--r-s);display:grid;place-items:center;cursor:pointer;color:var(--ink-2);
+  box-shadow:var(--sh-in);transition:all .16s}
+.icb:hover{background:var(--sunk);color:var(--ink)}
+.icb.pri{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:none}
+.icb.pri:hover{background:var(--blue-2);color:#fff}
+
+/* ─── Mesure sur photo ──────────────────────────────── */
+.mes{position:relative;background:var(--sunk);border:1px solid var(--line);
+  border-radius:var(--r-s);overflow:hidden;margin-bottom:.7rem}
+.mes img{width:100%;display:block;cursor:crosshair;user-select:none}
+.mes svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.mes-hint{padding:.55rem .8rem;font-size:.78rem;color:var(--ink-2);background:var(--surface);
+  border-top:1px solid var(--line-2);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.mes-hint b{color:var(--ink)}
+.mes-hint .btn{margin-left:auto}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .btn:hover,.kpi:hover,.pstep:hover{transform:none}
+}
+@media print{aside,.btn,.no-print{display:none!important}
+  .app{grid-template-columns:1fr}main{padding:0}
+  .card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside>
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true">
+      <rect width="100" height="100" rx="24" fill="#16324F"/>
+      <path d="M26 68 L50 26 L74 68 Z" fill="none" stroke="#E9A23B" stroke-width="7" stroke-linejoin="round"/>
+    </svg>
+    <div><b>Le Petit Menuisier</b><span>Atelier · Alpes-Maritimes</span></div>
+  </div>
+
+  <nav class="side" id="nav">
+    <button data-v="dash" aria-current="true">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      <span>Tableau de bord</span></button>
+    <button data-v="chantiers">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h11"/></svg>
+      <span>Chantiers</span></button>
+    <button data-v="conception">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg>
+      <span>Conception</span></button>
+    <button data-v="chiffrage">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h2M12 10h2M16 10h.01M8 14h2M12 14h2M16 14h.01M8 18h6"/></svg>
+      <span>Chiffrage</span></button>
+    <button data-v="factures">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6"/></svg>
+      <span>Factures</span></button>
+    <button data-v="fisc">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+      <span>Fiscalité</span></button>
+    <button data-v="reglages">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Réglages</span></button>
+  </nav>
+
+  <div class="side-foot">
+    <small>Construit par <a href="#" id="solva-link">Solva</a><br>Données locales à cet appareil</small>
+  </div>
+</aside>
+
+<main>
+
+<!-- ══════ TABLEAU DE BORD ══════ -->
+<section class="view on" id="v-dash">
+  <div class="head">
+    <div>
+      <h1>Tableau de bord</h1>
+      <p id="dash-sub">Année en cours · chiffres calculés sur les chantiers acceptés et terminés.</p>
+    </div>
+    <button class="btn pri" data-new>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Nouveau chantier</button>
+  </div>
+
+  <div class="grid g4" id="kpis" style="margin-bottom:1rem"></div>
+
+  <div class="grid g2" style="margin-bottom:1rem">
+    <div class="card">
+      <h3>Chiffre d'affaires et marge</h3>
+      <p class="sub">Douze derniers mois, hors taxes.</p>
+      <div id="ch-ca"></div>
+      <div class="legend">
+        <b><i style="background:var(--blue)"></i>Chiffre d'affaires HT</b>
+        <b><i style="background:var(--green)"></i>Marge après matériaux</b>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Où part chaque euro facturé</h3>
+      <p class="sub">Répartition moyenne sur les chantiers acceptés.</p>
+      <div id="ch-split"></div>
+      <div class="legend" id="lg-split"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <h3>Le pipeline</h3>
+    <p class="sub">Du premier appel à la commande fournisseur. Cliquez une étape pour filtrer les chantiers.</p>
+    <div class="pipe" id="pipe"></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card pad0">
+      <div style="padding:1.3rem 1.3rem .9rem"><h3>Devis en attente de réponse</h3>
+        <p class="sub" style="margin:0">Relancer au bout de sept jours double le taux d'acceptation.</p></div>
+      <div class="tw"><table id="t-attente"></table></div>
+    </div>
+    <div class="card">
+      <h3>Taux d'acceptation des devis</h3>
+      <p class="sub">Sur les douze derniers mois.</p>
+      <div id="ch-accept"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CHANTIERS ══════ -->
+<section class="view" id="v-chantiers">
+  <div class="head">
+    <div><h1>Chantiers</h1><p id="ct-sub">Tous les chantiers, du premier appel à la facture.</p></div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <select id="filt" style="width:auto;min-width:190px"></select>
+      <button class="btn pri" data-new>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Nouveau</button>
+    </div>
+  </div>
+  <div class="card pad0"><div class="tw"><table id="t-chantiers"></table></div></div>
+</section>
+
+<!-- ══════ CONCEPTION ══════ -->
+<section class="view" id="v-conception">
+  <div id="cn-body"></div>
+</section>
+
+<!-- ══════ CHIFFRAGE ══════ -->
+<section class="view" id="v-chiffrage">
+  <div class="head">
+    <div>
+      <h1 id="cf-title">Chiffrage</h1>
+      <p>Le coût fournisseur entre à gauche. Le prix de vente, la marge et ce qu'il vous reste vraiment se calculent à droite, en direct.</p>
+    </div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <select id="cf-pick" style="width:auto;min-width:230px"></select>
+      <button class="btn" id="cf-print">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Devis</button>
+    </div>
+  </div>
+  <div id="cf-body"></div>
+</section>
+
+<!-- ══════ FACTURES ══════ -->
+<section class="view" id="v-factures">
+  <div class="head">
+    <div><h1>Factures</h1><p>Générées depuis les chantiers acceptés. En micro-entreprise, les cotisations portent sur ce qui est <b>encaissé</b>, pas sur ce qui est facturé.</p></div>
+  </div>
+  <div class="grid g3" id="fac-kpi" style="margin-bottom:1rem"></div>
+  <div class="card pad0"><div class="tw"><table id="t-factures"></table></div></div>
+</section>
+
+<!-- ══════ FISCALITÉ ══════ -->
+<section class="view" id="v-fisc">
+  <div class="head">
+    <div><h1>Fiscalité</h1><p>Ce qu'il faut mettre de côté, et à quelle distance vous êtes des seuils. Chiffres 2026.</p></div>
+  </div>
+  <div id="fisc-body"></div>
+</section>
+
+<!-- ══════ RÉGLAGES ══════ -->
+<section class="view" id="v-reglages">
+  <div class="head">
+    <div><h1>Réglages</h1><p>Vos tarifs et votre régime. Tout le reste de l'application s'appuie sur ces valeurs.</p></div>
+  </div>
+  <div id="set-body"></div>
+</section>
+
+</main>
+</div>
+
+<div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ÉTAT
+   ══════════════════════════════════════════════════════════ */
+const KEY = 'lpm.v1';
+const EUR = n => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',
+  minimumFractionDigits:0,maximumFractionDigits:0}).format(n||0);
+const EUR2 = n => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(n||0);
+const PCT = n => (n||0).toFixed(1).replace('.',',')+' %';
+const uid = () => 'c'+Math.random().toString(36).slice(2,9);
+const MOIS = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+
+const ETAPES = [
+  {k:'appel',      n:'Appel reçu',            c:'p-grey'},
+  {k:'rdv',        n:'Rendez-vous posé',      c:'p-blue'},
+  {k:'conception', n:'Conception',            c:'p-violet'},
+  {k:'fourn',      n:'Prix fournisseur',      c:'p-amber'},
+  {k:'devis',      n:'Devis envoyé',          c:'p-blue'},
+  {k:'accepte',    n:'Accepté',               c:'p-green'},
+  {k:'refuse',     n:'Refusé',                c:'p-red'},
+  {k:'termine',    n:'Terminé et facturé',    c:'p-green'},
+];
+const etape = k => ETAPES.find(e=>e.k===k) || ETAPES[0];
+
+const DEFAUT = {
+  settings:{
+    entreprise:'Le Petit Menuisier', siret:'', ville:'Nice (06)',
+    regime:'micro',            // micro | reel
+    activite:'services',       // services (21,2 %) | vente (12,3 %)
+    tauxUrssaf:21.2,
+    tauxHoraire:45, tarifKm:0.60,
+    margeDefaut:35, moDefaut:'heures',
+    franchiseTVA:true, tvaDefaut:10, seuilTVA:37500, seuilMajore:41250,
+    versementLib:false, tauxIR:1.7,
+  },
+  chantiers:[]
+};
+
+let S = charger();
+let vueActive = 'dash';
+let chantierActif = null;
+let filtreEtape = null;
+
+function charger(){
+  try{
+    const b = localStorage.getItem(KEY);
+    if(b){ const d = JSON.parse(b);
+      return {settings:{...DEFAUT.settings,...d.settings},
+              chantiers:d.chantiers||[], methode:d.methode||{}}; }
+  }catch(e){ console.warn('Lecture impossible, démarrage à vide.',e); }
+  return {settings:{...DEFAUT.settings}, chantiers:demo(), methode:{}};
+}
+function sauver(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ toast('Sauvegarde impossible — stockage plein ou navigation privée.'); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   DONNÉES DE DÉMONSTRATION
+   ══════════════════════════════════════════════════════════ */
+function demo(){
+  const now = new Date(); const j = (d)=>{const x=new Date(now);x.setDate(x.getDate()-d);return x.toISOString().slice(0,10)};
+  const mk = (o) => ({
+    id:uid(), client:'', tel:'', adresse:'', titre:'', statut:'appel',
+    cree:j(0), rdv:'', materiaux:[], margeMode:'pct', margeVal:35,
+    moMode:'heures', heures:0, moPct:60, km:0, trajets:2, tva:10,
+    notes:'', paye:false, ...o
+  });
+  return [
+    mk({client:'Mme Rossi', tel:'06 12 44 87 03', adresse:'Cimiez, Nice',
+      titre:'Dressing sur mesure, chambre parentale', statut:'termine', cree:j(96),
+      materiaux:[{l:'Panneaux chêne plaqué 19 mm',f:'Dispano',q:8,pu:78},
+                 {l:'Quincaillerie Blum, coulisses',f:'Würth',q:1,pu:340},
+                 {l:'Découpe et chants',f:'Dispano',q:1,pu:190}],
+      margeVal:38, heures:26, km:9, tva:10, paye:true}),
+    mk({client:'M. Ferrand', tel:'06 78 21 09 55', adresse:'Vieux Nice',
+      titre:'Bibliothèque murale, salon', statut:'termine', cree:j(74),
+      materiaux:[{l:'Chêne massif lamellé',f:'Dispano',q:5,pu:132},
+                 {l:'Vernis et finitions',f:'Blanchon',q:1,pu:95}],
+      margeVal:42, heures:19, km:6, tva:10, paye:true}),
+    mk({client:'Restaurant Le Safran', tel:'04 93 88 12 40', adresse:'Antibes',
+      titre:'Comptoir de bar et étagères', statut:'termine', cree:j(58),
+      materiaux:[{l:'Hêtre massif épaisseur 40 mm',f:'Dispano',q:6,pu:210},
+                 {l:'Structure métal sur mesure',f:'MetalCo',q:1,pu:680},
+                 {l:'Traitement alimentaire',f:'Blanchon',q:1,pu:120}],
+      margeVal:35, heures:41, km:24, tva:20, paye:true}),
+    mk({client:'M. et Mme Aubry', tel:'06 33 90 71 22', adresse:'Saint-Paul-de-Vence',
+      titre:'Cuisine complète, façades chêne', statut:'accepte', cree:j(31),
+      materiaux:[{l:'Façades chêne massif',f:'Dispano',q:14,pu:96},
+                 {l:'Caissons mélaminé',f:'Dispano',q:9,pu:54},
+                 {l:'Quincaillerie et charnières',f:'Blum',q:1,pu:520},
+                 {l:'Plan de travail stratifié',f:'Dispano',q:1,pu:430}],
+      margeVal:36, heures:58, km:19, tva:10}),
+    mk({client:'Mme Berger', tel:'06 44 12 78 90', adresse:'Cagnes-sur-Mer',
+      titre:'Escalier deux quarts tournant', statut:'devis', cree:j(11),
+      materiaux:[{l:'Chêne massif marches',f:'Dispano',q:13,pu:118},
+                 {l:'Limon et contremarches',f:'Dispano',q:1,pu:840},
+                 {l:'Garde-corps acier',f:'MetalCo',q:1,pu:1150}],
+      margeVal:34, heures:47, km:14, tva:10}),
+    mk({client:'M. Lacombe', tel:'06 87 55 31 02', adresse:'Villeneuve-Loubet',
+      titre:'Terrasse bois exotique 28 m²', statut:'devis', cree:j(6),
+      materiaux:[{l:'Lames ipé 21 mm',f:'Bois du Sud',q:28,pu:94},
+                 {l:'Lambourdes et plots',f:'Bois du Sud',q:1,pu:490},
+                 {l:'Visserie inox',f:'Würth',q:1,pu:180}],
+      margeVal:32, heures:34, km:11, tva:10}),
+    mk({client:'Cabinet Marchand', tel:'04 92 07 44 18', adresse:'Nice Arénas',
+      titre:'Banque d\'accueil et rangements', statut:'fourn', cree:j(4),
+      materiaux:[{l:'Panneaux compact stratifié',f:'Dispano',q:7,pu:165}],
+      margeVal:35, heures:30, km:8, tva:20}),
+    mk({client:'Mme Pons', tel:'06 21 88 43 76', adresse:'Beaulieu-sur-Mer',
+      titre:'Placards sous pente', statut:'conception', cree:j(3), rdv:j(1),
+      materiaux:[], margeVal:35, heures:0, km:16, tva:10}),
+    mk({client:'M. Ziani', tel:'06 09 76 22 41', adresse:'Saint-Laurent-du-Var',
+      titre:'Remplacement portes intérieures', statut:'rdv', cree:j(2), rdv:j(-3),
+      materiaux:[], margeVal:35, heures:0, km:7, tva:10}),
+    mk({client:'Mme Oliveira', tel:'06 55 30 18 64', adresse:'Nice Libération',
+      titre:'Meuble TV suspendu', statut:'appel', cree:j(1),
+      materiaux:[], margeVal:35, heures:0, km:5, tva:10}),
+    mk({client:'M. Delaunay', tel:'06 71 09 55 23', adresse:'Mougins',
+      titre:'Pergola bois 18 m²', statut:'refuse', cree:j(48),
+      materiaux:[{l:'Douglas lamellé-collé',f:'Bois du Sud',q:12,pu:145}],
+      margeVal:40, heures:38, km:29, tva:10}),
+    mk({client:'Mme Chevalier', tel:'06 14 82 07 39', adresse:'Vence',
+      titre:'Verrière atelier intérieure', statut:'refuse', cree:j(66),
+      materiaux:[{l:'Profilés acier verrière',f:'MetalCo',q:1,pu:1420}],
+      margeVal:36, heures:22, km:21, tva:10}),
+  ];
+}
+
+/* ══════════════════════════════════════════════════════════
+   LE CALCUL — cœur de l'outil
+   ══════════════════════════════════════════════════════════ */
+function calc(c){
+  const st = S.settings;
+  const coutMat = (c.materiaux||[]).reduce((s,m)=> s + (+m.q||0)*(+m.pu||0), 0);
+  const marge = c.margeMode === 'eur' ? (+c.margeVal||0) : coutMat * (+c.margeVal||0)/100;
+  const matFacture = coutMat + marge;
+  const mo = c.moMode === 'pct'
+    ? coutMat * (+c.moPct||0)/100
+    : (+c.heures||0) * (+st.tauxHoraire||0);
+  const deplacement = (+c.km||0) * 2 * (+c.trajets||0) * (+st.tarifKm||0);
+  const totalHT = matFacture + mo + deplacement;
+  const tauxTVA = st.franchiseTVA ? 0 : (+c.tva||0);
+  const tva = totalHT * tauxTVA/100;
+  const totalTTC = totalHT + tva;
+  const margeBrute = totalHT - coutMat;
+  const margePct = totalHT > 0 ? margeBrute/totalHT*100 : 0;
+  const urssaf = totalHT * (+st.tauxUrssaf||0)/100;
+  const ir = st.versementLib ? totalHT * (+st.tauxIR||0)/100 : 0;
+  const reste = totalHT - coutMat - urssaf - ir;
+  const resteHeure = (+c.heures||0) > 0 ? reste/(+c.heures) : 0;
+  // Tant qu'il n'y a ni matériaux ni main-d'œuvre, le chantier n'est pas chiffré :
+  // afficher une marge dans ce cas n'aurait aucun sens (elle vaudrait toujours 100 %).
+  const chiffre = coutMat > 0 || mo > 0;
+  return {coutMat,marge,matFacture,mo,deplacement,totalHT,tauxTVA,tva,totalTTC,
+          margeBrute,margePct,urssaf,ir,reste,resteHeure,chiffre};
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDU — utilitaires
+   ══════════════════════════════════════════════════════════ */
+const $  = (s,r=document) => r.querySelector(s);
+const $$ = (s,r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s??'').replace(/[&<>"']/g, m =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+let toastT;
+function toast(msg){
+  $('#toast-msg').textContent = msg;
+  $('#toast').classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=> $('#toast').classList.remove('on'), 3200);
+}
+
+function moisRecents(n=12){
+  const out=[]; const d=new Date();
+  for(let i=n-1;i>=0;i--){ const x=new Date(d.getFullYear(),d.getMonth()-i,1);
+    out.push({y:x.getFullYear(),m:x.getMonth(),lbl:MOIS[x.getMonth()]}); }
+  return out;
+}
+const encaisses = () => S.chantiers.filter(c=>['accepte','termine'].includes(c.statut));
+
+/* ══════════════════════════════════════════════════════════
+   GRAPHIQUES — SVG généré, aucune bibliothèque
+   ══════════════════════════════════════════════════════════ */
+function chartCA(el){
+  const mois = moisRecents(12);
+  const data = mois.map(mo=>{
+    const list = encaisses().filter(c=>{ const d=new Date(c.cree);
+      return d.getFullYear()===mo.y && d.getMonth()===mo.m; });
+    let ca=0, mg=0;
+    list.forEach(c=>{ const k=calc(c); ca+=k.totalHT; mg+=k.margeBrute; });
+    return {...mo, ca, mg};
+  });
+  const max = Math.max(...data.map(d=>d.ca), 1000);
+  const W=520, H=210, pl=46, pb=26, pt=10, pr=6;
+  const iw = W-pl-pr, ih = H-pt-pb;
+  const bw = iw/data.length;
+  let g='';
+  for(let i=0;i<=4;i++){ const y = pt + ih*(i/4);
+    g += `<line class="gl" x1="${pl}" y1="${y}" x2="${W-pr}" y2="${y}"/>
+          <text x="${pl-8}" y="${y+4}" text-anchor="end">${Math.round(max*(1-i/4)/1000)}k</text>`; }
+  data.forEach((d,i)=>{
+    const x = pl + i*bw;
+    const hCA = ih*(d.ca/max), hMG = ih*(d.mg/max);
+    g += `<rect class="bar-r" x="${x+bw*0.16}" y="${pt+ih-hCA}" width="${bw*0.68}" height="${Math.max(hCA,0)}"
+            rx="3" fill="var(--blue)" opacity=".92"><title>${d.lbl} — CA ${EUR(d.ca)}</title></rect>`;
+    g += `<rect class="bar-r" x="${x+bw*0.16}" y="${pt+ih-hMG}" width="${bw*0.68}" height="${Math.max(hMG,0)}"
+            rx="3" fill="var(--green)"><title>${d.lbl} — marge ${EUR(d.mg)}</title></rect>`;
+    g += `<text x="${x+bw/2}" y="${H-8}" text-anchor="middle">${d.lbl}</text>`;
+  });
+  el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="Chiffre d'affaires et marge sur douze mois">${g}</svg>`;
+}
+
+function chartSplit(el, lgEl){
+  const list = encaisses();
+  let mat=0, mo=0, dep=0, urs=0, net=0;
+  list.forEach(c=>{ const k=calc(c);
+    mat+=k.coutMat; mo+=k.mo; dep+=k.deplacement; urs+=k.urssaf;
+    net += k.totalHT - k.coutMat - k.urssaf; });
+  // La main-d'œuvre et le déplacement sont du revenu, pas un coût sorti de poche :
+  // on montre donc le partage réel entre matériaux, cotisations et ce qui reste.
+  const parts = [
+    {l:'Matériaux fournisseur', v:mat, c:'var(--amber)'},
+    {l:'Cotisations URSSAF',    v:urs, c:'var(--red)'},
+    {l:'Ce qui vous reste',     v:net, c:'var(--green)'},
+  ];
+  const tot = parts.reduce((s,p)=>s+p.v,0) || 1;
+  const W=520, H=210, cx=W/2, cy=H/2-4, R=76, r=48;
+  let a0=-Math.PI/2, g='';
+  parts.forEach(p=>{
+    const a1 = a0 + (p.v/tot)*Math.PI*2;
+    const large = (a1-a0) > Math.PI ? 1 : 0;
+    const x0=cx+R*Math.cos(a0), y0=cy+R*Math.sin(a0);
+    const x1=cx+R*Math.cos(a1), y1=cy+R*Math.sin(a1);
+    const xi1=cx+r*Math.cos(a1), yi1=cy+r*Math.sin(a1);
+    const xi0=cx+r*Math.cos(a0), yi0=cy+r*Math.sin(a0);
+    g += `<path d="M${x0} ${y0} A${R} ${R} 0 ${large} 1 ${x1} ${y1}
+           L${xi1} ${yi1} A${r} ${r} 0 ${large} 0 ${xi0} ${yi0} Z"
+           fill="${p.c}" stroke="var(--surface)" stroke-width="2">
+           <title>${p.l} — ${EUR(p.v)} (${PCT(p.v/tot*100)})</title></path>`;
+    a0 = a1;
+  });
+  g += `<text x="${cx}" y="${cy-2}" text-anchor="middle" style="font-size:20px;font-weight:600;fill:var(--ink)">${EUR(tot)}</text>
+        <text x="${cx}" y="${cy+16}" text-anchor="middle">facturé HT</text>`;
+  el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="Répartition du chiffre d'affaires">${g}</svg>`;
+  lgEl.innerHTML = parts.map(p=>
+    `<b><i style="background:${p.c}"></i>${p.l} · ${PCT(p.v/tot*100)}</b>`).join('');
+}
+
+function chartAccept(el){
+  const envoyes = S.chantiers.filter(c=>['devis','accepte','refuse','termine'].includes(c.statut));
+  const gagnes  = S.chantiers.filter(c=>['accepte','termine'].includes(c.statut));
+  const perdus  = S.chantiers.filter(c=>c.statut==='refuse');
+  const attente = S.chantiers.filter(c=>c.statut==='devis');
+  const decides = gagnes.length + perdus.length;
+  const taux = decides ? gagnes.length/decides*100 : 0;
+  const W=520, H=200;
+  const R=72, cx=W/2, cy=H/2+6, sw=17;
+  const circ = Math.PI*R; // demi-cercle
+  const off = circ*(1-taux/100);
+  el.innerHTML = `
+  <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Taux d'acceptation ${PCT(taux)}">
+    <path d="M${cx-R} ${cy} A${R} ${R} 0 0 1 ${cx+R} ${cy}" fill="none"
+      stroke="var(--line)" stroke-width="${sw}" stroke-linecap="round"/>
+    <path d="M${cx-R} ${cy} A${R} ${R} 0 0 1 ${cx+R} ${cy}" fill="none"
+      stroke="var(--green)" stroke-width="${sw}" stroke-linecap="round"
+      stroke-dasharray="${circ}" stroke-dashoffset="${off}"
+      style="transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1)"/>
+    <text x="${cx}" y="${cy-14}" text-anchor="middle"
+      style="font-size:34px;font-weight:600;fill:var(--ink);letter-spacing:-1px">${Math.round(taux)}%</text>
+    <text x="${cx}" y="${cy+8}" text-anchor="middle">des devis décidés sont signés</text>
+    <text x="${cx-R}" y="${cy+26}" text-anchor="middle">0 %</text>
+    <text x="${cx+R}" y="${cy+26}" text-anchor="middle">100 %</text>
+    <text x="${cx}" y="${cy+40}" text-anchor="middle" style="fill:var(--ink-4)">
+      ${gagnes.length} signés · ${perdus.length} refusés · ${attente.length} en attente</text>
+  </svg>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VUE — TABLEAU DE BORD
+   ══════════════════════════════════════════════════════════ */
+function renderDash(){
+  const list = encaisses();
+  let ca=0, mg=0, urs=0, heures=0, net=0;
+  list.forEach(c=>{ const k=calc(c);
+    ca+=k.totalHT; mg+=k.margeBrute; urs+=k.urssaf; heures+=(+c.heures||0); net+=k.reste; });
+  const parH = heures ? net/heures : 0;
+  const enCours = S.chantiers.filter(c=>!['termine','refuse'].includes(c.statut)).length;
+  const attenteVal = S.chantiers.filter(c=>c.statut==='devis')
+    .reduce((s,c)=>s+calc(c).totalHT,0);
+
+  $('#kpis').innerHTML = `
+   <div class="kpi">
+     <div class="lbl">Chiffre d'affaires HT</div>
+     <div class="val num">${EUR(ca)}</div>
+     <div class="foot">${list.length} chantiers signés</div></div>
+   <div class="kpi k-green">
+     <div class="lbl">Ce qu'il vous reste</div>
+     <div class="val num">${EUR(net)}</div>
+     <div class="foot">après matériaux et cotisations</div></div>
+   <div class="kpi k-amber">
+     <div class="lbl">Revenu net par heure</div>
+     <div class="val num">${EUR2(parH)}</div>
+     <div class="foot">sur ${Math.round(heures)} h atelier et pose</div></div>
+   <div class="kpi k-violet">
+     <div class="lbl">Devis en attente</div>
+     <div class="val num">${EUR(attenteVal)}</div>
+     <div class="foot">${enCours} chantiers ouverts</div></div>`;
+
+  chartCA($('#ch-ca'));
+  chartSplit($('#ch-split'), $('#lg-split'));
+  chartAccept($('#ch-accept'));
+
+  $('#pipe').innerHTML = ETAPES.filter(e=>e.k!=='refuse').map((e,i)=>{
+    const n = S.chantiers.filter(c=>c.statut===e.k).length;
+    return `<div class="pstep${filtreEtape===e.k?' on':''}" data-etape="${e.k}" role="button" tabindex="0">
+      <div class="pn">${String(i+1).padStart(2,'0')}</div>
+      <div class="pt">${e.n}</div>
+      <div class="pc num">${n}</div></div>`;
+  }).join('');
+
+  const att = S.chantiers.filter(c=>c.statut==='devis')
+    .sort((a,b)=> new Date(a.cree)-new Date(b.cree));
+  $('#t-attente').innerHTML = att.length ? `
+    <thead><tr><th>Client</th><th>Chantier</th><th class="r">Montant HT</th><th class="r">Envoyé</th></tr></thead>
+    <tbody>${att.map(c=>{
+      const jours = Math.round((Date.now()-new Date(c.cree))/864e5);
+      return `<tr class="clik" data-open="${c.id}">
+        <td><b>${esc(c.client)}</b></td>
+        <td style="color:var(--ink-3)">${esc(c.titre)}</td>
+        <td class="r num">${EUR(calc(c).totalHT)}</td>
+        <td class="r"><span class="pill ${jours>7?'p-amber':'p-grey'}">
+          ${jours} j${jours>7?' · relancer':''}</span></td></tr>`;
+    }).join('')}</tbody>`
+    : `<tbody><tr><td><div class="empty" style="padding:2rem 1rem">
+       <p>Aucun devis en attente de réponse.</p></div></td></tr></tbody>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VUE — CHANTIERS
+   ══════════════════════════════════════════════════════════ */
+function renderChantiers(){
+  const f = $('#filt');
+  if(f.options.length === 0){
+    f.innerHTML = `<option value="">Toutes les étapes</option>` +
+      ETAPES.map(e=>`<option value="${e.k}">${e.n}</option>`).join('');
+  }
+  f.value = filtreEtape || '';
+  const list = S.chantiers
+    .filter(c=> !filtreEtape || c.statut===filtreEtape)
+    .sort((a,b)=> new Date(b.cree) - new Date(a.cree));
+
+  $('#ct-sub').textContent = filtreEtape
+    ? `${list.length} chantier${list.length>1?'s':''} à l'étape « ${etape(filtreEtape).n} ».`
+    : `${S.chantiers.length} chantiers, du premier appel à la facture.`;
+
+  $('#t-chantiers').innerHTML = list.length ? `
+    <thead><tr><th>Client</th><th>Chantier</th><th>Étape</th>
+      <th class="r">Total HT</th><th class="r">Marge</th><th class="r">Reste net</th></tr></thead>
+    <tbody>${list.map(c=>{ const k=calc(c); const e=etape(c.statut);
+      // Un chantier sans matériaux ni main-d'œuvre n'est pas encore chiffré :
+      // n'afficher ni total ni marge plutôt qu'un « 100 % » trompeur.
+      const chiffre = k.coutMat > 0 || k.mo > 0;
+      return `<tr class="clik" data-open="${c.id}">
+        <td><b>${esc(c.client)}</b><div style="color:var(--ink-4);font-size:.78rem">${esc(c.adresse)}</div></td>
+        <td style="color:var(--ink-2)">${esc(c.titre)}</td>
+        <td><span class="pill ${e.c}"><i></i>${e.n}</span></td>
+        <td class="r num">${chiffre?EUR(k.totalHT):'<span style="color:var(--ink-4)">à chiffrer</span>'}</td>
+        <td class="r num">${chiffre?PCT(k.margePct):'—'}</td>
+        <td class="r num" style="font-weight:600;color:${chiffre&&k.reste>0?'var(--green)':'var(--ink-4)'}">
+          ${chiffre?EUR(k.reste):'—'}</td></tr>`;
+    }).join('')}</tbody>`
+    : `<tbody><tr><td><div class="empty">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M3 12h18M3 17h11"/></svg>
+        <p>Aucun chantier à cette étape.</p></div></td></tr></tbody>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VUE — CHIFFRAGE
+   ══════════════════════════════════════════════════════════ */
+function renderChiffrage(){
+  const sel = $('#cf-pick');
+  sel.innerHTML = S.chantiers
+    .sort((a,b)=> new Date(b.cree)-new Date(a.cree))
+    .map(c=>`<option value="${c.id}">${esc(c.client)} — ${esc(c.titre)}</option>`).join('');
+  if(!chantierActif || !S.chantiers.find(c=>c.id===chantierActif))
+    chantierActif = S.chantiers[0]?.id;
+  sel.value = chantierActif;
+
+  const c = S.chantiers.find(x=>x.id===chantierActif);
+  if(!c){ $('#cf-body').innerHTML = `<div class="card"><div class="empty">
+    <p>Aucun chantier. Créez-en un pour commencer un chiffrage.</p>
+    <button class="btn pri" data-new>Nouveau chantier</button></div></div>`; return; }
+
+  const k = calc(c);
+  const st = S.settings;
+  $('#cf-title').textContent = c.client || 'Chiffrage';
+
+  $('#cf-body').innerHTML = `
+  <div class="calc-wrap">
+    <div>
+      <div class="card" style="margin-bottom:1rem">
+        <h3>Le chantier</h3><p class="sub">Ce que le client a demandé lors de la visite.</p>
+        <div class="fgrid c2">
+          <div class="fr"><label class="f" for="i-client">Client</label>
+            <input type="text" id="i-client" data-f="client" value="${esc(c.client)}"></div>
+          <div class="fr"><label class="f" for="i-tel">Téléphone</label>
+            <input type="tel" id="i-tel" data-f="tel" value="${esc(c.tel)}"></div>
+        </div>
+        <div class="fgrid c2">
+          <div class="fr"><label class="f" for="i-titre">Chantier</label>
+            <input type="text" id="i-titre" data-f="titre" value="${esc(c.titre)}"></div>
+          <div class="fr"><label class="f" for="i-adr">Adresse</label>
+            <input type="text" id="i-adr" data-f="adresse" value="${esc(c.adresse)}"></div>
+        </div>
+        <div class="fgrid c3">
+          <div class="fr"><label class="f" for="i-statut">Étape</label>
+            <select id="i-statut" data-f="statut">${ETAPES.map(e=>
+              `<option value="${e.k}"${c.statut===e.k?' selected':''}>${e.n}</option>`).join('')}</select></div>
+          <div class="fr"><label class="f" for="i-rdv">Rendez-vous</label>
+            <input type="date" id="i-rdv" data-f="rdv" value="${esc(c.rdv)}"></div>
+          <div class="fr"><label class="f" for="i-tva">TVA applicable</label>
+            <select id="i-tva" data-f="tva"${st.franchiseTVA?' disabled':''}>
+              <option value="20"${c.tva==20?' selected':''}>20 % — neuf, mobilier, pro</option>
+              <option value="10"${c.tva==10?' selected':''}>10 % — rénovation, logement +2 ans</option>
+              <option value="5.5"${c.tva==5.5?' selected':''}>5,5 % — rénovation énergétique</option>
+            </select>
+            ${st.franchiseTVA?`<div style="font-size:.74rem;color:var(--ink-3);margin-top:.3rem">
+              Franchise en base active — aucune TVA facturée.</div>`:''}</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3>Le devis fournisseur</h3>
+        <p class="sub">Ce que vos fournisseurs vous facturent : bois, découpe, quincaillerie.</p>
+        <div class="mat-row" style="font-size:.76rem;color:var(--ink-3);font-weight:500;margin-bottom:.35rem">
+          <div>Désignation</div><div>Fournisseur</div><div>Qté</div><div>Prix unitaire</div><div></div></div>
+        <div id="mats">${(c.materiaux||[]).map((m,i)=>`
+          <div class="mat-row">
+            <input type="text" data-m="${i}" data-mf="l" value="${esc(m.l)}" placeholder="Panneaux chêne 19 mm" aria-label="Désignation">
+            <input type="text" data-m="${i}" data-mf="f" value="${esc(m.f)}" placeholder="Dispano" aria-label="Fournisseur">
+            <input type="number" data-m="${i}" data-mf="q" value="${m.q}" min="0" step="0.5" aria-label="Quantité">
+            <input type="number" data-m="${i}" data-mf="pu" value="${m.pu}" min="0" step="1" aria-label="Prix unitaire">
+            <button class="del" data-del="${i}" aria-label="Supprimer la ligne">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>`).join('')}</div>
+        <button class="btn sm" id="add-mat" style="margin-top:.4rem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Ajouter une ligne</button>
+        <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line-2);
+          display:flex;justify-content:space-between;align-items:baseline">
+          <span style="color:var(--ink-3);font-size:.85rem">Coût fournisseur total</span>
+          <b class="num" style="font-size:1.2rem">${EUR2(k.coutMat)}</b></div>
+      </div>
+
+      <div class="card">
+        <h3>Votre prix</h3>
+        <p class="sub">Marge sur les matériaux, main-d'œuvre et déplacement. Choisissez la méthode qui vous arrange chantier par chantier.</p>
+
+        <div class="fr">
+          <label class="f">Marge sur les matériaux</label>
+          <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+            <div class="seg" role="group" aria-label="Mode de marge">
+              <button type="button" data-mode="marge" data-val="pct" aria-pressed="${c.margeMode!=='eur'}">En pourcentage</button>
+              <button type="button" data-mode="marge" data-val="eur" aria-pressed="${c.margeMode==='eur'}">Montant fixe</button>
+            </div>
+            <input type="number" data-f="margeVal" value="${c.margeVal}" min="0" step="1"
+              style="width:118px" aria-label="Valeur de la marge">
+            <span style="color:var(--ink-3);font-size:.85rem">${c.margeMode==='eur'?'€':'% du coût fournisseur'}</span>
+            <span style="margin-left:auto;font-weight:600" class="num">${EUR2(k.marge)}</span>
+          </div>
+        </div>
+
+        <div class="fr">
+          <label class="f">Main-d'œuvre</label>
+          <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+            <div class="seg" role="group" aria-label="Mode de main-d'œuvre">
+              <button type="button" data-mode="mo" data-val="heures" aria-pressed="${c.moMode!=='pct'}">Au temps passé</button>
+              <button type="button" data-mode="mo" data-val="pct" aria-pressed="${c.moMode==='pct'}">% des matériaux</button>
+            </div>
+            ${c.moMode==='pct'
+              ? `<input type="number" data-f="moPct" value="${c.moPct}" min="0" step="5" style="width:118px" aria-label="Pourcentage main-d'œuvre">
+                 <span style="color:var(--ink-3);font-size:.85rem">% du coût fournisseur</span>`
+              : `<input type="number" data-f="heures" value="${c.heures}" min="0" step="0.5" style="width:118px" aria-label="Heures">
+                 <span style="color:var(--ink-3);font-size:.85rem">heures × ${EUR2(st.tauxHoraire)}/h</span>`}
+            <span style="margin-left:auto;font-weight:600" class="num">${EUR2(k.mo)}</span>
+          </div>
+        </div>
+
+        <div class="fr" style="margin-bottom:0">
+          <label class="f">Déplacement</label>
+          <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+            <input type="number" data-f="km" value="${c.km}" min="0" step="1" style="width:92px" aria-label="Kilomètres">
+            <span style="color:var(--ink-3);font-size:.85rem">km aller ×</span>
+            <input type="number" data-f="trajets" value="${c.trajets}" min="0" step="1" style="width:74px" aria-label="Allers-retours">
+            <span style="color:var(--ink-3);font-size:.85rem">A/R × ${EUR2(st.tarifKm)}/km</span>
+            <span style="margin-left:auto;font-weight:600" class="num">${EUR2(k.deplacement)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="build">
+        <h4>Le devis <span style="font-weight:400;color:#7E9AB8;font-size:.78rem">
+          ${st.franchiseTVA?'Franchise en base':'TVA '+String(k.tauxTVA).replace('.',',')+' %'}</span></h4>
+        <div class="brow"><span>Matériaux (coût)</span><b class="num">${EUR2(k.coutMat)}</b></div>
+        <div class="brow"><span>Marge matériaux</span><b class="num">+ ${EUR2(k.marge)}</b></div>
+        <div class="brow sub-t"><span>Matériaux facturés</span><b class="num">${EUR2(k.matFacture)}</b></div>
+        <div class="brow"><span>Main-d'œuvre</span><b class="num">+ ${EUR2(k.mo)}</b></div>
+        <div class="brow"><span>Déplacement</span><b class="num">+ ${EUR2(k.deplacement)}</b></div>
+        <div class="brow"><span>Total HT</span><b class="num">${EUR2(k.totalHT)}</b></div>
+        ${!st.franchiseTVA?`<div class="brow"><span>TVA ${String(k.tauxTVA).replace('.',',')} %</span><b class="num">+ ${EUR2(k.tva)}</b></div>`:''}
+        <div class="brow tot"><span>${st.franchiseTVA?'Total à payer':'Total TTC'}</span><b class="num">${EUR2(k.totalTTC)}</b></div>
+
+        <div class="marge-box">
+          <div class="mb-top">
+            <span class="mb-l">Marge brute</span>
+            <span class="mb-v num ${k.margeBrute<0?'neg':''}">${k.chiffre?PCT(k.margePct):'—'}</span>
+          </div>
+          <div class="mb-s">${k.chiffre
+            ? EUR2(k.margeBrute)+' au-dessus du coût fournisseur.'
+            : 'Ajoutez le devis fournisseur et vos heures pour voir la marge.'}</div>
+          <div class="bar">
+            <i style="width:${k.totalHT?k.coutMat/k.totalHT*100:0}%;background:var(--amber)"></i>
+            <i style="width:${k.totalHT?k.urssaf/k.totalHT*100:0}%;background:var(--red)"></i>
+            <i style="width:${k.totalHT?Math.max(k.reste,0)/k.totalHT*100:0}%;background:#4ADE9B"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="reste">
+        <div class="rl">Ce qu'il vous reste vraiment</div>
+        <div class="rv num">${EUR2(k.reste)}</div>
+        <div class="rs">Après ${EUR2(k.coutMat)} de matériaux et ${EUR2(k.urssaf)} de cotisations
+        URSSAF (${String(st.tauxUrssaf).replace('.',',')} %)${st.versementLib?` et ${EUR2(k.ir)} d'impôt libératoire`:''}.
+        ${(+c.heures>0 && c.moMode!=='pct')
+          ? `Soit <b>${EUR2(k.resteHeure)}</b> par heure travaillée.` : ''}</div>
+      </div>
+
+      ${k.margePct>0 && k.margePct<25 ? `<div class="note warn" style="margin-top:1rem">
+        <b>Marge sous 25 %.</b> Sur ce chantier, une erreur de métré ou une reprise
+        efface votre bénéfice. Vérifiez les heures avant d'envoyer.</div>`:''}
+      ${k.coutMat>0 && k.mo===0 ? `<div class="note warn" style="margin-top:1rem">
+        <b>Aucune main-d'œuvre chiffrée.</b> Vous facturez le bois sans facturer votre temps.</div>`:''}
+
+      <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn pri" id="cf-save" style="flex:1">Enregistrer</button>
+        <button class="btn dan" id="cf-del" aria-label="Supprimer le chantier">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VUE — FACTURES
+   ══════════════════════════════════════════════════════════ */
+function renderFactures(){
+  const list = S.chantiers.filter(c=>['accepte','termine'].includes(c.statut))
+    .sort((a,b)=> new Date(b.cree)-new Date(a.cree));
+  let encaisse=0, attente=0;
+  list.forEach(c=>{ const k=calc(c); if(c.paye) encaisse+=k.totalTTC; else attente+=k.totalTTC; });
+
+  $('#fac-kpi').innerHTML = `
+    <div class="kpi k-green"><div class="lbl">Encaissé</div>
+      <div class="val num">${EUR(encaisse)}</div>
+      <div class="foot">base de calcul des cotisations</div></div>
+    <div class="kpi k-amber"><div class="lbl">Facturé, pas encore payé</div>
+      <div class="val num">${EUR(attente)}</div>
+      <div class="foot">${list.filter(c=>!c.paye).length} factures ouvertes</div></div>
+    <div class="kpi"><div class="lbl">Total facturé</div>
+      <div class="val num">${EUR(encaisse+attente)}</div>
+      <div class="foot">${list.length} factures émises</div></div>`;
+
+  $('#t-factures').innerHTML = list.length ? `
+    <thead><tr><th>Nº</th><th>Client</th><th>Chantier</th>
+      <th class="r">Total HT</th><th class="r">Total TTC</th><th class="r">Statut</th></tr></thead>
+    <tbody>${list.map((c,i)=>{ const k=calc(c);
+      return `<tr class="clik" data-pay="${c.id}">
+        <td class="num" style="color:var(--ink-4)">F-${String(i+1).padStart(4,'0')}</td>
+        <td><b>${esc(c.client)}</b></td>
+        <td style="color:var(--ink-3)">${esc(c.titre)}</td>
+        <td class="r num">${EUR(k.totalHT)}</td>
+        <td class="r num" style="font-weight:600">${EUR(k.totalTTC)}</td>
+        <td class="r"><span class="pill ${c.paye?'p-green':'p-amber'}"><i></i>
+          ${c.paye?'Encaissée':'En attente'}</span></td></tr>`;
+    }).join('')}</tbody>`
+    : `<tbody><tr><td><div class="empty"><p>Aucune facture pour l'instant.</p></div></td></tr></tbody>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VUE — FISCALITÉ
+   ══════════════════════════════════════════════════════════ */
+function renderFisc(){
+  const st = S.settings;
+  const anneeCA = S.chantiers
+    .filter(c=>['accepte','termine'].includes(c.statut))
+    .filter(c=> new Date(c.cree).getFullYear() === new Date().getFullYear())
+    .reduce((s,c)=> s + calc(c).totalHT, 0);
+  const encaisseCA = S.chantiers.filter(c=>c.paye).reduce((s,c)=>s+calc(c).totalHT,0);
+  const urssafDu = encaisseCA * st.tauxUrssaf/100;
+  const irDu = st.versementLib ? encaisseCA * st.tauxIR/100 : 0;
+  const cfp = encaisseCA * 0.003; // contribution formation professionnelle, artisan
+  const pctSeuil = Math.min(anneeCA/st.seuilTVA*100, 100);
+  const restant = Math.max(st.seuilTVA - anneeCA, 0);
+
+  $('#fisc-body').innerHTML = `
+  <div class="grid g3" style="margin-bottom:1rem">
+    <div class="kpi k-amber"><div class="lbl">À provisionner pour l'URSSAF</div>
+      <div class="val num">${EUR(urssafDu)}</div>
+      <div class="foot">${String(st.tauxUrssaf).replace('.',',')} % de ${EUR(encaisseCA)} encaissés</div></div>
+    <div class="kpi k-violet"><div class="lbl">Contribution formation</div>
+      <div class="val num">${EUR(cfp)}</div>
+      <div class="foot">0,3 % du chiffre d'affaires, artisan</div></div>
+    <div class="kpi ${st.versementLib?'k-violet':''}"><div class="lbl">
+      ${st.versementLib?'Impôt libératoire':'Impôt sur le revenu'}</div>
+      <div class="val num">${st.versementLib?EUR(irDu):'—'}</div>
+      <div class="foot">${st.versementLib
+        ? String(st.tauxIR).replace('.',',')+' % prélevé avec les cotisations'
+        : 'au barème, hors de cet outil'}</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <h3>Seuil de franchise en base de TVA</h3>
+    <p class="sub">Tant que vous restez sous le seuil, vous ne facturez pas de TVA et vous n'en récupérez pas.</p>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.2rem">
+      <b class="num" style="font-size:1.35rem">${EUR(anneeCA)}</b>
+      <span style="color:var(--ink-3);font-size:.85rem">seuil ${EUR(st.seuilTVA)}</span>
+    </div>
+    <div class="gauge"><i style="width:${pctSeuil}%;background:${
+      pctSeuil>85?'var(--red)':pctSeuil>65?'var(--amber)':'var(--green)'}"></i></div>
+    <p style="font-size:.85rem;color:var(--ink-2);margin:.5rem 0 0">
+      ${restant>0
+        ? `Il vous reste <b>${EUR(restant)}</b> de chiffre d'affaires avant de basculer à la TVA.`
+        : `<b>Seuil dépassé.</b> Vous devez facturer la TVA. Prévenez votre comptable.`}
+      Le seuil de tolérance est fixé à ${EUR(st.seuilMajore)} : au-delà, la TVA s'applique immédiatement.</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Vos taux 2026</h3>
+      <p class="sub">Micro-entreprise, activité artisanale.</p>
+      <div class="tw"><table>
+        <tbody>
+          <tr><td>Cotisations sociales — prestations de services artisanales (BIC)</td>
+            <td class="r num"><b>21,2 %</b></td></tr>
+          <tr><td>Cotisations sociales — achat-revente de marchandises</td>
+            <td class="r num">12,3 %</td></tr>
+          <tr><td>Contribution à la formation professionnelle, artisan</td>
+            <td class="r num">0,3 %</td></tr>
+          <tr><td>Seuil de franchise en base — prestations de services</td>
+            <td class="r num">37 500 €</td></tr>
+          <tr><td>Seuil de franchise en base — vente de marchandises</td>
+            <td class="r num">85 000 €</td></tr>
+          <tr><td>Seuil majoré — prestations de services</td>
+            <td class="r num">41 250 €</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="card">
+      <h3>Quel taux de TVA sur vos chantiers</h3>
+      <p class="sub">Quand vous sortez de la franchise en base.</p>
+      <div class="tw"><table>
+        <tbody>
+          <tr><td><b>5,5 %</b><div style="color:var(--ink-3);font-size:.8rem">
+            Rénovation énergétique : isolation, menuiseries performantes</div></td></tr>
+          <tr><td><b>10 %</b><div style="color:var(--ink-3);font-size:.8rem">
+            Amélioration et entretien d'un logement achevé depuis plus de 2 ans.
+            Fourniture et pose comprises.</div></td></tr>
+          <tr><td><b>20 %</b><div style="color:var(--ink-3);font-size:.8rem">
+            Neuf, locaux professionnels, mobilier livré sans pose</div></td></tr>
+        </tbody></table></div>
+      <div class="note" style="margin-top:.9rem">
+        <b>Attestation obligatoire.</b> Pour appliquer 10 % ou 5,5 %, faites signer au client
+        le formulaire <b>1301-SD</b> et gardez-le cinq ans. Sans lui, l'administration
+        requalifie à 20 % et la différence est à votre charge.</div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:1rem">
+    <b>Cet outil calcule, il ne conseille pas.</b> Les taux ci-dessus sont ceux publiés pour 2026 et
+    vous pouvez les modifier dans les réglages. Un point reste à confirmer avec votre comptable :
+    un seuil de franchise spécifique au bâtiment a été discuté au Parlement sans être retenu dans
+    la loi de finances. Faites valider votre situation avant tout dépassement.</div>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VUE — RÉGLAGES
+   ══════════════════════════════════════════════════════════ */
+function renderReglages(){
+  const st = S.settings;
+  $('#set-body').innerHTML = `
+  <div class="grid g2">
+    <div class="card">
+      <h3>L'entreprise</h3><p class="sub">Apparaît sur les devis et les factures.</p>
+      <div class="fr"><label class="f" for="s-ent">Nom</label>
+        <input type="text" id="s-ent" data-s="entreprise" value="${esc(st.entreprise)}"></div>
+      <div class="fgrid c2">
+        <div class="fr"><label class="f" for="s-siret">SIRET <em>facultatif</em></label>
+          <input type="text" id="s-siret" data-s="siret" value="${esc(st.siret)}"></div>
+        <div class="fr"><label class="f" for="s-ville">Ville</label>
+          <input type="text" id="s-ville" data-s="ville" value="${esc(st.ville)}"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Vos tarifs</h3><p class="sub">Valeurs par défaut de chaque nouveau chiffrage.</p>
+      <div class="fgrid c2">
+        <div class="fr"><label class="f" for="s-th">Taux horaire main-d'œuvre</label>
+          <input type="number" id="s-th" data-s="tauxHoraire" value="${st.tauxHoraire}" min="0" step="1"></div>
+        <div class="fr"><label class="f" for="s-km">Tarif au kilomètre</label>
+          <input type="number" id="s-km" data-s="tarifKm" value="${st.tarifKm}" min="0" step="0.05"></div>
+      </div>
+      <div class="fr" style="margin-bottom:0"><label class="f" for="s-mg">Marge par défaut sur les matériaux (%)</label>
+        <input type="number" id="s-mg" data-s="margeDefaut" value="${st.margeDefaut}" min="0" step="1"></div>
+    </div>
+
+    <div class="card">
+      <h3>Régime social</h3><p class="sub">Détermine le taux de cotisations appliqué partout.</p>
+      <div class="fr"><label class="f" for="s-act">Nature de l'activité</label>
+        <select id="s-act" data-s="activite">
+          <option value="services"${st.activite==='services'?' selected':''}>Prestations de services artisanales — 21,2 %</option>
+          <option value="vente"${st.activite==='vente'?' selected':''}>Achat-revente de marchandises — 12,3 %</option>
+        </select></div>
+      <div class="fr"><label class="f" for="s-urs">Taux de cotisations appliqué (%)</label>
+        <input type="number" id="s-urs" data-s="tauxUrssaf" value="${st.tauxUrssaf}" min="0" step="0.1"></div>
+      <label class="f" style="display:flex;align-items:center;gap:.6rem;cursor:pointer;margin:0">
+        <input type="checkbox" data-s="versementLib" ${st.versementLib?'checked':''} style="width:auto;box-shadow:none">
+        Versement libératoire de l'impôt sur le revenu</label>
+      ${st.versementLib?`<div class="fr" style="margin-top:.7rem;margin-bottom:0">
+        <label class="f" for="s-ir">Taux libératoire (%)</label>
+        <input type="number" id="s-ir" data-s="tauxIR" value="${st.tauxIR}" min="0" step="0.1"></div>`:''}
+    </div>
+
+    <div class="card">
+      <h3>TVA</h3><p class="sub">Tant que la franchise est active, aucun devis ne porte de TVA.</p>
+      <label class="f" style="display:flex;align-items:center;gap:.6rem;cursor:pointer;margin-bottom:.9rem">
+        <input type="checkbox" data-s="franchiseTVA" ${st.franchiseTVA?'checked':''} style="width:auto;box-shadow:none">
+        Franchise en base de TVA active</label>
+      <div class="fgrid c2">
+        <div class="fr"><label class="f" for="s-seuil">Seuil applicable (€)</label>
+          <input type="number" id="s-seuil" data-s="seuilTVA" value="${st.seuilTVA}" min="0" step="500"></div>
+        <div class="fr"><label class="f" for="s-seuilm">Seuil majoré (€)</label>
+          <input type="number" id="s-seuilm" data-s="seuilMajore" value="${st.seuilMajore}" min="0" step="500"></div>
+      </div>
+      <div class="note">Seuils 2026 : <b>37 500 €</b> pour les prestations de services,
+        <b>85 000 €</b> pour la vente de marchandises. En activité mixte, c'est le seuil
+        le plus bas qui s'applique.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem">
+    <h3>Vos données</h3>
+    <p class="sub">Tout est stocké dans ce navigateur, sur cet appareil. Rien ne part sur internet.
+      Exportez régulièrement : effacer les données du navigateur effacerait vos chantiers.</p>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn" id="exp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Exporter mes données</button>
+      <button class="btn" id="imp-b">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Importer</button>
+      <input type="file" id="imp" accept="application/json" hidden>
+      <button class="btn dan" id="raz" style="margin-left:auto">Tout effacer</button>
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONCEPTION — lecture du résumé d'appel
+   L'extraction lit les nombres écrits dans le texte. Elle n'en invente
+   aucun : ce qui n'est pas dit reste à la valeur par défaut, visible et
+   modifiable. Toute la géométrie qui suit est du calcul déterministe.
+   ══════════════════════════════════════════════════════════ */
+const MATIERES = {
+  'chêne':      {n:'Chêne',            c:'#B98A52', px:96},
+  'hêtre':      {n:'Hêtre',            c:'#D2AE84', px:82},
+  'noyer':      {n:'Noyer',            c:'#7A5638', px:145},
+  'frêne':      {n:'Frêne',            c:'#CDB18A', px:88},
+  'mélaminé':   {n:'Mélaminé blanc',   c:'#E4E0D8', px:44, veine:false},
+  'medium':     {n:'MDF',              c:'#C0A183', px:38, veine:false},
+  'contreplaqué':{n:'Contreplaqué',    c:'#D9BC92', px:64},
+};
+const TYPES = {
+  dressing:     'Dressing',
+  bibliothèque: 'Bibliothèque',
+  placard:      'Placard',
+  cuisine:      'Meuble de cuisine',
+  meuble:       'Meuble',
+  caisson:      'Caisson',
+};
+
+/* Repère tous les nombres d'un texte et les convertit en millimètres, en
+   gardant leur position. Partagé par la lecture du résumé et par le chat :
+   deux analyseurs séparés finissaient par diverger sur les mêmes phrases. */
+function normTexte(txt){
+  return ' ' + (txt||'').toLowerCase().replace(/\u00A0/g,' ') + ' ';
+}
+
+function nombresMM(t, min=50, brutMM=false){
+  // min : plancher sous lequel un nombre est du bruit. 50 mm par défaut pour
+  // les côtes ; abaissé pour les épaisseurs de panneau, qui valent 19 ou 22.
+  const nums = [], vus = [];
+  const push = (i, mm) => { if(mm>=min && mm<=6000) nums.push({i, mm}); };
+  const scan = (re, conv) => {
+    let m; re.lastIndex = 0;
+    while((m = re.exec(t))){
+      const a = m.index, b = a + m[0].length;
+      if(vus.some(v => a < v[1] && b > v[0])) continue;
+      vus.push([a, b]);
+      push(a, conv(m));
+    }
+  };
+  scan(/(\d+)\s*m\s*(\d{2})(?![\d,.])/g,  m => +m[1]*1000 + +m[2]*10);
+  scan(/(\d+)[,.](\d+)\s*m(?![a-z])/g,    m => Math.round(parseFloat(m[1]+'.'+m[2])*1000));
+  scan(/(\d+)\s*mm\b/g,                   m => +m[1]);
+  scan(/(\d+)\s*cm\b/g,                   m => +m[1]*10);
+  scan(/(\d+)\s*m(?![a-z\d])/g,           m => +m[1]*1000);
+  // Nombre nu : lu en cm par défaut (« 60 de profondeur » = 600 mm), mais en
+  // millimètres pour les épaisseurs — « épaisseur 22 » n'a jamais voulu dire 22 cm.
+  scan(/(\d{2,4})/g, m => { const v = +m[1];
+    return brutMM ? v : (v <= 320 ? v*10 : v); });
+  return nums.sort((a,b)=> a.i - b.i);
+}
+
+function lireResume(txt){
+  const t = normTexte(txt);
+  const nums = nombresMM(t);
+
+  const CLES = [
+    {re:/larg|de large|linéaire/g,                 d:'L'},
+    {re:/haut|sous[- ]?plafond|de haut/g,          d:'H'},
+    {re:/profond|de prof\b|prof\./g,               d:'P'},
+  ];
+  const out = {};
+  const pris = new Set();
+  CLES.forEach(({re,d})=>{
+    let m; re.lastIndex = 0;
+    while((m = re.exec(t))){
+      if(out[d] !== undefined) break;
+      let best = null, bd = 1e9;
+      nums.forEach((n,idx)=>{
+        if(pris.has(idx)) return;
+        const dist = Math.abs(n.i - m.index);
+        if(dist < bd && dist < 40){ bd = dist; best = idx; }
+      });
+      if(best !== null){ out[d] = nums[best].mm; pris.add(best); }
+    }
+  });
+
+  // Ce qui reste de non attribué comble dans l'ordre largeur, hauteur, profondeur.
+  const libres = nums.filter((_,i)=>!pris.has(i)).map(n=>n.mm);
+  ['L','H','P'].forEach(d=>{ if(out[d]===undefined && libres.length) out[d] = libres.shift(); });
+
+  let type = 'meuble';
+  for(const k of Object.keys(TYPES)) if(t.includes(k)) { type = k; break; }
+  if(t.includes('biblio')) type = 'bibliothèque';
+
+  let mat = 'mélaminé';
+  for(const k of Object.keys(MATIERES)) if(t.includes(k)) { mat = k; break; }
+  if(t.includes('mdf')) mat = 'medium';
+
+  const et = t.match(/(\d+)\s*(?:étag|etag|tablette)/);
+  const mo = t.match(/(\d+)\s*(?:montant|séparation|separation|compartiment)/);
+
+  // Ce qui n'est pas écrit dans le texte est repris de sa façon de travailler
+  // (voir defautsPour), et non d'une valeur générique.
+  const b = defautsPour(type);
+  return {
+    type, matiere: mat === 'mélaminé' && b.matiere ? b.matiere : mat,
+    L: out.L || b.L || 2000, H: out.H || b.H || 2400, P: out.P || b.P || 600,
+    ep: b.ep || 19, fond: b.fond !== undefined ? b.fond : true,
+    socle: t.includes('socle') ? 100 : 0,
+    prixFeuille: b.prixFeuille,
+    montants: mo ? Math.min(+mo[1], 6)
+      : (b.montants !== undefined ? b.montants : ((out.L||0) > 1600 ? 2 : 1)),
+    etageres: et ? Math.min(+et[1], 8)
+      : (b.etageres !== undefined ? b.etageres : (t.includes('penderie') ? 2 : 4)),
+    penderie: t.includes('penderie'),
+    lu: Object.keys(out).length,
+  };
+}
+
+/* ── La fiche méthode : ce que l'app retient de sa façon de faire ──
+   Aucun modèle n'est réentraîné. À chaque conception validée, les choix
+   retenus deviennent les valeurs de départ de la suivante, par type de
+   meuble. Il corrige au début, il corrige de moins en moins ensuite. */
+const APPRIS = ['ep','P','matiere','prixFeuille','montants','etageres','fond'];
+
+function defautsPour(type){
+  const m = S.methode?.[type];
+  if(!m) return {};
+  const out = {};
+  APPRIS.forEach(k=>{ if(m[k] !== undefined) out[k] = m[k]; });
+  return out;
+}
+
+function apprendre(type, p){
+  S.methode = S.methode || {};
+  const m = S.methode[type] || {n:0};
+  APPRIS.forEach(k=>{ if(p[k] !== undefined) m[k] = p[k]; });
+  m.n = (m.n||0) + 1;
+  m.maj = new Date().toISOString().slice(0,10);
+  S.methode[type] = m;
+  sauver();
+}
+
+/* ── Géométrie : la liste des panneaux, en millimètres ───── */
+function panneaux(p){
+  const {L,H,P,ep} = p;
+  const n = Math.max(0, p.montants|0);
+  const comp = n + 1;
+  const cw = (L - 2*ep - n*ep) / comp;          // largeur utile d'un compartiment
+  const box = [];
+  const add = (nom,x,y,z,w,h,d,role) => box.push({nom,x,y,z,w,h,d,role});
+
+  add('Côté gauche',  0,     0,     0, ep,      H,       P, 'carcasse');
+  add('Côté droit',   L-ep,  0,     0, ep,      H,       P, 'carcasse');
+  add('Dessous',      ep,    0,     0, L-2*ep,  ep,      P, 'carcasse');
+  add('Dessus',       ep,    H-ep,  0, L-2*ep,  ep,      P, 'carcasse');
+  for(let i=0;i<n;i++){
+    const x = ep + (i+1)*cw + i*ep;
+    add('Montant',    x,     ep,    0, ep,      H-2*ep,  P, 'carcasse');
+  }
+  const ne = Math.max(0, p.etageres|0);
+  const pe = P - 10;
+  for(let c=0;c<comp;c++){
+    const x = ep + c*(cw+ep);
+    for(let j=0;j<ne;j++){
+      const y = ep + (j+1)*(H-2*ep)/(ne+1);
+      add('Étagère',  x,     y,     0, cw,      ep,      pe, 'etagere');
+    }
+  }
+  if(p.fond) add('Fond', 0, 0, P-8, L, H, 8, 'fond');
+  return box;
+}
+
+/* ── La pièce : sol, mur du fond, retour, plinthe ─────────
+   Le meuble est vu là où il ira, pas flottant dans un cadre gris.
+   Le mur est cliquable pour saisir ses vraies côtes. */
+const MUR_DEF = {
+  L:4200, H:2700, ep:0, sol:'#C0A88E', mur:'#E9E6E0',
+  // Ce que tout menuisier relève sur place et qu'aucun logiciel ne demande :
+  aplomb:0,     // écart du mur entre le bas et le haut, en mm (+ = penche vers la pièce)
+  niveau:0,     // écart du sol entre gauche et droite, en mm (+ = monte à droite)
+  scribe:15,    // fileur à raboter de chaque côté pour rattraper le mur
+  niche:false,  // le meuble s'encastre entre deux murs
+  obstacles:[], // {type, x, y, w, h} en mm depuis le coin bas-gauche du mur
+};
+const OBSTACLES = {
+  prise:      {n:'Prise',        w:85,   h:85,   c:'#E8E4DC'},
+  inter:      {n:'Interrupteur', w:85,   h:85,   c:'#E8E4DC'},
+  fenetre:    {n:'Fenêtre',      w:1200, h:1400, c:'#CFE0EC'},
+  porte:      {n:'Porte',        w:830,  h:2040, c:'#DCD6CC'},
+  radiateur:  {n:'Radiateur',    w:1000, h:600,  c:'#E4E4E2'},
+  tuyau:      {n:'Tuyau',        w:60,   h:2400, c:'#DAD6CE'},
+  trappe:     {n:'Trappe',       w:400,  h:400,  c:'#E0DCD4'},
+};
+
+/* ── La pièce, en boîte ouverte ───────────────────────────
+   Sol, mur du fond, mur de gauche, avec leur épaisseur visible. On garde
+   le volume serré autour du meuble : c'est ce qui permet au tri par
+   profondeur de rester juste. De grandes surfaces qui traversent la scène
+   s'entrecroisent et cassent le rendu — la leçon de la version précédente. */
+function piece(p){
+  const m = {...MUR_DEF, ...(p.mur||{})};
+  const {L,P} = p;
+  const ep = 100;
+  const murL = Math.max(m.L, L + 900);
+  const prof = P + 950;
+  const ox = -(murL - L)/2;
+  const b = [];
+  const add = (nom,x,y,z,w,h,d,mat,col,k=1) => b.push({nom,x,y,z,w,h,d,mat,col,k});
+  add('Sol',       ox,    -ep, P-prof, murL, ep,  prof,      'sol', m.sol);
+  add('Mur A',     ox,    0,   P,      murL, m.H, ep,        'mur', m.mur, 1);
+  add('Mur B',     ox-ep, 0,   P-prof, ep,   m.H, prof + ep, 'mur', m.mur, .93);
+  add('Plinthe',   ox,    0,   P-18,   murL, 95,  18,        'pli', '#F4F2EE');
+  return {boxes:b, ox, murL, murH:m.H, ep, obstacles:m.obstacles||[]};
+}
+
+/* ── Débit : regroupement par dimensions identiques ──────── */
+function debit(p){
+  const box = panneaux(p);
+  const m = new Map();
+  box.forEach(b=>{
+    // Dimensions du panneau à plat : on retire l'épaisseur des trois côtes.
+    const dims = [b.w,b.h,b.d].sort((x,y)=>y-x);
+    const ep = Math.round(dims[2]), a = Math.round(dims[0]), c = Math.round(dims[1]);
+    const k = `${b.nom}|${a}|${c}|${ep}`;
+    if(!m.has(k)) m.set(k,{nom:b.nom, l:a, larg:c, ep, q:0, role:b.role});
+    m.get(k).q++;
+  });
+  const lignes = [...m.values()].sort((a,b)=> b.l*b.larg - a.l*a.larg);
+  const surf = lignes.filter(l=>l.role!=='fond')
+    .reduce((s,l)=> s + l.l*l.larg*l.q, 0) / 1e6;       // m²
+  const surfFond = lignes.filter(l=>l.role==='fond')
+    .reduce((s,l)=> s + l.l*l.larg*l.q, 0) / 1e6;
+  const FEUILLE = 2800*2070/1e6;                        // panneau standard, m²
+  const feuilles = Math.max(1, Math.ceil(surf * 1.15 / FEUILLE));
+  const feuillesFond = surfFond ? Math.max(1, Math.ceil(surfFond*1.1 / FEUILLE)) : 0;
+  // Chants : les rives visibles de face, en mètres linéaires.
+  const chants = lignes.reduce((s,l)=> s + (l.role==='fond' ? 0 : l.larg*l.q/1000), 0);
+  return {lignes, surf, surfFond, feuilles, feuillesFond, chants};
+}
+
+/* ── Rendu : perspective, veinage et ombre. Aucune bibliothèque ──
+   Projection perspective maison, tri des faces par profondeur, éclairage
+   lambertien avec plancher d'ambiance, veinage suivant la perspective. */
+const VUE_W = 620, VUE_H = 470;
+
+function teinte(hex, f){
+  const n = parseInt(hex.slice(1),16);
+  const c = i => Math.max(0, Math.min(255, Math.round((n >> i & 255) * f)));
+  return `rgb(${c(16)},${c(8)},${c(0)})`;
+}
+
+const FACES = [
+  {i:[0,1,2,3], n:[0,0,-1], g:'h'}, // avant
+  {i:[5,4,7,6], n:[0,0, 1], g:'h'}, // arrière
+  {i:[4,0,3,7], n:[-1,0,0], g:'v'}, // gauche
+  {i:[1,5,6,2], n:[1,0, 0], g:'v'}, // droite
+  {i:[3,2,6,7], n:[0,1, 0], g:'h'}, // dessus
+  {i:[4,5,1,0], n:[0,-1,0], g:'h'}, // dessous
+];
+const LUM = (()=>{ const v=[0.40,0.86,-0.32];
+  const n=Math.hypot(...v); return v.map(x=>x/n); })();
+
+function dessine3D(p, v){
+  const meuble = panneaux(p);
+  const salle = (v.piece === false) ? null : piece(p);
+  const {L,H,P} = p;
+  const base = MATIERES[p.matiere]?.c || '#C0A183';
+  const veine = MATIERES[p.matiere]?.veine !== false;
+  const ecl = v.ecl || 0, zoom = v.zoom || 1;
+  const taille = Math.max(L,H,P,1);
+
+  const cy=Math.cos(v.yaw), sy=Math.sin(v.yaw);
+  const cp=Math.cos(v.pitch), sp=Math.sin(v.pitch);
+  const rot = (x,y,z) => {
+    const x1 = x*cy - z*sy, z1 = x*sy + z*cy;
+    return [x1, y*cp - z1*sp, y*sp + z1*cp];
+  };
+  const D = taille*2.9;                                   // distance caméra
+  // Cadrage exact : on projette les huit coins du volume à l'échelle 1 pour
+  // mesurer l'encombrement réel à l'écran, puis on ajuste. Une estimation
+  // grossière laisserait le meuble minuscule dans un cadre à moitié vide.
+  let ex = 0, ey = 0;
+  for(const sx of [-1,1]) for(const sy of [-1,1]) for(const sz of [-1,1]){
+    const [a,b,c] = rot(sx*L/2, sy*H/2, sz*P/2);
+    const f = D / Math.max(D + c, taille*0.25);
+    ex = Math.max(ex, Math.abs(a*f)); ey = Math.max(ey, Math.abs(b*f));
+  }
+  // Avec la pièce on recule un peu : le meuble doit se lire dans son contexte,
+  // pas remplir le cadre au point qu'on ne voie plus le mur.
+  const cadre = salle ? 0.34 : 0.44;
+  const ech = Math.min(VUE_W*cadre/Math.max(ex,1), VUE_H*(cadre-.02)/Math.max(ey,1)) * zoom;
+  const proj = (x,y,z) => {
+    const [a,b,c] = rot(x,y,z);
+    const f = D / Math.max(D + c, taille*0.25);           // perspective
+    return {x: VUE_W/2 + a*ech*f, y: VUE_H/2 - b*ech*f, z: c};
+  };
+  const lerp = (A,B,t) => ({x:A.x+(B.x-A.x)*t, y:A.y+(B.y-A.y)*t});
+
+  const polys = [];
+
+  // Un seul dessinateur pour la pièce et le meuble : même éclairage, même
+  // perspective, même tri en profondeur. C'est ce qui fait que le meuble a
+  // l'air posé dans la pièce et non collé par-dessus.
+  const rendre = (b, idx, estMeuble) => {
+    // Seul le meuble s'écarte en vue éclatée ; la pièce ne bouge pas.
+    const e = estMeuble ? ecl : 0;
+    const dx = (b.x + b.w/2 - L/2) * e;
+    const dy = (b.y + b.h/2 - H/2) * e;
+    const dz = (b.z + b.d/2 - P/2) * e;
+    const X = b.x - L/2 + dx, Y = b.y - H/2 + dy, Z = b.z - P/2 + dz;
+    const s = [[X,X+b.w],[Y,Y+b.h],[Z,Z+b.d]];
+    const pts8 = [
+      [s[0][0],s[1][0],s[2][0]],[s[0][1],s[1][0],s[2][0]],
+      [s[0][1],s[1][1],s[2][0]],[s[0][0],s[1][1],s[2][0]],
+      [s[0][0],s[1][0],s[2][1]],[s[0][1],s[1][0],s[2][1]],
+      [s[0][1],s[1][1],s[2][1]],[s[0][0],s[1][1],s[2][1]],
+    ].map(q=>proj(q[0],q[1],q[2]));
+
+    const col0 = estMeuble ? base : b.col;
+    const rf = !estMeuble ? (b.k || 1)
+      : b.role==='fond' ? 0.84 : b.role==='etagere' ? 1.06 : 1;
+    const choisi = estMeuble && v.sel === idx;
+    const fil = estMeuble && veine && b.role !== 'fond';
+
+    FACES.forEach(f=>{
+      const [nx,ny,nz] = rot(f.n[0], f.n[1], f.n[2]);
+      const lum = Math.max(0, nx*LUM[0] + ny*LUM[1] + nz*LUM[2]);
+      const q = f.i.map(k=>pts8[k]);
+      const prof = (q[0].z+q[1].z+q[2].z+q[3].z)/4;
+      // Brume atmosphérique : le fond de la pièce recule.
+      const brume = 1 - Math.min(0.16, Math.max(0, prof/(taille*3.4))*0.16);
+      const amb = estMeuble ? 0.70 : 0.80;   // les murs sont plus uniformément éclairés
+      const dif = estMeuble ? 0.42 : 0.28;
+      const col = choisi ? '#2563EB' : teinte(col0, rf * (amb + dif*lum) * brume);
+      let grain = '';
+      if(fil && !choisi && lum > 0.08){
+        const dark = teinte(col0, rf * (amb + dif*lum) * brume * 0.90);
+        for(let t=0.18; t<0.95; t+=0.22){
+          const a1 = lerp(q[0], q[3], t), a2 = lerp(q[1], q[2], t);
+          grain += `<line x1="${a1.x.toFixed(1)}" y1="${a1.y.toFixed(1)}"
+            x2="${a2.x.toFixed(1)}" y2="${a2.y.toFixed(1)}"
+            stroke="${dark}" stroke-width=".9" opacity=".5"/>`;
+        }
+      }
+      polys.push({prof, idx, estMeuble, mat:b.mat,
+        d: q.map(u=>`${u.x.toFixed(1)},${u.y.toFixed(1)}`).join(' '),
+        col, grain, choisi,
+        trait: estMeuble ? (choisi?'#1D4ED8':'rgba(20,14,8,.28)') : 'rgba(20,14,8,.07)',
+        ep: estMeuble ? (choisi?1.6:.7) : .5});
+    });
+  };
+
+  // La pièce d'abord (triée entre elle), le meuble ensuite : le volume est
+  // toujours derrière et dessous, donc l'ordre entre les deux est sûr.
+  const pol0 = [];
+  if(salle){ const g = polys.length;
+    salle.boxes.forEach(b => rendre(b, -1, false));
+    pol0.push(...polys.splice(g));
+    pol0.sort((a,b)=> b.prof - a.prof);
+  }
+  meuble.forEach((b,i) => rendre(b, i, true));
+  polys.sort((a,b)=> b.prof - a.prof);
+
+  const pj = (x,y,z) => proj(x - L/2, y - H/2, z - P/2);
+  const XY = u => `${u.x.toFixed(1)},${u.y.toFixed(1)}`;
+
+  /* ── Cotations : ligne, embouts, étiquette ─────────────
+     Tracées dans le plan de l'écran à partir des points projetés, donc
+     elles suivent la perspective sans jamais se déformer illisiblement. */
+  const cote = (A, B, txt, dx=0, dy=0) => {
+    const a = {x:A.x+dx, y:A.y+dy}, b = {x:B.x+dx, y:B.y+dy};
+    const ang = Math.atan2(b.y-a.y, b.x-a.x);
+    const n = {x:Math.sin(ang)*4.5, y:-Math.cos(ang)*4.5};
+    const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+    let deg = ang*180/Math.PI; if(deg > 90 || deg < -90) deg += 180;
+    return `<g class="cote">
+      <line x1="${A.x}" y1="${A.y}" x2="${a.x}" y2="${a.y}" class="ext"/>
+      <line x1="${B.x}" y1="${B.y}" x2="${b.x}" y2="${b.y}" class="ext"/>
+      <line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>
+      <line x1="${a.x-n.x}" y1="${a.y-n.y}" x2="${a.x+n.x}" y2="${a.y+n.y}"/>
+      <line x1="${b.x-n.x}" y1="${b.y-n.y}" x2="${b.x+n.x}" y2="${b.y+n.y}"/>
+      <text x="${mx}" y="${my-6}" transform="rotate(${deg.toFixed(1)} ${mx} ${my})">${txt}</text>
+    </g>`;
+  };
+  let cotes = '';
+  if(v.cotes !== false){
+    const bg = pj(0,0,0), bd = pj(L,0,0), hd = pj(L,H,0), ar = pj(L,0,P);
+    cotes = cote(bg, bd, `${L} mm`, 0, 34)
+          + cote(bd, hd, `${H} mm`, 30, 0)
+          + cote(bd, ar, `${P} mm`, 8, 26);
+  }
+
+  /* ── Repère du panneau sélectionné ────────────────────── */
+  let etiq = '';
+  if(v.sel != null && meuble[v.sel]){
+    const b = meuble[v.sel];
+    const c = pj(b.x + b.w/2, b.y + b.h/2, b.z + b.d/2);
+    etiq = `<g class="ref"><rect x="${(c.x-19).toFixed(1)}" y="${(c.y-11).toFixed(1)}"
+      width="38" height="22" rx="5"/><text x="${c.x.toFixed(1)}" y="${(c.y+4.5).toFixed(1)}"
+      text-anchor="middle">${refPanneau(v.sel)}</text></g>`;
+  }
+
+  /* ── Cube de navigation ───────────────────────────────── */
+  let cube = '';
+  if(v.cube !== false){
+    const cx = VUE_W - 52, cy = VUE_H - 52, r = 19;
+    const F = [
+      {i:[0,1,2,3], n:[0,0,-1], t:'AV'}, {i:[5,4,7,6], n:[0,0,1], t:'AR'},
+      {i:[4,0,3,7], n:[-1,0,0], t:'G'},  {i:[1,5,6,2], n:[1,0,0], t:'D'},
+      {i:[3,2,6,7], n:[0,1,0], t:'H'},   {i:[4,5,1,0], n:[0,-1,0], t:'B'},
+    ];
+    const s8 = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
+                [-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]]
+      .map(q=>{ const [a,b2,c] = rot(q[0]*r,q[1]*r,q[2]*r);
+        return {x:cx+a, y:cy-b2, z:c}; });
+    const fs = F.map(f=>{
+      const q = f.i.map(k=>s8[k]);
+      const pr = (q[0].z+q[1].z+q[2].z+q[3].z)/4;
+      const [nx,ny,nz] = rot(f.n[0],f.n[1],f.n[2]);
+      const face = nz < -0.25;
+      const mx = q.reduce((s,u)=>s+u.x,0)/4, my = q.reduce((s,u)=>s+u.y,0)/4;
+      return {pr, s:`<polygon points="${q.map(XY).join(' ')}"
+        fill="${face?'var(--cube-on)':'var(--cube)'}" stroke="var(--cube-l)" stroke-width=".8"/>
+        ${face?`<text x="${mx.toFixed(1)}" y="${(my+3).toFixed(1)}" text-anchor="middle"
+          class="cube-t">${f.t}</text>`:''}`};
+    }).sort((a,b)=> b.pr - a.pr).map(f=>f.s).join('');
+    cube = `<g class="cube">${fs}</g>`;
+  }
+
+  const dessine = (q) => `<g${q.estMeuble ? ` data-panneau="${q.idx}"` : ` data-piece="${q.mat}"`}>
+      <polygon points="${q.d}" fill="${q.col}" stroke="${q.trait}"
+        stroke-width="${q.ep}" stroke-linejoin="round"/>${q.grain}</g>`;
+
+  const omb = [[-140,2,-40],[L+140,2,-40],[L+70,2,P],[-70,2,P]]
+    .map(u=>pj(u[0],u[1],u[2])).map(XY).join(' ');
+
+  return `<svg viewBox="0 0 ${VUE_W} ${VUE_H}" role="img"
+    aria-label="Vue 3D — ${L} sur ${H} sur ${P} millimètres">
+    <defs><filter id="flou" x="-40%" y="-140%" width="180%" height="380%">
+      <feGaussianBlur stdDeviation="8"/></filter></defs>
+    ${pol0.map(dessine).join('')}
+    ${salle ? `<polygon points="${omb}" fill="rgba(40,28,16,.34)" filter="url(#flou)"/>` : ''}
+    ${polys.map(dessine).join('')}
+    ${cotes}${etiq}${cube}
+  </svg>`;
+}
+
+/* Référence stable d'un panneau : P01, P02… dans l'ordre de la nomenclature. */
+function refPanneau(i){ return 'P' + String(i+1).padStart(2,'0'); }
+
+/* ── Plans cotés : élévation face, profil et dessus ─────── */
+function dessinePlan(p, type){
+  const box = panneaux(p);
+  const {L,H,P} = p;
+  // axes[0] = horizontal du plan, axes[1] = vertical, selon la vue choisie.
+  const conf = {
+    face:   {a:'x', b:'y', da:'w', db:'h', ta:L, tb:H, la:'Largeur', lb:'Hauteur'},
+    profil: {a:'z', b:'y', da:'d', db:'h', ta:P, tb:H, la:'Profondeur', lb:'Hauteur'},
+    dessus: {a:'x', b:'z', da:'w', db:'d', ta:L, tb:P, la:'Largeur', lb:'Profondeur'},
+  }[type];
+  const M = 62, W = VUE_W, Ht = VUE_H;
+  const ech = Math.min((W-2*M)/conf.ta, (Ht-2*M)/conf.tb);
+  const ox = (W - conf.ta*ech)/2, oy = (Ht - conf.tb*ech)/2;
+  const X = a => ox + a*ech;
+  const Y = b => oy + (conf.tb - b)*ech;   // origine en bas
+  const base = MATIERES[p.matiere]?.c || '#C0A183';
+
+  // Le fond couvre toute la face : il doit être peint en premier, sinon il
+  // masque la carcasse et le plan devient un aplat.
+  const ordre = {fond:0, carcasse:1, etagere:2};
+  const rects = [...box]
+    .sort((a,b)=> (ordre[a.role]??1) - (ordre[b.role]??1))
+    .map(b=>{
+      const a0 = b[conf.a], b0 = b[conf.b];
+      const aw = b[conf.da], bh = b[conf.db];
+      const f = b.role==='fond' ? .78 : b.role==='etagere' ? 1.08 : 1;
+      return `<rect x="${X(a0).toFixed(1)}" y="${Y(b0+bh).toFixed(1)}"
+        width="${(aw*ech).toFixed(1)}" height="${(bh*ech).toFixed(1)}"
+        fill="${teinte(base, f*0.95)}" stroke="rgba(20,14,8,.55)" stroke-width="1"/>`;
+    }).join('');
+
+  // Ligne de cote avec flèches et valeur.
+  const cote = (x1,y1,x2,y2,txt,dec) => {
+    const mx=(x1+x2)/2, my=(y1+y2)/2;
+    return `<g stroke="var(--ink-3)" stroke-width="1" fill="none">
+      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>
+      <line x1="${x1-4}" y1="${y1-(dec==='h'?4:0)}" x2="${x1+4}" y2="${y1+(dec==='h'?4:0)}"/>
+      <line x1="${x2-4}" y1="${y2-(dec==='h'?4:0)}" x2="${x2+4}" y2="${y2+(dec==='h'?4:0)}"/>
+    </g><text x="${mx}" y="${my+(dec==='h'?-7:-4)}" text-anchor="middle"
+      style="font-size:12px;font-weight:600;fill:var(--ink)"
+      transform="${dec==='v'?`rotate(-90 ${mx} ${my})`:''}">${txt}</text>`;
+  };
+
+  return `<svg viewBox="0 0 ${W} ${Ht}" role="img"
+    aria-label="Plan ${type}, ${conf.ta} par ${conf.tb} millimètres">
+    ${rects}
+    ${cote(X(0), Y(0)+26, X(conf.ta), Y(0)+26, conf.ta+' mm', 'h')}
+    ${cote(X(0)-28, Y(0), X(0)-28, Y(conf.tb), conf.tb+' mm', 'v')}
+    <text x="${X(conf.ta)}" y="${Y(conf.tb)-14}" text-anchor="end"
+      style="font-size:11px;fill:var(--ink-4)">${conf.la} × ${conf.lb}</text>
+  </svg>`;
+}
+
+/* ── Chat d'édition : interprète des ordres en français ───
+   Ce n'est pas un modèle de langage — c'est un analyseur de commandes.
+   Déterministe, hors ligne, gratuit, et il ne se trompe jamais de côte. */
+function commandeEdition(txt, p){
+  const t = ' ' + (txt||'').toLowerCase() + ' ';
+  const faits = [];
+  const nums = nombresMM(t);
+  const numsFins = nombresMM(t, 6, true);     // épaisseurs : toujours en mm
+  const pris = new Set();
+  const DIM = [
+    {re:/épaisseur|epaisseur/,  k:'ep',n:'Épaisseur'},
+    {re:/profond|prof\b/,       k:'P', n:'Profondeur'},
+    {re:/haut|sous[- ]?plafond/,k:'H', n:'Hauteur'},
+    {re:/larg|de large/,        k:'L', n:'Largeur'},
+  ];
+  // On prend le nombre le PLUS PROCHE du mot-clé, pas le premier trouvé dans
+  // une fenêtre : « 2m50 de haut, 45 de profondeur » attribuait 2500 à la
+  // profondeur, et un panneau coupé faux coûte le prix du bois.
+  DIM.forEach(({re,k,n})=>{
+    const i = t.search(re);
+    if(i < 0) return;
+    const src = (k === 'ep') ? numsFins : nums;
+    let best = null, bd = 30;
+    src.forEach((q,j)=>{
+      if(src === nums && pris.has(j)) return;
+      const d = Math.abs(q.i - i);
+      if(d < bd){ bd = d; best = j; }
+    });
+    if(best === null) return;
+    if(src === nums) pris.add(best);
+    const v = src[best].mm;
+    if(v && v !== p[k]){ p[k] = v; faits.push(`${n} → ${v} mm`); }
+  });
+
+  const plus  = /ajoute|rajoute|plus de|une de plus|encore/.test(t);
+  const moins = /enlève|enleve|retire|supprime|moins de|une de moins/.test(t);
+  if(/étag|etag|tablette/.test(t)){
+    const n = t.match(/(\d+)\s*(?:étag|etag|tablette)/);
+    if(n){ p.etageres = Math.min(+n[1], 8); faits.push(`Étagères → ${p.etageres}`); }
+    else if(plus) { p.etageres = Math.min(p.etageres+1, 8); faits.push(`Étagères → ${p.etageres}`); }
+    else if(moins){ p.etageres = Math.max(p.etageres-1, 0); faits.push(`Étagères → ${p.etageres}`); }
+  }
+  if(/montant|séparation|separation|compartiment/.test(t)){
+    const n = t.match(/(\d+)\s*(?:montant|séparation|separation|compartiment)/);
+    if(n){ p.montants = Math.min(+n[1], 6); faits.push(`Montants → ${p.montants}`); }
+    else if(plus) { p.montants = Math.min(p.montants+1, 6); faits.push(`Montants → ${p.montants}`); }
+    else if(moins){ p.montants = Math.max(p.montants-1, 0); faits.push(`Montants → ${p.montants}`); }
+  }
+  if(/fond/.test(t)){
+    if(moins && p.fond) { p.fond = false; faits.push('Fond retiré'); }
+    else if(plus && !p.fond){ p.fond = true; faits.push('Fond ajouté'); }
+  }
+  for(const k of Object.keys(MATIERES)){
+    if(t.includes(k) && p.matiere !== k){
+      p.matiere = k; faits.push(`Matière → ${MATIERES[k].n}`);
+      p.prixFeuille = MATIERES[k].px; break; }
+  }
+  for(const k of Object.keys(TYPES)){
+    if(t.includes(k) && p.type !== k){ p.type = k; faits.push(`Type → ${TYPES[k]}`); break; }
+  }
+  // Ajustements relatifs sans chiffre : « plus haut », « moins profond ».
+  if(/plus haut/.test(t) && !/\d/.test(t)){ p.H += 100; faits.push(`Hauteur → ${p.H} mm`); }
+  if(/moins haut|plus bas/.test(t) && !/\d/.test(t)){ p.H -= 100; faits.push(`Hauteur → ${p.H} mm`); }
+  if(/plus large/.test(t) && !/\d/.test(t)){ p.L += 100; faits.push(`Largeur → ${p.L} mm`); }
+  if(/moins large|plus étroit|plus etroit/.test(t) && !/\d/.test(t)){ p.L -= 100; faits.push(`Largeur → ${p.L} mm`); }
+
+  return faits;
+}
+
+/* ── La fiche du mur ──────────────────────────────────────
+   Le relevé que tout menuisier fait sur place et qu'aucun logiciel ne
+   lui demande : un mur n'est jamais d'aplomb, un sol jamais de niveau,
+   et il y a toujours une prise là où on ne veut pas. */
+function murDe(p){ return {...MUR_DEF, ...(p.mur||{})}; }
+
+/* Angle réel du mur : l'écart d'aplomb rapporté à la hauteur. Un facteur
+   arbitraire donnerait un chiffre qui n'a aucun sens sur le chantier. */
+function angleMur(m){
+  const a = 90 - Math.atan2(m.aplomb || 0, m.H || 1) * 180 / Math.PI;
+  return a.toFixed(1).replace('.', ',');
+}
+
+function contraintes(p){
+  const m = murDe(p);
+  const cotes = m.niche ? 2 : 1;
+  const Lmax = m.L - cotes * m.scribe;
+  const av = [];
+  if(p.L > Lmax) av.push({t:'bad', m:`Le meuble ne rentre pas : ${p.L} mm pour ${Lmax} mm
+    utiles (mur ${m.L} mm moins ${cotes} fileur${cotes>1?'s':''} de ${m.scribe} mm).`});
+  if(p.H > m.H) av.push({t:'bad', m:`Le meuble dépasse le plafond : ${p.H} mm sous ${m.H} mm.`});
+  if(Math.abs(m.aplomb) >= 6) av.push({t:'warn', m:`Mur hors d'aplomb de ${Math.abs(m.aplomb)} mm
+    sur la hauteur. Prévoir un fileur à raboter, sinon le jeu se verra
+    ${m.aplomb > 0 ? 'en haut' : 'en bas'}.`});
+  if(Math.abs(m.niveau) >= 4) av.push({t:'warn', m:`Sol hors niveau de ${Math.abs(m.niveau)} mm
+    sur la largeur. Prévoir des vérins ou un socle à recouper.`});
+  // Un obstacle derrière le meuble se traite au débit, pas sur le chantier.
+  const gx = (Math.max(m.L, p.L + 1400) - p.L)/2;      // bord gauche du meuble sur le mur
+  const heurte = (m.obstacles||[]).filter(o=>{
+    const d = OBSTACLES[o.type] || OBSTACLES.prise;
+    const x0 = +o.x||0, y0 = +o.y||0, w = +o.w||d.w, h = +o.h||d.h;
+    return x0 < gx + p.L && x0 + w > gx && y0 < p.H && y0 + h > 0;
+  });
+  heurte.forEach(o=>{
+    const d = OBSTACLES[o.type] || OBSTACLES.prise;
+    av.push({t:'warn', m:`${d.n} à ${o.x} mm du bord du mur, ${o.y} mm du sol :
+      derrière le meuble. Prévoir une découpe dans le fond.`});
+  });
+  return {m, Lmax, cotes, av, heurte};
+}
+
+function ficheMur(p){
+  const {m, Lmax, av} = contraintes(p);
+  const ch = (id,k,lbl,unit,step=10,min=0) => `<div class="fr">
+    <label class="f" for="${id}">${lbl} <em>${unit}</em></label>
+    <input type="number" id="${id}" data-mur="${k}" value="${m[k]}" step="${step}" min="${min}"></div>`;
+  return `<div class="card" id="cn-mur" style="margin-bottom:1rem">
+    <h3>Le mur</h3>
+    <p class="sub">Cliquez le mur dans la vue 3D pour revenir ici.
+      Surface utile <b>${((m.L/1000)*(m.H/1000)).toFixed(2).replace('.',',')} m²</b> ·
+      largeur exploitable <b>${Lmax} mm</b>.</p>
+
+    <div class="fgrid c3">
+      ${ch('m-L','L','Largeur du mur','mm')}
+      ${ch('m-H','H','Hauteur sous plafond','mm')}
+      ${ch('m-scribe','scribe','Fileur par côté','mm',1)}
+    </div>
+    <div class="fgrid c3">
+      ${ch('m-aplomb','aplomb','Aplomb du mur','écart mm',1,-200)}
+      ${ch('m-niveau','niveau','Niveau du sol','écart mm',1,-200)}
+      <div class="fr" style="display:flex;flex-direction:column;justify-content:flex-end;gap:.45rem">
+        <label class="f" style="display:flex;align-items:center;gap:.6rem;cursor:pointer;margin:0">
+          <input type="checkbox" data-mur-b="niche" ${m.niche?'checked':''} style="width:auto;box-shadow:none">
+          Encastré entre deux murs</label>
+        <label class="f" style="display:flex;align-items:center;gap:.6rem;cursor:pointer;margin:0">
+          <input type="checkbox" data-vpiece ${vue3D.piece===false?'':'checked'} style="width:auto;box-shadow:none">
+          Afficher la pièce</label>
+      </div>
+    </div>
+
+    <div style="margin-top:.4rem;padding-top:1rem;border-top:1px solid var(--line-2)">
+      <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem">
+        <b style="font-size:.82rem">Ce qu'il y a sur le mur</b>
+        <select id="m-obs-t" style="width:auto;min-width:150px;padding:.35rem .6rem;font-size:.82rem">
+          ${Object.entries(OBSTACLES).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}
+        </select>
+        <button class="btn sm" id="m-obs-add">Ajouter</button>
+      </div>
+      ${(m.obstacles||[]).length ? (m.obstacles||[]).map((o,i)=>{
+        const d = OBSTACLES[o.type] || OBSTACLES.prise;
+        return `<div class="mat-row" style="grid-template-columns:1fr 86px 86px 34px">
+          <b style="font-size:.84rem;display:flex;align-items:center;gap:.45rem">
+            <span class="swatch" style="background:${d.c};border:1px solid var(--line)"></span>${d.n}</b>
+          <input type="number" data-obs="${i}" data-of="x" value="${o.x}" step="10" aria-label="Distance du bord gauche, mm">
+          <input type="number" data-obs="${i}" data-of="y" value="${o.y}" step="10" aria-label="Hauteur depuis le sol, mm">
+          <button class="del" data-obs-del="${i}" aria-label="Supprimer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>`; }).join('')
+        + `<div class="xs" style="margin-top:.3rem">Colonnes : distance du bord gauche du mur,
+           puis hauteur depuis le sol.</div>`
+        : `<div class="xs">Rien de relevé. Ajoutez les prises, tuyaux et fenêtres :
+           l'app vous dira lesquels tombent derrière le meuble.</div>`}
+    </div>
+
+    ${av.length ? `<div style="margin-top:1rem;display:flex;flex-direction:column;gap:.55rem">
+      ${av.map(a=>`<div class="note ${a.t==='bad'?'warn':'warn'}"
+        style="${a.t==='bad'?'border-left-color:var(--red);background:var(--red-bg)':''}">${a.m}</div>`).join('')}
+    </div>` : `<div class="note" style="margin-top:1rem">
+      <b>Rien ne bloque.</b> Le meuble passe dans le mur relevé.</div>`}
+  </div>`;
+}
+
+/* ── Blocs réutilisables de la vue Conception ────────────── */
+function blocDebit(p){
+  const d = debit(p), mat = MATIERES[p.matiere];
+  return `<p class="sub">${d.lignes.reduce((s,l)=>s+l.q,0)} panneaux ·
+      ${d.surf.toFixed(2).replace('.',',')} m² de ${esc(mat.n)}${
+      d.surfFond?` · ${d.surfFond.toFixed(2).replace('.',',')} m² de fond`:''}</p>
+    <div class="cut-r h"><div>Panneau</div><div>Quantité</div>
+      <div style="text-align:right">Longueur × largeur</div><div style="text-align:right">Ép.</div></div>
+    ${d.lignes.map(l=>`<div class="cut-r">
+      <div><b><span class="swatch" style="background:${
+        l.role==='fond'?'#8A7A64':l.role==='etagere'?'#D8B98A':mat.c}"></span>${l.nom}</b>
+        ${l.role==='fond'?'<em>panneau de fond</em>':''}</div>
+      <div class="dim">× ${l.q}</div>
+      <div class="dim" style="text-align:right">${l.l} × ${l.larg}</div>
+      <div class="dim" style="text-align:right">${l.ep}</div></div>`).join('')}
+    <div class="note" style="margin-top:1rem">
+      <b>Estimation matière :</b> ${d.feuilles} panneau${d.feuilles>1?'x':''} de ${esc(mat.n)}${
+      d.feuillesFond?` + ${d.feuillesFond} panneau de fond`:''} ·
+      ${d.chants.toFixed(1).replace('.',',')} m de chant.
+      Calcul par surface avec 15 % de perte — <b>pour le vrai plan de coupe, passez par OptiCoupe</b>,
+      l'optimisation de chutes ne se devine pas.</div>`;
+}
+
+function methodeCard(type){
+  const m = S.methode?.[type];
+  if(!m || !m.n) return `<div class="note" style="margin-top:1rem">
+    <b>Rien d'appris pour l'instant.</b> À chaque conception envoyée au chiffrage,
+    l'application retient vos choix — épaisseur, profondeur, matière, nombre d'étagères —
+    et les propose par défaut la fois suivante, pour ce type de meuble.</div>`;
+  const LIB = {ep:'Épaisseur', P:'Profondeur', matiere:'Matière',
+    prixFeuille:'Prix du panneau', montants:'Montants', etageres:'Étagères', fond:'Fond'};
+  const val = (k,v) => k==='matiere' ? (MATIERES[v]?.n || v)
+    : k==='fond' ? (v?'oui':'non')
+    : k==='prixFeuille' ? EUR2(v)
+    : (k==='ep'||k==='P') ? v+' mm' : v;
+  return `<div class="card" style="margin-top:1rem">
+    <h3>Votre façon de travailler</h3>
+    <p class="sub">Appris sur ${m.n} ${TYPES[type]?.toLowerCase()||'meuble'}${m.n>1?'s':''}
+      — dernière mise à jour le ${m.maj?.split('-').reverse().join('/')||'—'}.
+      Ces valeurs deviennent le point de départ du prochain chantier de ce type.</p>
+    ${APPRIS.filter(k=>m[k]!==undefined).map(k=>`<div class="cut-r" style="grid-template-columns:1fr auto">
+      <div>${LIB[k]}</div><div class="dim"><b>${val(k,m[k])}</b></div></div>`).join('')}
+    <button class="btn sm" id="cn-oubli" style="margin-top:.8rem">Oublier ces habitudes</button>
+  </div>`;
+}
+
+/* ── Chat : rendu d'un message ───────────────────────────── */
+function msgHTML(m){
+  const corps = m.faits && m.faits.length
+    ? `${esc(m.t)}<ul>${m.faits.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`
+    : esc(m.t);
+  return `<div class="msg ${m.r==='moi'?'moi':'bot'}">${corps}
+    ${m.img ? `<img src="${m.img}" alt="Photo du mur envoyée">` : ''}</div>`;
+}
+
+/* ── Mesure sur photo ─────────────────────────────────────
+   Aucune magie : une photo seule ne donne aucune côte. On demande UNE
+   distance réelle connue, et tout le reste de ce plan s'en déduit. C'est
+   une estimation à confirmer au mètre, et c'est écrit à l'écran. */
+let mesure = {pts:[], px:null, last:null};
+
+function blocMesure(p){
+  const pt = mesure.pts;
+  const ligne = pt.length === 2
+    ? `<line x1="${pt[0].x*100}%" y1="${pt[0].y*100}%" x2="${pt[1].x*100}%" y2="${pt[1].y*100}%"
+         stroke="#E9A23B" stroke-width="2.5"/>` : '';
+  const ronds = pt.map(q=>`<circle cx="${q.x*100}%" cy="${q.y*100}%" r="5"
+    fill="#E9A23B" stroke="#fff" stroke-width="2"/>`).join('');
+  const etat = !mesure.px
+    ? `Cliquez <b>deux points dont vous connaissez la distance</b> (une porte, une plinthe,
+       votre mètre posé au mur) pour donner l'échelle.`
+    : mesure.last
+      ? `Distance mesurée : <b>${Math.round(mesure.last)} mm</b>`
+      : `Échelle réglée. Cliquez deux points pour mesurer.`;
+  return `<div class="mes">
+      <img src="${p.photo}" id="cn-img" alt="Photo du mur, cliquez pour mesurer">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">${ligne}</svg>
+      <svg>${ronds}</svg>
+    </div>
+    <div class="mes-hint">
+      <span>${etat}</span>
+      ${mesure.last ? `<span class="btn sm" data-vers="L">→ largeur</span>
+        <span class="btn sm" data-vers="H">→ hauteur</span>
+        <span class="btn sm" data-vers="P">→ profondeur</span>` : ''}
+      <button class="btn sm" id="cn-mes-raz">Recommencer</button>
+    </div>`;
+}
+
+/* ── Vue Conception ──────────────────────────────────────── */
+let vue3D = {yaw:-0.62, pitch:0.28, ecl:0, zoom:1, mode:'3d', sel:null, piece:true};
+
+/* ── Tanguirry : ce qu'il sait du projet ──────────────────
+   Aucun modèle de langage. Il interroge les vraies données du chantier —
+   côtes, mur, débit, contraintes — et répond en citant sa source. Un
+   assistant qui invente une côte fait couper du bois pour rien. */
+function tanguirry(q, c){
+  const p = c.conception, t = normTexte(q);
+  const {m, Lmax, av, heurte} = contraintes(p);
+  const d = debit(p);
+  const rep = (txt, src, act) => ({txt, src, act});
+
+  if(/jeu|fileur|scribe|côté mur|cote mur/.test(t))
+    return rep(`${m.scribe} mm de fileur par côté, ${m.niche?'des deux côtés':'côté mur'}.`
+      + (Math.abs(m.aplomb) >= 6
+        ? ` Mais le mur est hors d'aplomb de ${Math.abs(m.aplomb)} mm : vérifiez l'aplomb avant de figer le jeu.`
+        : ` Le mur est dans les tolérances.`), 'relevé du mur', Math.abs(m.aplomb)>=6 ? 'mur' : null);
+
+  if(/aplomb|angle|droit|équerre|equerre/.test(t))
+    return rep(m.aplomb ? `Mur A relevé à ${angleMur(m)}° — écart de ${m.aplomb} mm sur ${m.H} mm de hauteur.`
+      : `Aucun défaut d'aplomb relevé sur le mur A.`, 'relevé du mur', 'mur');
+
+  if(/niveau|sol/.test(t))
+    return rep(m.niveau ? `Sol hors niveau de ${Math.abs(m.niveau)} mm sur la largeur. Prévoir des vérins.`
+      : `Sol relevé de niveau.`, 'relevé du mur', 'mur');
+
+  if(/combien.*panneau|nombre.*panneau|débit|debit/.test(t))
+    return rep(`${d.lignes.reduce((s,l)=>s+l.q,0)} panneaux, ${d.surf.toFixed(2).replace('.',',')} m² `
+      + `de ${MATIERES[p.matiere].n}, soit ${d.feuilles} feuille${d.feuilles>1?'s':''} à commander `
+      + `et ${d.chants.toFixed(1).replace('.',',')} m de chant.`, 'liste de débit');
+
+  if(/largeur|large/.test(t))
+    return rep(`Meuble ${p.L} mm pour ${Lmax} mm utiles (mur ${m.L} mm moins le fileur). `
+      + (p.L > Lmax ? 'Il ne rentre pas.' : `Il reste ${Lmax - p.L} mm de marge.`), 'côtes du projet');
+
+  if(/hauteur|haut/.test(t))
+    return rep(`Meuble ${p.H} mm sous un plafond relevé à ${m.H} mm.`, 'côtes du projet');
+
+  if(/prise|obstacle|tuyau|fenêtre|fenetre/.test(t))
+    return rep(heurte.length
+      ? `${heurte.length} élément${heurte.length>1?'s':''} tombe${heurte.length>1?'nt':''} derrière le meuble. `
+        + heurte.map(o=>`${(OBSTACLES[o.type]||OBSTACLES.prise).n} à ${o.x} mm du bord, ${o.y} mm du sol`).join(' · ')
+        + `. Prévoir la découpe dans le fond.`
+      : `Rien de relevé derrière le meuble.`, 'relevé du mur', heurte.length ? 'mur' : null);
+
+  if(/prix|coût|cout|marge|reste/.test(t)){
+    const k = calc(c);
+    return rep(k.chiffre
+      ? `Total HT ${EUR2(k.totalHT)}, marge ${PCT(k.margePct)}. Après matériaux et cotisations, `
+        + `il vous reste ${EUR2(k.reste)}.`
+      : `Le chantier n'est pas encore chiffré.`, 'chiffrage');
+  }
+
+  if(/problème|probleme|vérifier|verifier|ça va|ca va|ok/.test(t))
+    return rep(av.length
+      ? `${av.length} point${av.length>1?'s':''} à vérifier : ` + av.map(a=>a.m.replace(/\s+/g,' ').trim()).join(' ')
+      : `Rien ne bloque. Le meuble passe dans le mur relevé.`, 'contrôle du projet', av.length ? 'mur' : null);
+
+  // Sinon : une consigne de modification.
+  const faits = commandeEdition(q, p);
+  if(faits.length) return rep('C’est modifié : ' + faits.join(' · '), 'côtes du projet');
+  const lu = /\d/.test(q) ? lireResume(q) : null;
+  if(lu && lu.lu){ Object.assign(p, lu, {resume:q});
+    return rep(`Relevé mis à jour : ${lu.L} × ${lu.H} × ${lu.P} mm.`, 'côtes du projet'); }
+
+  return rep(`Je connais les côtes, le mur, le débit et le chiffrage de ce chantier. `
+    + `Demandez-moi « quel jeu côté mur A ? », « combien de panneaux ? », « y a-t-il un problème ? » — `
+    + `ou dictez une modification : « profondeur 45 », « ajoute une étagère ».`, null);
+}
+
+/* ── Le panneau de propriétés, selon la sélection ─────── */
+function propsHTML(p, c){
+  const {m, Lmax} = contraintes(p);
+  const box = panneaux(p);
+  if(vue3D.selMur){
+    const ang = angleMur(m);
+    const hs = Math.abs(m.aplomb) >= 6;
+    return `<h4>Mur A</h4><div class="sub2">Propriétés du relevé</div>
+      <div class="prow"><b>Localisation</b><span>${esc(c.adresse || 'Chantier')}</span></div>
+      <div class="prow"><b>Type</b><span>Cloison sèche</span></div>
+      <div class="prow"><b>Largeur</b><span>${m.L} mm</span></div>
+      <div class="prow"><b>Hauteur</b><span>${m.H} mm</span></div>
+      <div class="prow"><b>Angle</b><span class="${hs?'warn2':''}">${ang}°${hs?' · à vérifier':''}</span></div>
+      <div class="prow"><b>Niveau sol</b><span class="${Math.abs(m.niveau)>=4?'warn2':''}">${m.niveau>0?'+':''}${m.niveau} mm</span></div>
+      <div class="prow"><b>Fileur</b><span>${m.scribe} mm / côté</span></div>
+      <div class="prow"><b>Utile</b><span>${Lmax} mm</span></div>
+      <div class="prow"><b>Source</b><span>Relevé v3</span></div>
+      ${hs?`<div style="margin-top:.6rem"><span class="pchk">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 9v5M12 17h.01"/></svg>
+        À confirmer sur place</span></div>`:''}`;
+  }
+  if(vue3D.sel != null && box[vue3D.sel]){
+    const b = box[vue3D.sel];
+    const dm = [b.w,b.h,b.d].sort((x,y)=>y-x).map(Math.round);
+    return `<h4>Panneau ${refPanneau(vue3D.sel)}</h4>
+      <div class="sub2">${esc(b.nom)} · ${MATIERES[p.matiere].n}</div>
+      <div class="prow"><b>Longueur</b><span>${dm[0]} mm</span></div>
+      <div class="prow"><b>Largeur</b><span>${dm[1]} mm</span></div>
+      <div class="prow"><b>Épaisseur</b><span>${dm[2]} mm</span></div>
+      <div class="prow"><b>Rôle</b><span>${b.role==='carcasse'?'Carcasse':b.role==='etagere'?'Étagère':'Fond'}</span></div>
+      <div class="prow"><b>Chant visible</b><span>${b.role==='fond'?'non':(dm[1]/1000).toFixed(2).replace('.',',')+' m'}</span></div>`;
+  }
+  return `<h4>${esc(TYPES[p.type]||'Meuble')}</h4>
+    <div class="sub2">${esc(c.client||'Sans nom')} · ${MATIERES[p.matiere].n}</div>
+    <div class="prow"><b>Largeur</b><span><input type="number" data-p="L" value="${p.L}" step="10"></span></div>
+    <div class="prow"><b>Hauteur</b><span><input type="number" data-p="H" value="${p.H}" step="10"></span></div>
+    <div class="prow"><b>Profondeur</b><span><input type="number" data-p="P" value="${p.P}" step="10"></span></div>
+    <div class="prow"><b>Épaisseur</b><span><input type="number" data-p="ep" value="${p.ep}" step="1"></span></div>
+    <div class="prow"><b>Montants</b><span><input type="number" data-p="montants" value="${p.montants}" min="0" max="6"></span></div>
+    <div class="prow"><b>Étagères</b><span><input type="number" data-p="etageres" value="${p.etageres}" min="0" max="8"></span></div>
+    <div class="prow"><b>Matière</b><span>${MATIERES[p.matiere].n}</span></div>`;
+}
+
+/* ── La vue Conception : le poste de travail ──────────── */
+function renderConception(){
+  const c = S.chantiers.find(x=>x.id===chantierActif) ||
+            (chantierActif = S.chantiers[0]?.id, S.chantiers[0]);
+  const corps = $('#cn-body');
+  if(!c){ corps.innerHTML = `<div class="card"><div class="empty">
+    <p>Aucun chantier. Créez-en un pour concevoir un meuble.</p>
+    <button class="btn pri" data-new>Nouveau chantier</button></div></div>`; return; }
+  if(!c.conception) c.conception = {resume:'', ...lireResume('')};
+  const p = c.conception;
+  const {m, av} = contraintes(p);
+  const d = debit(p), box = panneaux(p), mat = MATIERES[p.matiere];
+  const svg = vue3D.mode==='3d' ? dessine3D(p, vue3D) : dessinePlan(p, vue3D.mode);
+
+  const RAIL = [['proj','Projets','M3 7h6l2 2h10v11H3z'],
+                ['bib','Biblio.','M4 4h7v16H4zM13 4h7v16h-7z'],
+                ['rel','Relevés','M3 12h4l3-8 4 16 3-8h4'],
+                ['reg','Réglages','M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z']];
+  const OUTILS = [['orbite','Orbite'],['interieur','Intérieur'],['cotes','Cotes'],['coupe','Coupe']];
+
+  corps.innerHTML = `
+  <div class="ws">
+    <nav class="ws-rail" aria-label="Sections">
+      ${RAIL.map((r,i)=>`<button ${i===0?'aria-current="true"':''} data-rail="${r[0]}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="${r[2]}"/></svg>
+        <em>${r[1]}</em></button>`).join('')}
+    </nav>
+
+    <aside class="ws-tree">
+      <h4>Pièces
+        <button data-new title="Nouveau chantier" aria-label="Nouveau chantier">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </h4>
+      <button class="tn" data-tree="piece">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+        ${esc(c.adresse || 'Chantier')}</button>
+      <button class="tn d1" data-tree="mur" aria-selected="${!!vue3D.selMur}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="16" rx="1"/></svg>
+        Mur A
+        ${av.length?`<svg class="lk" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 9v5M12 17h.01"/></svg>`:''}</button>
+      <button class="tn d1" data-tree="meuble" aria-selected="${vue3D.sel===null && !vue3D.selMur}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+        ${esc(TYPES[p.type]||'Meuble')}</button>
+      ${box.map((b,i)=>`<button class="tn d2" data-tree="p${i}" aria-selected="${vue3D.sel===i}">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="1"/></svg>
+        ${refPanneau(i)} · ${esc(b.nom)}</button>`).join('')}
+    </aside>
+
+    <main class="ws-view">
+      <div class="ws-tabs">
+        ${[['3d','Conception'],['face','Élévation'],['profil','Profil'],['dessus','Dessus']]
+          .map(([k,n])=>`<button data-vue="${k}" aria-current="${vue3D.mode===k}">${n}</button>`).join('')}
+        <div class="ttl">
+          <select id="cn-pick" style="width:auto;max-width:200px;padding:.25rem .5rem;font-size:.78rem">
+            ${S.chantiers.map(x=>`<option value="${x.id}"${x.id===c.id?' selected':''}>${esc(x.client||'Sans nom')} — ${esc(x.titre)}</option>`).join('')}
+          </select>
+          <span class="tagc">CONCEPT</span>
+        </div>
+      </div>
+
+      <div class="ws-canvas${vue3D.mode==='3d'?'':' plan'}" id="viewer">
+        ${svg}
+        <div class="ws-note">${p.L} × ${p.H} × ${p.P} mm · ${esc(mat.n)}</div>
+        <div class="ws-tools">
+          ${OUTILS.map(([k,n])=>`<button data-outil="${k}"
+            aria-pressed="${k==='cotes' ? vue3D.cotes!==false : k==='interieur' ? vue3D.piece===false : false}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${
+              k==='orbite'?'<circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/>'
+             :k==='interieur'?'<path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5"/>'
+             :k==='cotes'?'<path d="M3 8h18M6 5v6M18 5v6M3 16h18"/>'
+             :'<path d="M4 20 20 4M9 4h11v11"/>'}</svg>
+            ${n}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="ws-strip">
+        <h5>Liste de débit <span>${box.length} panneaux · ${d.feuilles} feuille${d.feuilles>1?'s':''} · ${d.chants.toFixed(1).replace('.',',')} m de chant</span></h5>
+        <div class="strip">
+          ${box.map((b,i)=>{
+            const dm = [b.w,b.h,b.d].sort((x,y)=>y-x).map(Math.round);
+            const r = Math.min(dm[1]/dm[0], 1), w = 30, h = Math.max(4, 30*r);
+            return `<button class="pv" data-pv="${i}" aria-selected="${vue3D.sel===i}">
+              <b>${refPanneau(i)}</b>
+              <div class="th"><u style="width:${w}px;height:${h}px;background:${mat.c}"></u></div>
+              <span>${dm[0]} × ${dm[1]}</span></button>`;
+          }).join('')}
+        </div>
+      </div>
+    </main>
+
+    <aside class="ws-side">
+      <div class="ws-props" id="cn-props">${propsHTML(p, c)}</div>
+      <div class="tg">
+        <div class="tg-h"><i>T</i> Tanguirry
+          <em>${vue3D.selMur ? 'Mur A' : vue3D.sel!=null ? refPanneau(vue3D.sel) : 'Projet'}</em></div>
+        <div class="tg-log" id="tg-log">${(c.chat||[]).map(msgTG).join('')
+          || `<div class="tgm bot">Je connais ce chantier : les côtes, le mur, le débit et le chiffrage.
+              Demandez-moi « quel jeu côté mur A ? » ou dictez une modification.</div>`}</div>
+        <div class="tg-in">
+          <input type="text" id="tg-in" placeholder="Voir la zone…" aria-label="Question à Tanguirry">
+          <button class="icb pri" id="tg-go" aria-label="Envoyer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+  </div>`;
+
+  brancherViewer();
+}
+
+function msgTG(m){
+  if(m.r === 'moi') return `<div class="tgm moi">${esc(m.t)}</div>`;
+  return `<div class="tgm bot">${esc(m.t)}
+    ${m.src ? `<div class="src">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      Source : <u>${esc(m.src)}</u></div>` : ''}
+    ${m.act === 'mur' ? `<button class="act" data-tg-act="mur">Voir la zone</button>` : ''}</div>`;
+}
+
+function majConception(){
+  const c = S.chantiers.find(x=>x.id===chantierActif); if(!c?.conception) return;
+  const p = c.conception, d = debit(p), mat = MATIERES[p.matiere];
+  redessine();
+  const bd = $('#cn-debit'); if(bd) bd.innerHTML = blocDebit(p);
+  const px = p.prixFeuille ?? mat.px;
+  const cout = d.feuilles*px + d.feuillesFond*38 + d.chants*1.8;
+  const co = $('#cn-cout'); if(co) co.textContent = EUR2(cout);
+  const di = $('#cn-dims');
+  if(di) di.textContent = `${p.L} × ${p.H} × ${p.P} mm · ${TYPES[p.type]} en ${mat.n}`;
+}
+
+/* Redessine la seule zone de visualisation, sans toucher au reste. */
+function redessine(){
+  const c = S.chantiers.find(x=>x.id===chantierActif); if(!c?.conception) return;
+  const v = $('#viewer'); if(!v) return;
+  v.querySelector('svg')?.remove();
+  v.insertAdjacentHTML('afterbegin', vue3D.mode==='3d'
+    ? dessine3D(c.conception, vue3D) : dessinePlan(c.conception, vue3D.mode));
+}
+
+function brancherViewer(){
+  const v = $('#viewer'); if(!v) return;
+  const c = () => S.chantiers.find(x=>x.id===chantierActif);
+  const P = () => c()?.conception;
+
+  /* ── Orbite, zoom, sélection ─────────────────────────── */
+  let drag = false, bouge = false, x0 = 0, y0 = 0;
+  v.addEventListener('pointerdown', e=>{
+    if(vue3D.mode !== '3d') return;
+    drag = true; bouge = false; x0 = e.clientX; y0 = e.clientY;
+    v.setPointerCapture(e.pointerId);
+  });
+  v.addEventListener('pointermove', e=>{
+    if(!drag) return;
+    if(Math.abs(e.clientX-x0) + Math.abs(e.clientY-y0) > 3) bouge = true;
+    vue3D.yaw  += (e.clientX - x0) * 0.011;
+    vue3D.pitch = Math.max(-1.3, Math.min(1.3, vue3D.pitch + (e.clientY - y0) * 0.009));
+    x0 = e.clientX; y0 = e.clientY; redessine();
+  });
+  const lache = ()=> drag = false;
+  v.addEventListener('pointerup', lache);
+  v.addEventListener('pointercancel', lache);
+  v.addEventListener('wheel', e=>{
+    if(vue3D.mode !== '3d') return;
+    e.preventDefault();
+    vue3D.zoom = Math.max(.45, Math.min(3, vue3D.zoom * (e.deltaY > 0 ? .92 : 1.08)));
+    redessine();
+  }, {passive:false});
+
+  v.addEventListener('click', e=>{
+    if(bouge || vue3D.mode !== '3d') return;
+    if(e.target.closest('[data-piece="mur"],[data-piece="pli"]')) return choisir({mur:true});
+    const g = e.target.closest('[data-panneau]');
+    if(g) return choisir({sel: +g.dataset.panneau});
+    choisir({});                                   // clic dans le vide : on désélectionne
+  });
+
+  /* ── Sélection : une seule porte d'entrée pour l'arbre,
+     la vue, le bandeau de débit et les propriétés. ─────── */
+  function choisir({sel = null, mur = false}){
+    vue3D.sel = sel; vue3D.selMur = mur;
+    renderConception();
+    if(mur) toast('Mur A sélectionné.');
+    else if(sel != null){
+      const b = panneaux(P())[sel];
+      if(b){ const d = [b.w,b.h,b.d].sort((x,y)=>y-x).map(Math.round);
+        toast(`${refPanneau(sel)} · ${b.nom} — ${d[0]} × ${d[1]} × ${d[2]} mm`); }
+    }
+  }
+
+  $$('[data-tree]').forEach(b=> b.addEventListener('click', ()=>{
+    const k = b.dataset.tree;
+    if(k === 'mur') choisir({mur:true});
+    else if(k.startsWith('p')) choisir({sel:+k.slice(1)});
+    else choisir({});
+  }));
+  $$('[data-pv]').forEach(b=> b.addEventListener('click', ()=> choisir({sel:+b.dataset.pv})));
+
+  /* ── Vues et outils ──────────────────────────────────── */
+  $$('[data-vue]').forEach(b=> b.addEventListener('click', ()=>{
+    vue3D.mode = b.dataset.vue; renderConception(); }));
+
+  $$('[data-outil]').forEach(b=> b.addEventListener('click', ()=>{
+    const k = b.dataset.outil;
+    if(k === 'orbite'){ vue3D.yaw = -0.62; vue3D.pitch = 0.28; vue3D.zoom = 1;
+      vue3D.mode = '3d'; renderConception(); toast('Vue recadrée.'); }
+    else if(k === 'interieur'){ vue3D.piece = vue3D.piece === false; renderConception();
+      toast(vue3D.piece ? 'Pièce affichée.' : 'Meuble seul.'); }
+    else if(k === 'cotes'){ vue3D.cotes = vue3D.cotes === false; renderConception(); }
+    else if(k === 'coupe'){ vue3D.ecl = vue3D.ecl > 0 ? 0 : .38; renderConception();
+      toast(vue3D.ecl ? 'Vue éclatée.' : 'Vue assemblée.'); }
+  }));
+
+  $('#cn-pick')?.addEventListener('change', e=>{
+    chantierActif = e.target.value; vue3D.sel = null; vue3D.selMur = false;
+    renderConception(); });
+
+  /* ── Propriétés éditables ────────────────────────────── */
+  $$('#cn-props [data-p]').forEach(i=>{
+    const maj = () => { const p = P(); if(!p) return;
+      p[i.dataset.p] = parseFloat(i.value) || 0; sauver(); };
+    i.addEventListener('input',  ()=>{ maj(); redessine(); });
+    i.addEventListener('change', ()=>{ maj(); renderConception(); });
+  });
+
+  /* ── Tanguirry ───────────────────────────────────────── */
+  const auBas = () => { const l = $('#tg-log'); if(l) l.scrollTop = l.scrollHeight; };
+  const demander = () => {
+    const ch = c(); if(!ch) return;
+    const champ = $('#tg-in'), q = (champ?.value || '').trim(); if(!q) return;
+    ch.chat = ch.chat || [];
+    ch.chat.push({r:'moi', t:q});
+    const r = tanguirry(q, ch);
+    ch.chat.push({r:'bot', t:r.txt, src:r.src, act:r.act});
+    if(ch.chat.length > 30) ch.chat.splice(0, ch.chat.length - 30);
+    champ.value = ''; sauver(); renderConception(); auBas();
+  };
+  $('#tg-go')?.addEventListener('click', demander);
+  $('#tg-in')?.addEventListener('keydown', e=>{ if(e.key === 'Enter') demander(); });
+  $$('[data-tg-act]').forEach(b=> b.addEventListener('click', ()=> choisir({mur:true})));
+  auBas();
+}
+
+const calmeVue = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ══════════════════════════════════════════════════════════
+   NAVIGATION ET ÉVÉNEMENTS
+   ══════════════════════════════════════════════════════════ */
+const RENDU = {dash:renderDash, chantiers:renderChantiers, conception:renderConception,
+               chiffrage:renderChiffrage, factures:renderFactures,
+               fisc:renderFisc, reglages:renderReglages};
+
+function aller(v){
+  vueActive = v;
+  $$('#nav button').forEach(b=> b.setAttribute('aria-current', b.dataset.v===v ? 'true':'false'));
+  $$('.view').forEach(s=> s.classList.toggle('on', s.id === 'v-'+v));
+  RENDU[v]?.();
+  if(location.hash.slice(1) !== v) history.replaceState(null,'','#'+v);
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function nouveau(){
+  const c = {id:uid(), client:'', tel:'', adresse:'', titre:'', statut:'appel',
+    cree:new Date().toISOString().slice(0,10), rdv:'', materiaux:[],
+    margeMode:'pct', margeVal:S.settings.margeDefaut, moMode:'heures', heures:0, moPct:60,
+    km:0, trajets:2, tva:S.settings.tvaDefaut, notes:'', paye:false};
+  S.chantiers.unshift(c); sauver();
+  chantierActif = c.id; aller('chiffrage');
+  setTimeout(()=> $('#i-client')?.focus(), 60);
+  toast('Chantier créé.');
+}
+
+document.addEventListener('click', e=>{
+  const nav = e.target.closest('#nav button');       if(nav) return aller(nav.dataset.v);
+  if(e.target.closest('[data-new]'))                 return nouveau();
+
+  const step = e.target.closest('[data-etape]');
+  if(step){ filtreEtape = filtreEtape===step.dataset.etape ? null : step.dataset.etape;
+    renderDash(); return aller('chantiers'); }
+
+  const open = e.target.closest('[data-open]');
+  if(open){ chantierActif = open.dataset.open; return aller('chiffrage'); }
+
+  const pay = e.target.closest('[data-pay]');
+  if(pay){ const c = S.chantiers.find(x=>x.id===pay.dataset.pay);
+    if(c){ c.paye = !c.paye; sauver(); renderFactures();
+      toast(c.paye ? 'Facture marquée encaissée.' : 'Facture remise en attente.'); } return; }
+
+  const mode = e.target.closest('[data-mode]');
+  if(mode){ const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    if(mode.dataset.mode==='marge') c.margeMode = mode.dataset.val;
+    else c.moMode = mode.dataset.val;
+    sauver(); return renderChiffrage(); }
+
+  const del = e.target.closest('[data-del]');
+  if(del){ const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    c.materiaux.splice(+del.dataset.del,1); sauver(); return renderChiffrage(); }
+
+  if(e.target.closest('#add-mat')){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    c.materiaux.push({l:'',f:'',q:1,pu:0}); sauver(); renderChiffrage();
+    const rows = $$('#mats .mat-row'); rows[rows.length-1]?.querySelector('input')?.focus(); return; }
+
+  if(e.target.closest('#cn-lire')){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    const txt = $('#cn-txt').value;
+    const p = lireResume(txt);
+    c.conception = {...p, resume:txt};
+    sauver(); renderConception();
+    return toast(p.lu ? `${p.lu} côte${p.lu>1?'s':''} lue${p.lu>1?'s':''} dans le résumé.`
+                      : 'Aucune côte trouvée — les valeurs par défaut sont conservées.'); }
+
+  if(e.target.closest('#cn-send')){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    const p = c.conception, d = debit(p), mat = MATIERES[p.matiere];
+    const px = p.prixFeuille ?? mat.px;
+    c.materiaux = [{l:`Panneaux ${mat.n} ${p.ep} mm — 2800 × 2070`, f:'', q:d.feuilles, pu:px}];
+    if(d.feuillesFond) c.materiaux.push(
+      {l:'Panneau de fond 8 mm — 2800 × 2070', f:'', q:d.feuillesFond, pu:38});
+    if(d.chants) c.materiaux.push(
+      {l:`Chant plaqué ${mat.n}`, f:'', q:Math.ceil(d.chants), pu:1.8});
+    apprendre(p.type, p);
+    sauver(); aller('chiffrage');
+    return toast('Débit envoyé dans le chiffrage. Vos choix sont retenus.'); }
+
+  if(e.target.closest('#cn-oubli')){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    if(!confirm('Oublier les habitudes apprises pour ce type de meuble ?')) return;
+    delete S.methode?.[c.conception.type];
+    sauver(); renderConception(); return toast('Habitudes oubliées.'); }
+
+  if(e.target.closest('#cf-save')){ sauver(); toast('Chantier enregistré.'); return; }
+
+  if(e.target.closest('#cf-del')){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    if(!confirm(`Supprimer définitivement le chantier « ${c.titre||c.client} » ?`)) return;
+    S.chantiers = S.chantiers.filter(x=>x.id!==chantierActif);
+    chantierActif = S.chantiers[0]?.id || null; sauver(); renderChiffrage();
+    return toast('Chantier supprimé.'); }
+
+  if(e.target.closest('#cf-print')) return window.print();
+
+  if(e.target.closest('#exp')){
+    const blob = new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `petit-menuisier-${new Date().toISOString().slice(0,10)}.json`;
+    a.click(); URL.revokeObjectURL(a.href);
+    return toast('Sauvegarde téléchargée.'); }
+
+  if(e.target.closest('#imp-b')) return $('#imp').click();
+
+  if(e.target.closest('#raz')){
+    if(!confirm('Effacer tous les chantiers et réglages ? Cette action est définitive.')) return;
+    localStorage.removeItem(KEY);
+    S = {settings:{...DEFAUT.settings}, chantiers:[], methode:{}};
+    chantierActif = null; aller('dash'); return toast('Données effacées.'); }
+
+  if(e.target.closest('#solva-link')){ e.preventDefault();
+    return toast('Le Petit Menuisier — outil construit par Solva.'); }
+});
+
+document.addEventListener('keydown', e=>{
+  const step = e.target.closest('[data-etape]');
+  if(step && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); step.click(); }
+});
+
+document.addEventListener('input', e=>{
+  const t = e.target;
+
+  if(t.dataset.f){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    const num = ['margeVal','heures','moPct','km','trajets','tva'];
+    c[t.dataset.f] = num.includes(t.dataset.f) ? (parseFloat(t.value)||0) : t.value;
+    sauver(); majRecap(); return;
+  }
+
+  if(t.dataset.m !== undefined){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+    const m = c.materiaux[+t.dataset.m]; if(!m) return;
+    const f = t.dataset.mf;
+    m[f] = (f==='q'||f==='pu') ? (parseFloat(t.value)||0) : t.value;
+    sauver(); majRecap(); return;
+  }
+
+  if(t.dataset.p){
+    const c = S.chantiers.find(x=>x.id===chantierActif); if(!c?.conception) return;
+    const f = t.dataset.p;
+    const num = ['L','H','P','ep','montants','etageres','prixFeuille'];
+    c.conception[f] = t.type==='checkbox' ? t.checked
+      : num.includes(f) ? (parseFloat(t.value)||0) : t.value;
+    sauver(); majConception(); return;
+  }
+
+  if(t.dataset.s){
+    const f = t.dataset.s;
+    S.settings[f] = t.type==='checkbox' ? t.checked
+      : (typeof DEFAUT.settings[f] === 'number' ? (parseFloat(t.value)||0) : t.value);
+    if(f==='activite'){ S.settings.tauxUrssaf = t.value==='vente' ? 12.3 : 21.2;
+      S.settings.seuilTVA = t.value==='vente' ? 85000 : 37500;
+      S.settings.seuilMajore = t.value==='vente' ? 93500 : 41250;
+      sauver(); return renderReglages(); }
+    if(f==='franchiseTVA' || f==='versementLib'){ sauver(); return renderReglages(); }
+    sauver(); return;
+  }
+});
+
+document.addEventListener('change', e=>{
+  if(e.target.id === 'filt'){ filtreEtape = e.target.value || null; return renderChantiers(); }
+  if(e.target.id === 'cf-pick'){ chantierActif = e.target.value; return renderChiffrage(); }
+  if(e.target.id === 'cn-pick'){ chantierActif = e.target.value; return renderConception(); }
+  // Matière et type changent les couleurs et la fiche méthode : on refait la vue.
+  if(e.target.dataset.p === 'matiere' || e.target.dataset.p === 'type') return renderConception();
+  if(e.target.dataset.f === 'statut'){
+    const c = S.chantiers.find(x=>x.id===chantierActif);
+    if(c){ c.statut = e.target.value; sauver(); toast(`Étape : ${etape(c.statut).n}.`); } return; }
+  if(e.target.id === 'imp'){
+    const file = e.target.files?.[0]; if(!file) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const d = JSON.parse(r.result);
+        if(!d || !Array.isArray(d.chantiers)) throw new Error('format');
+        S = {settings:{...DEFAUT.settings,...(d.settings||{})},
+             chantiers:d.chantiers, methode:d.methode||{}};
+        chantierActif = null; sauver(); aller('dash'); toast('Données importées.');
+      }catch(err){ toast('Fichier illisible — ce n\'est pas une sauvegarde valide.'); }
+    };
+    r.readAsText(file); e.target.value = '';
+  }
+});
+
+/* Met à jour uniquement le récapitulatif pendant la frappe, pour ne pas
+   perdre le focus ni la position du curseur dans le champ en cours. */
+function majRecap(){
+  const c = S.chantiers.find(x=>x.id===chantierActif); if(!c) return;
+  const k = calc(c), st = S.settings;
+  const rec = $('.recap'); if(!rec) return;
+  const rows = $$('.brow b', rec);
+  const vals = st.franchiseTVA
+    ? [k.coutMat, k.marge, k.matFacture, k.mo, k.deplacement, k.totalHT, k.totalTTC]
+    : [k.coutMat, k.marge, k.matFacture, k.mo, k.deplacement, k.totalHT, k.tva, k.totalTTC];
+  rows.forEach((b,i)=>{
+    if(vals[i]===undefined) return;
+    const signe = b.textContent.trim().startsWith('+') ? '+ ' : '';
+    b.textContent = signe + EUR2(vals[i]);
+  });
+  const mb = $('.mb-v', rec);
+  if(mb){ mb.textContent = k.chiffre ? PCT(k.margePct) : '—';
+    mb.classList.toggle('neg', k.margeBrute<0); }
+  const ms = $('.mb-s', rec);
+  if(ms) ms.textContent = k.chiffre
+    ? `${EUR2(k.margeBrute)} au-dessus du coût fournisseur.`
+    : 'Ajoutez le devis fournisseur et vos heures pour voir la marge.';
+  const bars = $$('.bar i', rec);
+  if(bars.length===3 && k.totalHT>0){
+    bars[0].style.width = k.coutMat/k.totalHT*100+'%';
+    bars[1].style.width = k.urssaf/k.totalHT*100+'%';
+    bars[2].style.width = Math.max(k.reste,0)/k.totalHT*100+'%';
+  }
+  const rv = $('.reste .rv', rec); if(rv) rv.textContent = EUR2(k.reste);
+  const rs = $('.reste .rs', rec);
+  if(rs) rs.innerHTML = `Après ${EUR2(k.coutMat)} de matériaux et ${EUR2(k.urssaf)} de cotisations
+    URSSAF (${String(st.tauxUrssaf).replace('.',',')} %)${st.versementLib?` et ${EUR2(k.ir)} d'impôt libératoire`:''}.
+    ${(+c.heures>0 && c.moMode!=='pct') ? `Soit <b>${EUR2(k.resteHeure)}</b> par heure travaillée.` : ''}`;
+  const tot = $$('.brow', rec).find(r=>r.classList.contains('tot'));
+  if(tot) tot.querySelector('b').textContent = EUR2(k.totalTTC);
+}
+
+/* ─── Démarrage ─────────────────────────────────────── */
+const dep = location.hash.slice(1);
+aller(RENDU[dep] ? dep : 'dash');
+window.addEventListener('hashchange', ()=>{
+  const v = location.hash.slice(1);
+  if(RENDU[v] && v !== vueActive) aller(v);
+});
+</script>
+</body>
+</html>
