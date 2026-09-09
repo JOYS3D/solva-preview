@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Custom software — built around the way you work</title>
+<meta name="description" content="When the same job lives in five places and the numbers get retyped four times. Software shaped around one business, with an honest view of when not to build it. Solva, Brisbane.">
+<meta property="og:title" content="Custom software — built around the way you work">
+<meta property="og:description" content="One real project you can open and use, and a straight answer about when custom software is the wrong call.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F7F5F1" media="(prefers-color-scheme:light)">
+<meta name="theme-color" content="#0A0D12" media="(prefers-color-scheme:dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2314171C'/%3E%3Ctext x='50' y='71' font-family='Helvetica,Arial' font-size='64' font-weight='700' fill='%23fff' text-anchor='middle'%3Es%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   SOLVA — CUSTOM SOFTWARE
+   Mêmes jetons que Solva Call : papier chaud, encre profonde, un
+   cobalt rationné. Aucune chasse fixe, aucune esthétique de terminal.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --paper:#F7F5F1; --surface:#FFFFFF; --sunk:#EFECE6; --deep:#14171C;
+  --ink:#14171C; --ink-2:#42474F; --ink-3:#6E747D; --ink-4:#9DA3AC;
+  --line:#E2DFD8; --line-2:#EDEAE4;
+  --co:#1B3FD1; --co-d:#152FA3; --co-l:#4064E8; --co-bg:#E9EDFC; --co-soft:#F3F5FE;
+  --ok:#0C7C55; --ok-bg:#E3F2EC;
+  --urg:#B33A2E; --urg-bg:#FAEAE7;
+  --warm:#A9691C; --warm-bg:#FAF0E2;
+  --e:cubic-bezier(.22,1,.36,1); --e-o:cubic-bezier(.16,1,.3,1);
+  --r-s:10px; --r:15px; --r-l:24px; --r-xl:34px;
+  --d1:0 1px 1px rgba(20,23,28,.04),0 1px 3px rgba(20,23,28,.05);
+  --d2:0 1px 2px rgba(20,23,28,.04),0 8px 20px -8px rgba(20,23,28,.15);
+  --d3:0 2px 6px rgba(20,23,28,.05),0 24px 48px -18px rgba(20,23,28,.25);
+  --d4:0 6px 14px rgba(20,23,28,.06),0 48px 90px -28px rgba(20,23,28,.36);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0A0D12; --surface:#111519; --sunk:#0D1115; --deep:#05070A;
+  --ink:#EEF0F3; --ink-2:#B0B6BE; --ink-3:#848A93; --ink-4:#5C626B;
+  --line:#1F242B; --line-2:#181C22;
+  --co:#5077F0; --co-d:#3A5CE0; --co-l:#7D9AF6; --co-bg:#131C33; --co-soft:#0D1220;
+  --ok:#35B183; --ok-bg:#0B241A; --urg:#E0655A; --urg-bg:#2A1310;
+  --warm:#D0913F; --warm-bg:#241A0C;
+  --d1:0 1px 2px rgba(0,0,0,.4);
+  --d2:0 1px 2px rgba(0,0,0,.4),0 8px 20px -8px rgba(0,0,0,.6);
+  --d3:0 2px 6px rgba(0,0,0,.45),0 24px 48px -18px rgba(0,0,0,.7);
+  --d4:0 6px 14px rgba(0,0,0,.5),0 48px 90px -28px rgba(0,0,0,.8);
+}}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;line-height:1.58;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.012em}
+::selection{background:var(--co);color:#fff}
+:where(a,button,[tabindex]):focus-visible{outline:2px solid var(--co);outline-offset:3px;
+  border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.038em;line-height:1.05;text-wrap:balance}
+.d1{font-size:clamp(2.6rem,6vw,4.6rem);letter-spacing:-.05em;line-height:1}
+.d2{font-size:clamp(1.9rem,3.8vw,3rem);letter-spacing:-.043em}
+h3{font-size:1.15rem;letter-spacing:-.028em}
+p{margin:0 0 1rem}p:last-child{margin-bottom:0}
+.lede{font-size:clamp(1.05rem,1.7vw,1.24rem);line-height:1.5;color:var(--ink-2);
+  letter-spacing:-.012em;max-width:38ch}
+.sm{font-size:.9rem;color:var(--ink-2);line-height:1.55}
+.xs{font-size:.79rem;color:var(--ink-3);line-height:1.5}
+
+.wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 2.2rem}
+@media(max-width:800px){.wrap{padding:0 1.15rem}}
+section{padding:clamp(3.6rem,7vw,6.5rem) 0;position:relative}
+.sec{display:flex;align-items:center;gap:.8rem;margin-bottom:1.3rem}
+.sec b{font-size:.73rem;font-weight:700;letter-spacing:.15em;color:var(--co)}
+.sec span{font-size:.73rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-3)}
+.sec i{flex:1;max-width:90px;height:1px;background:var(--line);font-style:normal}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.86rem 1.45rem;border-radius:var(--r-s);font-size:.93rem;font-weight:600;
+  letter-spacing:-.012em;border:1px solid transparent;cursor:pointer;
+  transition:transform .2s var(--e),box-shadow .2s var(--e),background .18s}
+.btn svg{flex-shrink:0;transition:transform .26s var(--e)}
+.btn-p{background:var(--co);color:#fff;
+  box-shadow:0 1px 2px rgba(27,63,209,.3),0 10px 22px -10px rgba(27,63,209,.6)}
+.btn-p:hover{background:var(--co-d);transform:translateY(-2px)}
+.btn-p:hover svg{transform:translate(3px,-3px)}
+.btn-g{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn-g:hover{border-color:var(--ink-4);background:var(--surface);transform:translateY(-2px)}
+
+header{position:sticky;top:0;z-index:60;
+  background:color-mix(in srgb,var(--paper) 84%,transparent);
+  backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);
+  border-bottom:1px solid transparent;transition:border-color .3s}
+header.stuck{border-bottom-color:var(--line-2)}
+.nav{display:flex;align-items:center;gap:1.5rem;height:68px;max-width:1220px;margin:0 auto;
+  padding:0 2.2rem}
+@media(max-width:800px){.nav{padding:0 1.15rem}}
+.logo{font-size:1.5rem;font-weight:700;letter-spacing:-.06em;margin-right:auto}
+.logo i{color:var(--co);font-style:normal}
+.nav .back{font-size:.88rem;color:var(--ink-3);display:flex;align-items:center;gap:.4rem}
+.nav .back:hover{color:var(--ink)}
+.nav .btn{padding:.6rem 1.1rem;font-size:.86rem}
+
+.hero{padding-top:clamp(2.4rem,5vw,4rem);overflow:hidden}
+.hero-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);
+  gap:clamp(2rem,5vw,4.5rem);align-items:center}
+@media(max-width:940px){.hero-g{grid-template-columns:1fr;gap:2.4rem}}
+.hero h1{margin-bottom:1.4rem}
+.hero .lede{margin-bottom:2rem}
+.hero-cta{display:flex;gap:.75rem;flex-wrap:wrap}
+@media(max-width:420px){.hero-cta .btn{width:100%}}
+.hero-meta{display:flex;align-items:center;gap:.7rem;margin-top:2.2rem;font-size:.84rem;
+  color:var(--ink-3)}
+.hero-meta em{width:26px;height:1px;background:var(--line);font-style:normal}
+
+/* ─── Avant / après ─────────────────────────────────── */
+.tog{display:flex;gap:.3rem;background:var(--surface);border:1px solid var(--line);
+  border-radius:13px;padding:4px;margin:0 auto 2.2rem;width:fit-content;box-shadow:var(--d1)}
+.tog button{border:0;background:none;padding:.62rem 1.35rem;border-radius:9px;font-size:.9rem;
+  font-weight:600;color:var(--ink-3);cursor:pointer;transition:all .2s var(--e)}
+.tog button:hover{color:var(--ink)}
+.tog button[aria-selected="true"]{background:var(--co);color:#fff;
+  box-shadow:0 4px 12px -4px rgba(27,63,209,.55)}
+
+.pane{display:none}
+.pane.on{display:block;animation:in .42s var(--e)}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.scatter{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
+@media(max-width:900px){.scatter{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.scatter{grid-template-columns:1fr}}
+.sc-c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:1.05rem 1.15rem;box-shadow:var(--d1);display:flex;flex-direction:column;
+  transition:transform .3s var(--e),box-shadow .3s var(--e)}
+.sc-c:hover{transform:translateY(-3px);box-shadow:var(--d2)}
+.sc-c>b{display:block;font-size:.66rem;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-4);margin-bottom:.55rem}
+.sc-c h4{font-size:.95rem;margin-bottom:.45rem}
+.sc-c p{font-size:.83rem;color:var(--ink-2);margin:0;line-height:1.45}
+.dup{background:var(--warm-bg);color:var(--warm);font-weight:600;padding:.03em .28em;
+  border-radius:3px}
+.sc-f{margin-top:.8rem;padding-top:.65rem;border-top:1px solid var(--line-2);font-size:.72rem;
+  color:var(--ink-4)}
+
+.count{display:flex;align-items:center;gap:.8rem;justify-content:center;margin-top:1.8rem;
+  flex-wrap:wrap;text-align:center}
+.count b{font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.04em;color:var(--warm)}
+.count span{font-size:.92rem;color:var(--ink-2)}
+
+/* Le poste unique */
+.one{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);
+  overflow:hidden;box-shadow:var(--d3);max-width:840px;margin:0 auto}
+.one-h{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.2rem;background:var(--sunk);
+  border-bottom:1px solid var(--line-2);font-size:.86rem;font-weight:600}
+.one-h u{width:16px;height:16px;border-radius:5px;background:var(--co);text-decoration:none;
+  flex-shrink:0}
+.one-h em{margin-left:auto;font-style:normal;font-size:.66rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4)}
+.one-b{padding:1.3rem}
+.one-r{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin-bottom:1.1rem}
+@media(max-width:640px){.one-r{grid-template-columns:1fr 1fr}}
+.one-r div{background:var(--sunk);border-radius:11px;padding:.7rem .8rem}
+.one-r b{display:block;font-size:.62rem;color:var(--ink-3);font-weight:500;margin-bottom:.15rem}
+.one-r span{font-size:1.02rem;font-weight:700;letter-spacing:-.028em;display:block}
+.one-r .g span{color:var(--ok)}
+.once{display:flex;align-items:center;gap:.55rem;padding:.7rem .9rem;border-radius:11px;
+  background:var(--ok-bg);color:var(--ok);font-size:.88rem;font-weight:600}
+
+/* ─── Projet réel ───────────────────────────────────── */
+.proj{background:var(--sunk);border-top:1px solid var(--line-2);
+  border-bottom:1px solid var(--line-2)}
+.proj-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);
+  gap:clamp(1.8rem,4vw,4rem);align-items:center}
+@media(max-width:940px){.proj-g{grid-template-columns:1fr;gap:2.2rem}}
+.proj-v{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);
+  padding:1.5rem;box-shadow:var(--d3)}
+.proj-v img{width:100%}
+.pill{display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .72rem;border-radius:999px;
+  font-size:.72rem;font-weight:700;letter-spacing:.02em}
+.pill-real{background:var(--ok-bg);color:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.8rem 0}
+@media(max-width:460px){.stats{grid-template-columns:1fr}}
+.stats b{display:block;font-size:1.85rem;font-weight:700;letter-spacing:-.045em;line-height:1.1}
+.stats span{font-size:.8rem;color:var(--ink-3);line-height:1.4;display:block;margin-top:.15rem}
+
+/* ─── Grille des usages ─────────────────────────────── */
+.uses{display:grid;grid-template-columns:minmax(0,.98fr) minmax(0,1.02fr);
+  gap:clamp(1.6rem,3.2vw,3.2rem);align-items:start;margin-top:2.4rem}
+@media(max-width:920px){.uses{grid-template-columns:1fr;gap:1.8rem}}
+.ug{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+@media(max-width:560px){.ug{grid-template-columns:1fr}}
+.ub{border:1px solid var(--line);background:var(--surface);border-radius:11px;
+  padding:.75rem .85rem;text-align:left;cursor:pointer;font-size:.87rem;font-weight:500;
+  color:var(--ink-2);transition:all .2s var(--e);box-shadow:var(--d1);line-height:1.25}
+.ub:hover{border-color:var(--ink-4);color:var(--ink);transform:translateY(-2px)}
+.ub[aria-selected="true"]{border-color:var(--co);background:var(--co-soft);color:var(--co);
+  font-weight:600;box-shadow:0 0 0 3px var(--co-bg),var(--d1)}
+.ub small{display:block;font-size:.68rem;font-weight:500;color:var(--ink-4);margin-top:.12rem}
+.ub[aria-selected="true"] small{color:var(--co)}
+.up{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);
+  padding:clamp(1.4rem,2.6vw,2rem);box-shadow:var(--d3);position:sticky;top:92px}
+@media(max-width:920px){.up{position:static}}
+.up h3{font-size:1.28rem;margin-bottom:.2rem}
+.up>.xs{margin-bottom:1.2rem}
+.up-l{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-4);margin:0 0 .6rem}
+.up ul{list-style:none;margin:0 0 1.3rem;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.up li{display:flex;gap:.6rem;font-size:.89rem;color:var(--ink);line-height:1.45}
+.up li u{width:5px;height:5px;border-radius:50%;background:var(--co);flex-shrink:0;
+  margin-top:.5rem;text-decoration:none}
+.up-o{padding:.85rem 1rem;border-radius:12px;background:var(--ok-bg);color:var(--ok);
+  font-size:.88rem;line-height:1.45}
+.up-o b{display:block;font-size:.66rem;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;margin-bottom:.25rem;opacity:.85}
+
+/* ─── Quand ne PAS le construire ────────────────────── */
+.dont{background:var(--deep);color:#EDEFF2}
+.dont .sec span{color:#7E858F}
+.dont h2{color:#fff}
+.dont .lede{color:#A6ADB8}
+.dg{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2.4rem}
+@media(max-width:800px){.dg{grid-template-columns:1fr}}
+.dc{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r);padding:1.4rem 1.5rem}
+.dc h3{color:#fff;margin-bottom:.5rem;font-size:1.06rem}
+.dc p{font-size:.9rem;color:#A6ADB8;line-height:1.5;margin:0}
+.dc b{color:#fff;font-weight:600}
+.dc .then{display:block;margin-top:.8rem;padding-top:.7rem;
+  border-top:1px solid rgba(255,255,255,.1);font-size:.84rem;color:#7FCFAA;font-weight:600}
+.dont-note{margin-top:2rem;padding:1.1rem 1.3rem;border-radius:var(--r);
+  background:rgba(64,100,232,.14);border:1px solid rgba(64,100,232,.3);font-size:.95rem;
+  color:#C6D2F5;line-height:1.55;max-width:70ch}
+
+/* ─── Processus ─────────────────────────────────────── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:2.4rem;
+  border-top:1px solid var(--line)}
+@media(max-width:860px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.steps{grid-template-columns:1fr}}
+.steps div{padding:1.5rem 1.4rem 1.5rem 0;border-bottom:1px solid var(--line);
+  border-right:1px solid var(--line)}
+.steps div:nth-child(3n){border-right:0}
+@media(max-width:860px){.steps div:nth-child(3n){border-right:1px solid var(--line)}
+  .steps div:nth-child(2n){border-right:0}}
+@media(max-width:520px){.steps div{border-right:0!important;padding-right:0}}
+.steps b{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;color:var(--co);
+  margin-bottom:.5rem;font-variant-numeric:tabular-nums}
+.steps h3{margin-bottom:.3rem;font-size:1.02rem}
+.steps p{font-size:.86rem;color:var(--ink-3);line-height:1.5}
+
+.fin{background:var(--deep);border-radius:var(--r-xl);padding:clamp(2.2rem,5vw,4rem);
+  color:#fff;position:relative;overflow:hidden;box-shadow:var(--d4)}
+.fin::before{content:"";position:absolute;top:-45%;right:-10%;width:520px;aspect-ratio:1;
+  border-radius:50%;background:radial-gradient(circle,rgba(64,100,232,.42),transparent 68%);
+  filter:blur(32px);pointer-events:none}
+.fin-g{display:grid;grid-template-columns:1fr auto;gap:2.2rem;align-items:end;position:relative}
+@media(max-width:820px){.fin-g{grid-template-columns:1fr;align-items:start}}
+.fin h2{color:#fff;margin-bottom:.9rem}
+.fin p{color:#A6ADB8;max-width:40ch}
+.fin .btn-g{border-color:rgba(255,255,255,.24);color:#fff}
+.fin .btn-g:hover{background:rgba(255,255,255,.08)}
+footer{padding:2.6rem 0 2rem;border-top:1px solid var(--line-2);display:flex;
+  justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.8rem;color:var(--ink-4)}
+
+.js .rv{opacity:0;transform:translateY(18px);
+  transition:opacity .75s var(--e-o),transform .75s var(--e-o)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .rv{opacity:1!important;transform:none!important}
+  .btn:hover,.sc-c:hover,.ub:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header id="hd">
+  <nav class="nav">
+    <a href="/" class="logo">solva<i>.</i></a>
+    <a href="/" class="back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      All solutions</a>
+    <a href="/#talk" class="btn btn-p">Tell us what&rsquo;s slowing you down</a>
+  </nav>
+</header>
+
+<!-- ══════ HÉROS ══════ -->
+<section class="hero">
+  <div class="wrap hero-g">
+    <div class="rv">
+      <div class="sec"><b>01</b><i></i><span>Custom software</span></div>
+      <h1 class="d1">The same job,<br>retyped four times.</h1>
+      <p class="lede">Every business that outgrew a spreadsheet ends up here. Custom software is
+        how it stops &mdash; when it&rsquo;s genuinely warranted, and we&rsquo;ll tell you when
+        it isn&rsquo;t.</p>
+      <div class="hero-cta">
+        <a href="/demos/menuisier/" class="btn btn-p">Open a real one
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <a href="#dont" class="btn btn-g">When not to build it</a>
+      </div>
+      <div class="hero-meta"><em></em>One client project you can open and use today</div>
+    </div>
+
+    <div class="rv">
+      <div class="one">
+        <div class="one-h"><u></u>Le Petit Menuisier <em>Running</em></div>
+        <div class="one-b">
+          <div class="one-r">
+            <div><b>Pipeline</b><span class="num">8</span></div>
+            <div><b>Panels</b><span class="num">19</span></div>
+            <div><b>Sheets</b><span class="num">3</span></div>
+            <div class="g"><b>Tests</b><span class="num">88</span></div>
+          </div>
+          <img src="/assets/marketing/solva-menuisier-3d.svg"
+               alt="Three-dimensional view of a made-to-measure oak wardrobe standing against a wall"
+               width="315" height="399" style="max-height:180px;width:auto;margin:0 auto">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ AVANT / APRÈS ══════ -->
+<section>
+  <div class="wrap">
+    <div class="rv" style="text-align:center;max-width:660px;margin:0 auto 2rem">
+      <div class="sec" style="justify-content:center"><b>02</b><i></i><span>One job, five places</span></div>
+      <h2 class="d2">Nothing is missing.<br>Nothing is together.</h2>
+      <p class="lede" style="margin:1rem auto 0">A single wardrobe quote, exactly as it lives
+        today in most workshops. Watch the same phone number appear four times.</p>
+    </div>
+
+    <div class="tog rv" role="tablist" aria-label="Before or after">
+      <button role="tab" data-p="before" aria-selected="true">How it works today</button>
+      <button role="tab" data-p="after" aria-selected="false">After</button>
+    </div>
+
+    <div class="pane on rv" id="p-before">
+      <div class="scatter">
+        <div class="sc-c"><b>Notebook &middot; in the van</b>
+          <h4>The measurements</h4>
+          <p>2400 &times; 2500 &times; 600. <span class="dup">Mrs Pons</span>,
+             <span class="dup">0412 &bull;&bull;&bull; 338</span>. Written at the door,
+             read back three days later.</p>
+          <div class="sc-f">Nothing else knows this exists</div></div>
+
+        <div class="sc-c"><b>Phone &middot; camera roll</b>
+          <h4>Eleven photos of a wall</h4>
+          <p>Among four hundred others. No job name, no date you can search on.</p>
+          <div class="sc-f">Found by scrolling</div></div>
+
+        <div class="sc-c"><b>Email &middot; supplier</b>
+          <h4>The timber quote</h4>
+          <p>Panels, edging, cutting. <span class="dup">Mrs Pons</span> typed again in the
+             subject line so it can be found later.</p>
+          <div class="sc-f">Second entry of the same name</div></div>
+
+        <div class="sc-c"><b>Spreadsheet &middot; laptop</b>
+          <h4>The margin calculation</h4>
+          <p>Supplier cost, margin, hours, travel. <span class="dup">0412 &bull;&bull;&bull; 338</span>
+             typed a third time in column A.</p>
+          <div class="sc-f">Third entry &middot; last edited when?</div></div>
+
+        <div class="sc-c"><b>Word &middot; then PDF</b>
+          <h4>The quote document</h4>
+          <p>Last month&rsquo;s quote, saved under a new name. <span class="dup">Mrs Pons</span>
+             replaces the previous client. Usually.</p>
+          <div class="sc-f">Fourth entry &middot; the old name sometimes survives</div></div>
+
+        <div class="sc-c"><b>Head &middot; nowhere</b>
+          <h4>What you actually keep</h4>
+          <p>What the margin really was. Whether she ever answered. Whether the supplier
+             price still holds.</p>
+          <div class="sc-f">Not written down anywhere</div></div>
+      </div>
+      <div class="count">
+        <b class="num">4&times;</b>
+        <span>the same customer typed &nbsp;&middot;&nbsp;
+          <b class="num" style="font-size:inherit">6</b> places to look &nbsp;&middot;&nbsp;
+          <b class="num" style="font-size:inherit">0</b> of them talking to each other</span>
+      </div>
+    </div>
+
+    <div class="pane rv" id="p-after">
+      <div class="one">
+        <div class="one-h"><u></u>One workspace <em>Demonstration</em></div>
+        <div class="one-b">
+          <div class="once">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
+            Mrs Pons &middot; 0412 &bull;&bull;&bull; 338 &mdash; entered once, at the door
+          </div>
+          <div class="one-r" style="margin-top:1.1rem">
+            <div><b>Measurements</b><span class="num">2400&times;2500</span></div>
+            <div><b>Photos</b><span class="num">11</span></div>
+            <div><b>Supplier</b><span class="num">$1,044</span></div>
+            <div class="g"><b>You keep</b><span class="num">$1,030</span></div>
+          </div>
+          <p class="sm" style="margin-top:1.1rem">The measurements draw the piece. The piece
+            produces the cut list. The cut list carries the supplier cost into the quote. The
+            quote shows the margin, and what is left after tax, before it is sent.</p>
+          <p class="xs" style="margin-top:.8rem">Nothing above was typed twice. That is the
+            entire difference, and it is worth more than it sounds.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ LE PROJET RÉEL ══════ -->
+<section class="proj">
+  <div class="wrap proj-g">
+    <div class="rv">
+      <div class="sec"><b>03</b><i></i><span>Built and running</span></div>
+      <span class="pill pill-real">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
+        Client project</span>
+      <h2 class="d2" style="margin-top:1rem">Le Petit Menuisier.<br>Open it yourself.</h2>
+      <p class="lede" style="margin-top:1.1rem">A working joinery business on the French
+        Riviera. This is the software it runs on &mdash; not a mockup, not a video.
+        Every number on this page comes out of it.</p>
+
+      <div class="stats">
+        <div><b class="num">8</b><span>stages, first call to supplier order</span></div>
+        <div><b class="num">19</b><span>panels cut-listed automatically</span></div>
+        <div><b class="num">88</b><span>tests passing on the maths</span></div>
+      </div>
+
+      <p class="sm">Paste the call notes and the measurements are read out. The piece draws
+        itself against the wall, at scale. Click the wall and it tells you the plumb is 14&nbsp;mm
+        out and there&rsquo;s a power point behind the carcass. The cut list lands in the quote,
+        and the quote shows what is left after materials and tax.</p>
+
+      <div class="hero-cta" style="margin-top:1.8rem">
+        <a href="/demos/menuisier/" class="btn btn-p">Open the software
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <a href="/demos/menuisier/film/" class="btn btn-g">Watch it in 90 seconds</a>
+      </div>
+    </div>
+
+    <div class="proj-v rv">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;
+        flex-wrap:wrap;margin-bottom:1rem">
+        <span class="xs" style="font-weight:600">Exploded view &middot; 19 panels</span>
+        <span class="xs">2400 &times; 2500 &times; 600 mm &middot; oak</span>
+      </div>
+      <img src="/assets/marketing/solva-menuisier-3d-eclate.svg"
+           alt="Exploded three-dimensional view of the wardrobe, every panel shown separately"
+           width="346" height="451">
+    </div>
+  </div>
+</section>
+
+<!-- ══════ USAGES PAR MÉTIER ══════ -->
+<section>
+  <div class="wrap">
+    <div class="rv" style="max-width:680px">
+      <div class="sec"><b>04</b><i></i><span>What it looks like elsewhere</span></div>
+      <h2 class="d2">Six businesses.<br>Six different shapes.</h2>
+      <p class="lede" style="margin-top:1rem">Custom software is not one product. It is whatever
+        the awkward part of your week happens to be. Pick one and see.</p>
+    </div>
+    <div class="uses rv">
+      <div class="ug" id="ug" role="tablist" aria-label="Choose a use"></div>
+      <div class="up" id="up"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ QUAND NE PAS LE CONSTRUIRE ══════ -->
+<section class="dont" id="dont">
+  <div class="wrap">
+    <div class="rv" style="max-width:680px">
+      <div class="sec"><b>05</b><i></i><span>Straight answers</span></div>
+      <h2 class="d2">Four times out of ten,<br>we tell people not to.</h2>
+      <p class="lede" style="margin-top:1rem">Custom software is expensive to build and it
+        becomes yours to live with. Here is when it is the wrong call &mdash; and what to do
+        instead.</p>
+    </div>
+
+    <div class="dg rv">
+      <div class="dc">
+        <h3>Existing software already does it</h3>
+        <p>ServiceM8, Jobber, Tradify, Cliniko, Xero. If eighty per cent of what you need is
+          already in a product costing <b>fifty dollars a month</b>, building it yourself is
+          a bad trade.</p>
+        <span class="then">Then: use it, and we connect the missing twenty per cent.</span>
+      </div>
+      <div class="dc">
+        <h3>Your process changes every month</h3>
+        <p>Software freezes a way of working. If yours is still moving &mdash; a new service,
+          a new pricing model, a partner joining &mdash; you would be <b>paying to set concrete
+          on wet ground</b>.</p>
+        <span class="then">Then: wait until the shape stops moving. Usually a season.</span>
+      </div>
+      <div class="dc">
+        <h3>One person is the only user</h3>
+        <p>If it is just you, and the spreadsheet works, the spreadsheet works. A tool earns its
+          cost when <b>several people need the same truth</b> at the same time.</p>
+        <span class="then">Then: a better spreadsheet and one automation, for a fraction.</span>
+      </div>
+      <div class="dc">
+        <h3>The real problem is a habit</h3>
+        <p>Quotes going out late is sometimes a software problem. More often it is a
+          <b>Thursday afternoon problem</b>. No tool fixes a decision nobody is making.</p>
+        <span class="then">Then: change the routine first. Build only if it survives.</span>
+      </div>
+    </div>
+
+    <div class="dont-note rv">
+      Why say this at all? Because you will find out anyway, six weeks and several thousand
+      dollars in. We would rather lose the project than build something you resent.
+    </div>
+  </div>
+</section>
+
+<!-- ══════ PROCESSUS ══════ -->
+<section>
+  <div class="wrap">
+    <div class="rv" style="max-width:640px">
+      <div class="sec"><b>06</b><i></i><span>How it gets built</span></div>
+      <h2 class="d2">Smallest useful thing.<br>Used on a real job.</h2>
+      <p class="lede" style="margin-top:1rem">Not a six-month specification. Something you can
+        put in front of a paying customer within weeks, then sharpen with what you learn.</p>
+    </div>
+    <div class="steps rv">
+      <div><b>01</b><h3>Watch the work</h3><p>Take one job that finished last week and walk it
+        through end to end. Where did the time actually go?</p></div>
+      <div><b>02</b><h3>Find the awkward part</h3><p>There is always one step that costs an hour
+        and produces nothing. That is what gets built.</p></div>
+      <div><b>03</b><h3>Agree scope and price</h3><p>Both fixed before a line is written. No
+        open-ended hourly work, no surprises at the end.</p></div>
+      <div><b>04</b><h3>Build the narrow version</h3><p>One workflow, done properly, rather than
+        six done roughly. It has to survive contact with a real customer.</p></div>
+      <div><b>05</b><h3>Use it on a live job</h3><p>Not a test file. A real quote, a real client,
+        a real deadline. That is where the design errors show up.</p></div>
+      <div><b>06</b><h3>Sharpen or stop</h3><p>Keep improving it if it earns its keep. If it
+        doesn&rsquo;t, we say so. You own the code either way.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CTA ══════ -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="fin rv">
+      <div class="fin-g">
+        <div>
+          <h2 class="d2">Take one job that<br>finished last week.</h2>
+          <p>Walk us through it &mdash; the call, the notes, the quote, the invoice. By the end
+            of that conversation we will both know whether this is worth building.</p>
+        </div>
+        <div class="hero-cta">
+          <a href="/#talk" class="btn btn-p">Tell us what&rsquo;s slowing you down
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <a href="/solva-call/" class="btn btn-g">See Solva Call</a>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <span>&copy; 2026 Solva &middot; Brisbane, Australia</span>
+      <span>Le Petit Menuisier is real client work, shown with permission.</span>
+    </footer>
+  </div>
+</section>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const hd = $('#hd');
+  const majNav = () => hd.classList.toggle('stuck', scrollY > 8);
+  majNav(); addEventListener('scroll', majNav, { passive: true });
+
+  // Révélations, avec filet : jamais de page blanche si l'observateur ne part pas.
+  const cibles = $$('.rv');
+  if (calme || !('IntersectionObserver' in window)) {
+    cibles.forEach(e => e.classList.add('in'));
+  } else {
+    const obs = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    }), { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    cibles.forEach(e => obs.observe(e));
+    setTimeout(() => { cibles.forEach(e => e.classList.add('in')); obs.disconnect(); }, 2500);
+  }
+
+  // Avant / après
+  $$('[data-p]').forEach(b => b.addEventListener('click', () => {
+    $$('[data-p]').forEach(o => o.setAttribute('aria-selected', o === b));
+    $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.p));
+  }));
+
+  /* ═══ Ce que devient un logiciel sur mesure selon le métier ═══
+     Six formes réellement différentes. Une liste de fonctionnalités
+     génériques ne prouverait rien ; ce qui parle, c'est de nommer
+     l'heure perdue que chaque métier reconnaît. */
+  const USES = [
+    { k:'Quoting workspace', s:'Joiner, builder, landscaper',
+      w:['Measurements and photos captured once, on site',
+         'Supplier costs entered where they land, not retyped',
+         'Margin, labour and travel calculated as you type',
+         'The quote document generated, never rebuilt'],
+      o:'A quote goes out the same evening instead of the following Sunday.' },
+    { k:'Job management', s:'Trades, service teams',
+      w:['One card per job, from enquiry to invoice',
+         'Who is on it, what stage, what is blocking it',
+         'Photos and notes attached to the job, not the phone',
+         'The customer sees a status without ringing you'],
+      o:'You stop being the only person who knows where anything is up to.' },
+    { k:'Client portal', s:'Agency, accountant, consultant',
+      w:['Documents and approvals in one place per client',
+         'What you need from them, clearly listed',
+         'Progress visible without a meeting',
+         'Everything timestamped for later'],
+      o:'The chasing emails stop, because the answer is already visible.' },
+    { k:'Booking and records', s:'Clinic, salon, studio',
+      w:['Availability that reflects reality, not a guess',
+         'Client history where the practitioner needs it',
+         'Consent and intake forms filled before arrival',
+         'Reminders that cut the no-shows'],
+      o:'Reception spends the morning with people instead of a diary.' },
+    { k:'Stock and margin', s:'Retail, food, workshop',
+      w:['What you hold, what it cost, what it sells for',
+         'Waste and shrinkage visible, not guessed at year end',
+         'Reorder points that account for lead times',
+         'Margin per line, not just per month'],
+      o:'You find out a product loses money in March, not in July.' },
+    { k:'Compliance log', s:'Electrical, safety, food, childcare',
+      w:['The checks your regulator asks for, on a schedule',
+         'Signed off with who, when and a photo',
+         'The record exported the way the auditor wants it',
+         'Overdue items surfaced before they become findings'],
+      o:'An audit becomes an export instead of a fortnight of dread.' },
+  ];
+
+  const ug = $('#ug'), up = $('#up');
+  let ui = 0;
+  const peint = () => {
+    const u = USES[ui];
+    up.innerHTML = `<h3>${u.k}</h3><div class="xs">${u.s}</div>
+      <p class="up-l">What it holds</p>
+      <ul>${u.w.map(w => `<li><u></u><span>${w}</span></li>`).join('')}</ul>
+      <p class="up-l">What changes</p>
+      <div class="up-o"><b>The point of it</b>${u.o}</div>`;
+    $$('button', ug).forEach((b, k) => b.setAttribute('aria-selected', k === ui));
+  };
+  ug.innerHTML = USES.map((u, k) =>
+    `<button class="ub" role="tab" aria-selected="${k === 0}">${u.k}<small>${u.s}</small></button>`
+  ).join('');
+  $$('button', ug).forEach((b, k) => b.addEventListener('click', () => { ui = k; peint(); }));
+  peint();
+})();
+</script>
+</body>
+</html>
