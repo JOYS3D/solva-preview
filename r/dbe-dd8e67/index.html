@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drop Bear Engineering — Shopify catalogue audit</title>
+<meta name="robots" content="noindex,nofollow">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F5F1; --surface:#FFF; --sunk:#EFECE6; --deep:#14171C;
+  --ink:#14171C; --ink-2:#42474F; --ink-3:#6E747D; --ink-4:#9DA3AC;
+  --line:#E2DFD8; --line-2:#EDEAE4;
+  --co:#1B3FD1; --co-d:#152FA3; --co-bg:#E9EDFC; --co-soft:#F3F5FE;
+  --ok:#0C7C55; --ok-bg:#E3F2EC;
+  --urg:#B33A2E; --urg-bg:#FAEAE7;
+  --warm:#A9691C; --warm-bg:#FAF0E2;
+  --e:cubic-bezier(.22,1,.36,1);
+  --r-s:10px; --r:15px; --r-l:24px;
+  --d1:0 1px 1px rgba(20,23,28,.04),0 1px 3px rgba(20,23,28,.05);
+  --d2:0 1px 2px rgba(20,23,28,.04),0 8px 20px -8px rgba(20,23,28,.15);
+  --d3:0 2px 6px rgba(20,23,28,.05),0 24px 48px -18px rgba(20,23,28,.25);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0F1114; --surface:#171A1F; --sunk:#1E2228; --ink:#EDEBE7; --ink-2:#AEB4BC;
+  --ink-3:#828993; --ink-4:#5E656E; --line:#272B32; --line-2:#21252B;
+  --co-bg:#141C3A; --co-soft:#111726; --ok-bg:#0E2620; --urg-bg:#2B1512; --warm-bg:#2A1F0C;
+}}
+:root[data-theme="dark"]{
+  --paper:#0F1114; --surface:#171A1F; --sunk:#1E2228; --ink:#EDEBE7; --ink-2:#AEB4BC;
+  --ink-3:#828993; --ink-4:#5E656E; --line:#272B32; --line-2:#21252B;
+  --co-bg:#141C3A; --co-soft:#111726; --ok-bg:#0E2620; --urg-bg:#2B1512; --warm-bg:#2A1F0C;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:400 16px/1.65 Archivo,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;line-height:1.12;letter-spacing:-.022em;font-weight:700}
+h1{font-size:clamp(2.1rem,5vw,3.5rem)}
+h2{font-size:clamp(1.5rem,3vw,2.1rem)}
+h3{font-size:1.08rem;letter-spacing:-.01em}
+p{margin:0 0 1rem}
+.wrap{max-width:60rem;margin:0 auto;padding:0 1.5rem}
+.eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--co);display:flex;align-items:center;gap:.55rem;margin-bottom:.9rem}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--co)}
+.lede{font-size:1.1rem;color:var(--ink-2);max-width:42rem}
+.sm{font-size:.88rem}.xs{font-size:.79rem}
+.muted{color:var(--ink-3)}
+code{font:500 .87em/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:var(--sunk);padding:.14em .42em;border-radius:5px}
+
+/* ── Entête ── */
+.top{background:var(--deep);color:#fff;padding:clamp(2.6rem,6vw,4.4rem) 0}
+.top h1{color:#fff}
+.top .lede{color:#AAB0B8;margin-top:1.1rem}
+.solva{display:flex;align-items:center;gap:.6rem;margin-bottom:2.2rem;
+  font-size:.95rem;font-weight:600;letter-spacing:-.01em}
+.solva i{width:9px;height:9px;border-radius:2px;background:var(--co);display:block}
+.meta{display:flex;flex-wrap:wrap;gap:1.4rem 2.6rem;margin-top:2.4rem;padding-top:1.5rem;
+  border-top:1px solid rgba(255,255,255,.12);font-size:.8rem;color:#8D939B}
+.meta b{display:block;color:#fff;font-size:.95rem;margin-bottom:.15rem}
+
+section{padding:clamp(2.6rem,6vw,4.4rem) 0}
+.head{margin-bottom:2.2rem}
+.head p{margin-top:.85rem;color:var(--ink-2)}
+
+/* ── Le constat central ── */
+.core{background:var(--co-soft);border:1px solid var(--co-bg);border-left:4px solid var(--co);
+  border-radius:var(--r);padding:clamp(1.4rem,3vw,2.2rem)}
+.core h2{margin-bottom:.8rem}
+.core p:last-child{margin-bottom:0}
+
+/* ── Chiffres ── */
+.nums{display:grid;gap:1rem;margin:2rem 0}
+@media(min-width:700px){.nums{grid-template-columns:repeat(4,1fr)}}
+.num{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:1.4rem;box-shadow:var(--d1)}
+.num b{display:block;font-size:2.1rem;font-weight:700;letter-spacing:-.03em;line-height:1;
+  margin-bottom:.45rem}
+.num.bad b{color:var(--urg)}
+.num.warn b{color:var(--warm)}
+.num span{font-size:.84rem;color:var(--ink-2);display:block;line-height:1.45}
+.num em{font-style:normal;display:block;font-size:.74rem;color:var(--ink-4);margin-top:.4rem}
+
+/* ── Constats ── */
+.find{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:1.6rem;margin-bottom:1rem;box-shadow:var(--d1)}
+.find-h{display:flex;align-items:flex-start;gap:.85rem;margin-bottom:.8rem}
+.tag{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:.3rem .6rem;border-radius:6px;white-space:nowrap;margin-top:.12rem}
+.t-urg{background:var(--urg-bg);color:var(--urg)}
+.t-warm{background:var(--warm-bg);color:var(--warm)}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.find p{margin:0 0 .7rem;color:var(--ink-2);font-size:.95rem}
+.find p:last-child{margin-bottom:0}
+
+/* ── Tableau ── */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
+  border-radius:var(--r);background:var(--surface);margin:1.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:32rem}
+th,td{padding:.72rem .95rem;text-align:left;border-bottom:1px solid var(--line-2)}
+th{background:var(--sunk);font-weight:600;font-size:.76rem;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.split{color:var(--urg);font-weight:600}
+
+/* ── Exemples ── */
+.ex{border:1px solid var(--line);border-radius:var(--r-s);padding:1rem 1.15rem;
+  margin-bottom:.7rem;background:var(--surface)}
+.ex b{display:block;font-size:.93rem;margin-bottom:.35rem}
+.ex .f{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.f span{font-size:.72rem;padding:.24rem .5rem;border-radius:5px;background:var(--urg-bg);
+  color:var(--urg);font-weight:600}
+.ex a{font-size:.78rem;color:var(--co);word-break:break-all}
+
+/* ── Plan ── */
+.plan{counter-reset:p}
+.pstep{display:grid;grid-template-columns:2.6rem 1fr;gap:1.1rem;padding:1.4rem 0;
+  border-top:1px solid var(--line)}
+.pstep:first-child{border-top:0}
+.pstep b{font-size:1.35rem;font-weight:700;color:var(--co);line-height:1.1}
+.pstep h3{margin-bottom:.35rem}
+.pstep p{margin:0;font-size:.93rem;color:var(--ink-2)}
+
+/* ── Pied ── */
+footer{background:var(--deep);color:#8D939B;padding:2.6rem 0;font-size:.85rem;margin-top:2rem}
+footer b{color:#fff}
+footer a{color:#C3C8CE}
+
+.js .rv{opacity:0;transform:translateY(14px)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .55s var(--e),transform .55s var(--e)}
+@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="solva"><i></i>Solva</div>
+    <div class="eyebrow">Catalogue audit &middot; no account access used</div>
+    <h1>Your store isn't unfinished.<br>It's carrying one bad import.</h1>
+    <p class="lede">Every number below was measured on your public storefront on 12 September 2026.
+      Nothing here came from inside your admin, and nothing is estimated.</p>
+    <div class="meta">
+      <div><b>1,238</b>products</div>
+      <div><b>1,402</b>variants</div>
+      <div><b>7</b>vendors</div>
+      <div><b>$990</b>median price</div>
+      <div><b>12 Sep 2026</b>measured</div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="core rv">
+      <h2>441 products, one afternoon, one unticked box</h2>
+      <p>442 products in your store share the same three faults at once: no tax, no weight, no
+         tags. <b>441 of those 442 are Hamer.</b> That isn't 441 separate mistakes — it's a single
+         CSV import of the Hamer range that went in without tags, without collections, without
+         weights, and with <em>Charge tax on this product</em> left unticked.</p>
+      <p>That distinction decides everything about the job. 441 separate problems would be weeks
+         of manual editing. One bad import is a mapping table and a script &mdash; which is why
+         your 30 September deadline is realistic.</p>
+    </div>
+
+    <div class="nums">
+      <div class="num bad rv"><b>443</b><span>variants set to <b>not charge GST</b></span>
+        <em>31% of all variants &middot; $695,450 list value</em></div>
+      <div class="num bad rv"><b>727</b><span>variants with <b>no weight</b></span>
+        <em>52% &middot; live shipping can't calculate</em></div>
+      <div class="num warn rv"><b>518</b><span>products under a <b>duplicated title</b></span>
+        <em>235 titles, each existing 2+ times</em></div>
+      <div class="num warn rv"><b>769</b><span>products in <b>split categories</b></span>
+        <em>62% &middot; same category, different spelling</em></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--sunk)">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Finding 01 &mdash; money</div>
+      <h2>A third of your catalogue doesn't charge GST</h2>
+      <p>443 variants carry <code>taxable: false</code>. Drop Bear Garage Pty Ltd has been
+         GST-registered since August 2023. Every one of those sales either comes out of your
+         margin or doesn't reach the ATO.</p>
+    </div>
+
+    <div class="find rv">
+      <div class="find-h"><span class="tag t-urg">Verify yourself</span>
+        <div><h3>Three products, all three faults, live right now</h3></div></div>
+      <div class="ex">
+        <b>Rear Ladder for Suzuki Jimny 3 Door JB74W (2018&ndash;Present)</b>
+        <span class="sm muted">Hamer &middot; $250</span>
+        <div class="f"><span>no GST</span><span>0 g</span><span>no tags</span></div>
+        <a href="https://dropbearengineering.com.au/products/rear-ladder-suzuki-jimny-3-door-jb74w-2018-present">dropbearengineering.com.au/products/rear-ladder-suzuki-jimny-3-door-jb74w-2018-present</a>
+      </div>
+      <div class="ex">
+        <b>5 Piece Underbody Protection Plates for Suzuki Jimny 3 Door JB74W</b>
+        <span class="sm muted">Hamer &middot; $1,390</span>
+        <div class="f"><span>no GST</span><span>0 g</span><span>no tags</span></div>
+        <a href="https://dropbearengineering.com.au/products/5-piece-underbody-protection-plates-suzuki-jimny-3-door-jb74w-2018-present">dropbearengineering.com.au/products/5-piece-underbody-protection-plates-suzuki-jimny-3-door-jb74w-2018-present</a>
+      </div>
+      <div class="ex">
+        <b>Rear Bumper for Suzuki Jimny XL 5 Door JB74W (2023&ndash;Present)</b>
+        <span class="sm muted">Hamer &middot; $1,590</span>
+        <div class="f"><span>no GST</span><span>0 g</span><span>no tags</span></div>
+        <a href="https://dropbearengineering.com.au/products/rear-bumper-suzuki-jimny-xl-5-door-jb74w-2023-present">dropbearengineering.com.au/products/rear-bumper-suzuki-jimny-xl-5-door-jb74w-2023-present</a>
+      </div>
+      <p class="xs muted" style="margin-top:1rem">Open any of the three, add it to cart, and watch
+        the tax line. Then try to get a shipping quote on it.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Finding 02 &mdash; navigation</div>
+      <h2>Bull Bars and BULL BAR are two different aisles</h2>
+      <p>Your store has 44 product categories. Eight of them are the same category written twice,
+         and together they hold 769 products &mdash; 62% of everything you sell. A customer
+         browsing <em>Bull Bars</em> sees 137 products and never learns the other 65 exist.</p>
+    </div>
+    <div class="tw rv">
+      <table>
+        <thead><tr><th>Category, as it exists today</th><th>and again, as</th>
+          <th class="n">Products</th><th class="n">Split</th></tr></thead>
+        <tbody>
+          <tr><td>SPORTS BAR <span class="muted">(213)</span></td><td>Sportsbar <span class="muted">(2)</span></td><td class="n">215</td><td class="n split">2 aisles</td></tr>
+          <tr><td>Bull Bars <span class="muted">(137)</span></td><td>BULL BAR <span class="muted">(65)</span></td><td class="n">202</td><td class="n split">2 aisles</td></tr>
+          <tr><td>Barwork <span class="muted">(109)</span></td><td>Bar Work <span class="muted">(6)</span></td><td class="n">115</td><td class="n split">2 aisles</td></tr>
+          <tr><td>UNDERBODY <span class="muted">(72)</span></td><td>Underbody <span class="muted">(2)</span></td><td class="n">74</td><td class="n split">2 aisles</td></tr>
+          <tr><td>Rear Bars <span class="muted">(40)</span></td><td>REAR BAR <span class="muted">(25)</span></td><td class="n">65</td><td class="n split">2 aisles</td></tr>
+          <tr><td>Side Steps <span class="muted">(43)</span></td><td>SIDE STEP <span class="muted">(21)</span></td><td class="n">64</td><td class="n split">2 aisles</td></tr>
+          <tr><td>ROOF RACK <span class="muted">(22)</span></td><td>Roof rack <span class="muted">(1)</span></td><td class="n">23</td><td class="n split">2 aisles</td></tr>
+          <tr><td>AUTO ROLLER LID <span class="muted">(10)</span></td><td>Auto Roller Lid <span class="muted">(1)</span></td><td class="n">11</td><td class="n split">2 aisles</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sm muted rv">Merging these takes 44 categories down to 36, with nothing lost.</p>
+  </div>
+</section>
+
+<section style="background:var(--sunk)">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Finding 03 &mdash; the finder</div>
+      <h2>Your parts finder isn't broken. It's starved.</h2>
+    </div>
+    <div class="find rv">
+      <div class="find-h"><span class="tag t-ok">Working</span>
+        <div><h3>The code is fine &mdash; someone built it properly</h3></div></div>
+      <p>The vehicle selector on your home page is a custom theme section
+         (<code>parts_finder_hero_v3</code>). Four cascading menus, built deliberately. The
+         <code>v3</code> says it has been through at least three revisions.</p>
+      <p>It returns nothing because the products underneath it carry no vehicle tags. 453 products
+         have no tags at all. Fix the data and the filter you already paid for starts working &mdash;
+         no new development, no new app subscription.</p>
+    </div>
+    <div class="find rv">
+      <div class="find-h"><span class="tag t-warm">Recoverable</span>
+        <div><h3>Your titles already hold the answer</h3></div></div>
+      <p>Twelve vehicle makes are already readable straight out of your product titles &mdash;
+         Ford (201), Isuzu (100), Mitsubishi (71), Mazda (57), LDV (47), Toyota (46), Nissan (44),
+         GWM (36) and more. The make, model and series a customer needs to filter by is sitting in
+         the text; it has simply never been written into the tag field the finder reads.</p>
+      <p>That's why this is a mapping job, not a data-entry job.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Finding 04 &mdash; the rest</div>
+      <h2>Everything else we measured</h2>
+    </div>
+    <div class="tw rv">
+      <table>
+        <thead><tr><th>What we checked</th><th class="n">Count</th><th>What it costs you</th></tr></thead>
+        <tbody>
+          <tr><td>Variants with no SKU</td><td class="n">670</td><td>No stock control, no supplier matching</td></tr>
+          <tr><td>Products under a duplicated title</td><td class="n">518</td><td>Split reviews, split rankings, customer confusion</td></tr>
+          <tr><td>Products with no vehicle make in the title</td><td class="n">567</td><td>Invisible to a make-based search</td></tr>
+          <tr><td>Products with no image</td><td class="n">19</td><td>Effectively unsellable</td></tr>
+          <tr><td>Products with no description</td><td class="n">6</td><td>No SEO, no buying confidence</td></tr>
+          <tr><td>Variants priced at $0</td><td class="n">1</td><td>Orderable for nothing</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sm muted rv">Duplicates are the one to watch: 235 titles exist two or more times, for
+      example <em>M-Series Rear Bar for Nissan Navara NP300 (2015&ndash;2020)</em> and
+      <em>King Series Bull Bar for Nissan Navara NP300 (2015&ndash;2020)</em>. Merging them needs
+      301 redirects, or you lose the search rankings those pages already hold.</p>
+  </div>
+</section>
+
+<section style="background:var(--deep);color:#fff">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">The fix</div>
+      <h2 style="color:#fff">Six steps, in this order</h2>
+      <p style="color:#AAB0B8">Tax and weights first &mdash; those two touch money and postage
+        every day they stay as they are.</p>
+    </div>
+    <div class="plan">
+      <div class="pstep rv"><b>01</b><div><h3 style="color:#fff">Export and map</h3>
+        <p style="color:#AAB0B8">Full catalogue export, then build the make/model/series mapping
+        table from your existing titles. Roughly 130 vehicle rows.</p></div></div>
+      <div class="pstep rv"><b>02</b><div><h3 style="color:#fff">Script the repair</h3>
+        <p style="color:#AAB0B8">Tax, weights, vehicle tags, collections and SKUs written in one
+        pass. Re-import, then verify against the export.</p></div></div>
+      <div class="pstep rv"><b>03</b><div><h3 style="color:#fff">Merge the duplicates</h3>
+        <p style="color:#AAB0B8">235 titles reduced to one each, with a 301 redirect from every
+        retired URL so the rankings follow.</p></div></div>
+      <div class="pstep rv"><b>04</b><div><h3 style="color:#fff">Fold the split categories</h3>
+        <p style="color:#AAB0B8">44 categories down to 36. Menus and collection pages rebuilt
+        around the merged set.</p></div></div>
+      <div class="pstep rv"><b>05</b><div><h3 style="color:#fff">Add what's missing</h3>
+        <p style="color:#AAB0B8">The Hamer products absent from your store, against your current
+        supplier list. Anything beyond Hamer is a separate piece of work.</p></div></div>
+      <div class="pstep rv"><b>06</b><div><h3 style="color:#fff">Test and hand over</h3>
+        <p style="color:#AAB0B8">Finder, cart, shipping and checkout on desktop and mobile. Plus a
+        short written record of what changed and how to add a product correctly yourself.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="core rv" style="background:var(--warm-bg);border-color:#F0E0C0;border-left-color:var(--warm)">
+      <h2 style="font-size:1.3rem">What this audit does not claim</h2>
+      <p class="sm">We could multiply the $695,450 of untaxed catalogue by the GST rate and print a
+        frightening number. We haven't, because it would assume every product sells exactly once.
+        That's arithmetic, not a forecast, and presenting it as a loss would be the kind of claim
+        section 18 of the Australian Consumer Law exists to stop.</p>
+      <p class="sm" style="margin-bottom:0">What we've given you is what we measured. The catalogue
+        value is a fact. What it costs you is a number only you can work out, because only you know
+        what actually sells.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Method.</b> Measured 12 September 2026 from
+      <code style="background:#22262C;color:#C3C8CE">dropbearengineering.com.au/products.json</code>,
+      the public endpoint every Shopify store exposes. Five pages, 1,238 products, 1,402 variants.
+      No admin access was used or requested. Anyone can reproduce it.</p>
+    <p style="margin-bottom:0"><b>Solva</b> &mdash; websites, phone systems and custom software,
+      Brisbane. Prepared for Drop Bear Engineering ahead of the <em>Finishing Shopify page</em>
+      brief.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const cibles = [...document.querySelectorAll('.rv')];
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (calme || !('IntersectionObserver' in window)) {
+    cibles.forEach(e => e.classList.add('in'));
+  } else {
+    const ob = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); ob.unobserve(e.target); }
+    }), { threshold:.1, rootMargin:'0px 0px -6% 0px' });
+    cibles.forEach(e => ob.observe(e));
+    // Filet : une page ne doit jamais rester vide.
+    setTimeout(() => { cibles.forEach(e => e.classList.add('in')); ob.disconnect(); }, 2500);
+  }
+})();
+</script>
+</body>
+</html>
