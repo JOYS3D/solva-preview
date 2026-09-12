@@ -51,7 +51,8 @@ code{font:500 .86em/1 ui-monospace,Menlo,monospace;background:var(--sunk);paddin
 .cc{border-radius:var(--r);padding:1.1rem 1.3rem;border:1px solid}
 .cc.now{background:var(--urg-bg);border-color:#F0D5D0}
 .cc.after{background:var(--ok-bg);border-color:#C9E4D9}
-.cc b{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
+.cc>b{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
+.cc p b{display:inline;font-weight:700;font-size:inherit;letter-spacing:0;text-transform:none}
 .cc.now b{color:var(--urg)} .cc.after b{color:var(--ok)}
 .cc p{margin:0;font-size:.92rem;color:var(--ink-2)}
 :root[data-theme="dark"] .cc.now,:root:not([data-theme="light"]) .cc.now{border-color:#3A1C18}
