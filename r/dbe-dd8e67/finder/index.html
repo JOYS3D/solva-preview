@@ -228,7 +228,7 @@ mk.addEventListener('change', () => {
   const v = mk.value;
   remplir(md, v ? uniq(DATA.filter(d=>d.mk===v).map(d=>d.md)) : [], 'Choose a model');
   remplir(sr, [], 'Any series');
-  catActive = null; zoneActive = null;
+  catActive = null;  // la zone choisie est conservée : on change de ute, pas d'intention
   rendu();
 });
 md.addEventListener('change', () => {
