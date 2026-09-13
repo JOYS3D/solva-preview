@@ -51,8 +51,7 @@ code{font:500 .86em/1 ui-monospace,Menlo,monospace;background:var(--sunk);paddin
 .cc{border-radius:var(--r);padding:1.1rem 1.3rem;border:1px solid}
 .cc.now{background:var(--urg-bg);border-color:#F0D5D0}
 .cc.after{background:var(--ok-bg);border-color:#C9E4D9}
-.cc>b{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
-.cc p b{display:inline;font-weight:700;font-size:inherit;letter-spacing:0;text-transform:none}
+.cc b{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
 .cc.now b{color:var(--urg)} .cc.after b{color:var(--ok)}
 .cc p{margin:0;font-size:.92rem;color:var(--ink-2)}
 :root[data-theme="dark"] .cc.now,:root:not([data-theme="light"]) .cc.now{border-color:#3A1C18}
@@ -100,6 +99,42 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .note{background:var(--co-soft);border-left:3px solid var(--co);border-radius:var(--r-s);
   padding:1rem 1.2rem;font-size:.88rem;margin-top:1.6rem}
 .note b{font-weight:700}
+
+/* ── Le véhicule, en photo ── */
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:.75rem .75rem .5rem;box-shadow:var(--d1);margin-top:1.2rem}
+.shot{position:relative;border-radius:var(--r-s);overflow:hidden;background:var(--sunk);
+  aspect-ratio:1920/1282}
+.shot img{width:100%;height:100%;object-fit:fill;display:block}
+.hots{position:absolute;inset:0}
+.hot{position:absolute;transform:translate(-50%,-50%);cursor:pointer;border:0;padding:0;
+  background:none;font:inherit;-webkit-tap-highlight-color:transparent}
+.hot .dot{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.94);
+  border:2.5px solid var(--co);color:var(--co);font-weight:700;font-size:.82rem;
+  display:grid;place-items:center;box-shadow:0 3px 12px rgba(0,0,0,.32);
+  transition:.18s var(--e)}
+.hot::before{content:"";position:absolute;inset:-9px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.5);opacity:0;transition:.18s var(--e)}
+.hot:hover .dot,.hot:focus-visible .dot{transform:scale(1.16)}
+.hot:hover::before,.hot:focus-visible::before{opacity:1}
+.hot:focus-visible{outline:none}
+.hot[aria-pressed="true"] .dot{background:var(--co);color:#fff;transform:scale(1.16)}
+.hot[aria-pressed="true"]::before{opacity:1}
+.hot .lab{position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%);
+  background:rgba(12,14,18,.9);color:#fff;font-size:.7rem;font-weight:600;white-space:nowrap;
+  padding:.22rem .55rem;border-radius:5px;opacity:0;pointer-events:none;transition:.18s var(--e)}
+.hot:hover .lab,.hot:focus-visible .lab,.hot[aria-pressed="true"] .lab{opacity:1}
+@media(max-width:620px){.hot .dot{width:29px;height:29px;font-size:.74rem}}
+
+.hint-z{text-align:center;font-size:.84rem;color:var(--ink-3);padding:.7rem 0 .2rem}
+.hint-z b{color:var(--ink);font-weight:600}
+.zlist{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.2rem 0 .5rem}
+.zbtn{padding:.38rem .8rem;border:1px solid var(--line);border-radius:100px;font-size:.8rem;
+  cursor:pointer;background:var(--paper);transition:.16s var(--e);user-select:none}
+.zbtn[aria-pressed="true"]{background:var(--co);border-color:var(--co);color:#fff}
+.zbtn i{font-style:normal;opacity:.6;margin-left:.3rem;font-size:.9em}
+.zbtn[aria-pressed="true"] i{opacity:.85}
+
 footer{border-top:1px solid var(--line);padding:1.8rem 0;color:var(--ink-3);font-size:.82rem;margin-top:2rem}
 </style>
 </head>
@@ -135,6 +170,15 @@ footer{border-top:1px solid var(--line);padding:1.8rem 0;color:var(--ink-3);font
       <div class="fld"><label for="sr">Series / years</label><select id="sr" disabled></select></div>
     </div>
     <div class="cats" id="cats"></div>
+  </div>
+
+  <div class="stage">
+    <div class="shot">
+      <img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSC08635-Edit_0.jpg?v=1773232344" alt="Ford F-150 fitted with a Hamer bull bar, roof bar and side steps">
+      <div class="hots" id="pins"></div>
+    </div>
+    <div class="hint-z" id="hintz">Tap a part of the ute &mdash; or pick from the list below.</div>
+    <div class="zlist" id="zlist"></div>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -184,7 +228,7 @@ mk.addEventListener('change', () => {
   const v = mk.value;
   remplir(md, v ? uniq(DATA.filter(d=>d.mk===v).map(d=>d.md)) : [], 'Choose a model');
   remplir(sr, [], 'Any series');
-  catActive = null;
+  catActive = null; zoneActive = null;
   rendu();
 });
 md.addEventListener('change', () => {
@@ -195,19 +239,73 @@ md.addEventListener('change', () => {
 });
 sr.addEventListener('change', rendu);
 
-function filtre(){
+
+/* ─── Les zones du véhicule ─── */
+const ZONES = {
+  front:  {nom:'Front',      cats:['Bull Bar','Bull Bars','Rated Recovery Points','Barwork','Bar Work'], px:67, py:59},
+  rear:   {nom:'Rear',       cats:['Rear Bar','Rear Bars','Rear Ladder','Tailgate Storage'],             px:24, py:42},
+  side:   {nom:'Side steps', cats:['Side Step','Side Steps','Rock Slider','Rock Sliders'],               px:37, py:65},
+  roof:   {nom:'Roof',       cats:['Roof Rack','Roof rack'],                                             px:40, py:25},
+  tub:    {nom:'Tub',        cats:['Sports Bar','Sportsbar','Sports Bars','Tub Rack','Auto Roller Lid'], px:30, py:35},
+  under:  {nom:'Underbody',  cats:['Underbody','Underbody Protection'],                                  px:50, py:74},
+  inside: {nom:'Interior',   cats:['Canvas Seat Covers','Seat Covers','Centre Console',
+                                   'Fridge Compatible Centre Console','Gear Stick Extensions','Seat Adapter Kit'], px:55, py:40}
+};
+let zoneActive = null;
+const catsDe = z => ZONES[z] ? ZONES[z].cats : [];
+const zoneDe = c => Object.keys(ZONES).find(z => ZONES[z].cats.includes(c)) || null;
+
+function vehiculeCourant(){
   return DATA.filter(d =>
-    (!mk.value || d.mk===mk.value) &&
-    (!md.value || d.md===md.value) &&
-    (!sr.value || [d.sr,d.y].filter(Boolean).join(' · ')===sr.value) &&
-    (!catActive || d.c===catActive));
+    (!mk.value || d.mk === mk.value) &&
+    (!md.value || d.md === md.value) &&
+    (!sr.value || [d.sr,d.y].filter(Boolean).join(' \u00b7 ') === sr.value));
+}
+
+function dessineZones(){
+  const base = vehiculeCourant();
+  const n = {};
+  Object.keys(ZONES).forEach(z => n[z] = base.filter(d => catsDe(z).includes(d.c)).length);
+  if (zoneActive && !n[zoneActive]) zoneActive = null;
+
+  // points sur la photo
+  const pins = document.querySelector('#pins');
+  pins.innerHTML = Object.entries(ZONES).filter(([z]) => n[z] > 0).map(([z,o]) => `
+    <button class="hot" data-z="${z}" style="left:${o.px}%;top:${o.py}%"
+            aria-pressed="${z===zoneActive}" aria-label="${o.nom}, ${n[z]} products">
+      <span class="dot">${n[z]}</span><span class="lab">${o.nom}</span>
+    </button>`).join('');
+
+  // liste sous le dessin, pour ceux qui ne cliquent pas l'image
+  const zl = document.querySelector('#zlist');
+  zl.innerHTML = Object.entries(ZONES).filter(([z]) => n[z] > 0).map(([z,o]) =>
+    `<span class="zbtn" role="button" tabindex="0" data-z="${z}"
+       aria-pressed="${z===zoneActive}">${o.nom}<i>${n[z]}</i></span>`).join('');
+
+  [...pins.querySelectorAll('.hot'), ...zl.querySelectorAll('.zbtn')].forEach(el => {
+    const go = e => { e.preventDefault();
+      zoneActive = (zoneActive === el.dataset.z) ? null : el.dataset.z; rendu(); };
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') go(e); });
+  });
+
+  const h = document.querySelector('#hintz');
+  h.innerHTML = zoneActive
+    ? `Showing <b>${ZONES[zoneActive].nom}</b> &mdash; tap it again to see everything.`
+    : (mk.value ? 'Tap a part of the ute to narrow it down.'
+                : 'Tap a part of the ute &mdash; or choose a vehicle first.');
+}
+
+function filtre(){
+  return vehiculeCourant().filter(d =>
+    (!zoneActive || catsDe(zoneActive).includes(d.c)) &&
+    (!catActive  || d.c===catActive));
 }
 
 function rendu(){
-  const base = DATA.filter(d =>
-    (!mk.value || d.mk===mk.value) &&
-    (!md.value || d.md===md.value) &&
-    (!sr.value || [d.sr,d.y].filter(Boolean).join(' · ')===sr.value));
+  dessineZones();
+  const base = vehiculeCourant()
+    .filter(d => !zoneActive || catsDe(zoneActive).includes(d.c));
 
   const dispo = uniq(base.map(d=>d.c));
   if (catActive && !dispo.includes(catActive)) catActive = null;
@@ -223,11 +321,13 @@ function rendu(){
   });
 
   const r = filtre();
-  cpt.innerHTML = mk.value
-    ? `<b>${r.length}</b> product${r.length===1?'':'s'} fit${r.length===1?'s':''} this vehicle`
+  const quoi = zoneActive ? ZONES[zoneActive].nom.toLowerCase() : 'product';
+  cpt.innerHTML = (mk.value || zoneActive)
+    ? `<b>${r.length}</b> ${zoneActive ? quoi + ' option' : 'product'}${r.length===1?'':'s'}`
+      + (mk.value ? ' for this vehicle' : '')
     : `<b>${DATA.length}</b> products, ready to filter`;
 
-  const liste = mk.value ? r : r.slice(0,12);
+  const liste = (mk.value || zoneActive) ? r : r.slice(0,12);
   vide.hidden = liste.length > 0;
   grid.innerHTML = liste.map(d => `
     <article class="card">
