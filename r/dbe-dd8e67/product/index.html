@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One product, put right — Drop Bear Engineering</title>
+<meta name="robots" content="noindex,nofollow">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F5F1; --surface:#FFF; --sunk:#EFECE6; --deep:#14171C;
+  --ink:#14171C; --ink-2:#42474F; --ink-3:#6E747D; --ink-4:#9DA3AC;
+  --line:#E2DFD8; --line-2:#EDEAE4;
+  --co:#1B3FD1; --co-d:#152FA3; --co-bg:#E9EDFC; --co-soft:#F3F5FE;
+  --ok:#0C7C55; --ok-bg:#E3F2EC; --urg:#B33A2E; --urg-bg:#FAEAE7;
+  --warm:#A9691C; --warm-bg:#FAF0E2;
+  --e:cubic-bezier(.22,1,.36,1); --r-s:9px; --r:14px;
+  --d1:0 1px 1px rgba(20,23,28,.04),0 1px 3px rgba(20,23,28,.05);
+  --d2:0 1px 2px rgba(20,23,28,.04),0 8px 20px -8px rgba(20,23,28,.15);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0F1114; --surface:#171A1F; --sunk:#1E2228; --ink:#EDEBE7; --ink-2:#AEB4BC;
+  --ink-3:#828993; --ink-4:#5E656E; --line:#272B32; --line-2:#21252B;
+  --co-bg:#141C3A; --co-soft:#111726; --ok-bg:#0E2620; --urg-bg:#2B1512; --warm-bg:#2A1F0C;
+}}
+:root[data-theme="dark"]{
+  --paper:#0F1114; --surface:#171A1F; --sunk:#1E2228; --ink:#EDEBE7; --ink-2:#AEB4BC;
+  --ink-3:#828993; --ink-4:#5E656E; --line:#272B32; --line-2:#21252B;
+  --co-bg:#141C3A; --co-soft:#111726; --ok-bg:#0E2620; --urg-bg:#2B1512; --warm-bg:#2A1F0C;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:400 15px/1.62 Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;line-height:1.14;letter-spacing:-.022em;font-weight:700}
+h1{font-size:clamp(1.7rem,4vw,2.6rem)} h2{font-size:clamp(1.2rem,2.3vw,1.6rem)} h3{font-size:1rem}
+p{margin:0 0 .9rem} img{max-width:100%;display:block}
+.wrap{max-width:70rem;margin:0 auto;padding:0 1.4rem}
+.sm{font-size:.87rem} .xs{font-size:.76rem} .muted{color:var(--ink-3)}
+code{font:500 .85em/1 ui-monospace,Menlo,monospace;background:var(--sunk);padding:.14em .4em;border-radius:5px}
+
+.top{background:var(--deep);color:#fff;padding:2.4rem 0 2rem}
+.top h1{color:#fff} .top p{color:#AAB0B8;max-width:44rem;margin-top:.9rem}
+.solva{display:flex;align-items:center;gap:.55rem;margin-bottom:1.5rem;font-size:.88rem;font-weight:600}
+.solva i{width:8px;height:8px;border-radius:2px;background:var(--co);display:block}
+main{padding:2.2rem 0 3.5rem}
+
+.duo{display:grid;gap:1.2rem}
+@media(min-width:900px){.duo{grid-template-columns:1fr 1fr;align-items:start}}
+.col{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--surface);
+  box-shadow:var(--d1)}
+.col>header{padding:.85rem 1.2rem;font-size:.73rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;display:flex;align-items:center;gap:.5rem}
+.col.now>header{background:var(--urg-bg);color:var(--urg)}
+.col.fix>header{background:var(--ok-bg);color:var(--ok)}
+.pad{padding:1.3rem}
+
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:1.1rem}
+.gal .big{grid-column:1/-1;aspect-ratio:16/10;background:var(--sunk);border-radius:var(--r-s);overflow:hidden}
+.gal .th{aspect-ratio:1;background:var(--sunk);border-radius:6px;overflow:hidden}
+.gal img{width:100%;height:100%;object-fit:cover}
+
+.pt{font-size:1.12rem;font-weight:700;letter-spacing:-.015em;line-height:1.28;margin-bottom:.45rem}
+.pr{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin:.6rem 0 .2rem}
+.gstline{font-size:.8rem;margin-bottom:1rem}
+.fitbox{border-radius:var(--r-s);padding:.75rem .95rem;font-size:.86rem;margin-bottom:1rem;
+  border:1px solid}
+.fitbox.bad{background:var(--urg-bg);border-color:#F0D5D0;color:#7A2119}
+.fitbox.good{background:var(--ok-bg);border-color:#C9E4D9;color:#0A5B3F}
+:root[data-theme="dark"] .fitbox.bad,:root:not([data-theme="light"]) .fitbox.bad{border-color:#3A1C18;color:#E8A79E}
+:root[data-theme="dark"] .fitbox.good,:root:not([data-theme="light"]) .fitbox.good{border-color:#14382C;color:#8FD3B6}
+.fitbox b{display:block;margin-bottom:.2rem}
+
+.ship{font-size:.83rem;padding:.6rem .9rem;border-radius:var(--r-s);margin-bottom:1rem}
+.ship.bad{background:var(--urg-bg);color:var(--urg)} .ship.good{background:var(--ok-bg);color:var(--ok)}
+
+ul.feat{margin:0 0 1rem;padding-left:1.1rem;font-size:.86rem;color:var(--ink-2)}
+ul.feat li{margin-bottom:.22rem}
+ul.feat li.dup{color:var(--urg);font-weight:600}
+ul.feat li.dup::after{content:" ← same line, twice";font-weight:400;font-size:.9em;opacity:.8}
+
+.tags{display:flex;flex-wrap:wrap;gap:.32rem;margin-top:.2rem}
+.tags span{font-size:.68rem;padding:.2rem .45rem;border-radius:4px;font-weight:600;
+  font-family:ui-monospace,Menlo,monospace}
+.tags .t-bad{background:var(--urg-bg);color:var(--urg)}
+.tags .t-good{background:var(--co-soft);color:var(--co)}
+.lbl{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);
+  font-weight:600;margin:1rem 0 .35rem}
+
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin:2.2rem 0}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:34rem}
+th,td{padding:.66rem .9rem;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top}
+th{background:var(--sunk);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--ink-3);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.was{color:var(--urg)} td.now{color:var(--ok);font-weight:600}
+.note{background:var(--warm-bg);border-left:3px solid var(--warm);border-radius:var(--r-s);
+  padding:1rem 1.2rem;font-size:.88rem;color:#6B4A12;margin-top:1.6rem}
+:root[data-theme="dark"] .note,:root:not([data-theme="light"]) .note{color:#E0C68A}
+footer{border-top:1px solid var(--line);padding:1.8rem 0;color:var(--ink-3);font-size:.82rem;margin-top:2rem}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="solva"><i></i>Solva</div>
+    <h1>One product, put right.</h1>
+    <p>Your King Series bull bar for the HiLux, at $2,790 &mdash; one of the dearest things you
+       sell. Left: exactly as it sits on your store today. Right: the same product, same photos,
+       same copy, with the data settled. This is the method, on one page, before anything is
+       touched at scale.</p>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="duo">
+
+    <div class="col now">
+      <header>● As it is today</header>
+      <div class="pad">
+        <div class="gal">
+          <div class="big"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1954_0_39da1889-1d45-4cbb-ad5c-cd697d0d8749.jpg?v=1773234214" alt="King Series bull bar"></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1951_0_ec4449d5-1660-4896-aac5-5986f421fd70.jpg?v=1773234214" alt=""></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1952_0_75eb0af7-879f-4ff7-8fcd-d8fb83aea8e7.jpg?v=1773234214" alt=""></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1949_0_5786f31f-3ee2-46b4-90f7-c4cdc9846108.jpg?v=1773234214" alt=""></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1947_0_20eb4719-6442-4652-b607-540ccd1b6cd8.jpg?v=1773234214" alt=""></div>
+        </div>
+        <div class="pt">King series bull bar for Toyota Hilux (2024 &ndash; 2025)</div>
+        <div class="pr">$2,790</div>
+        <div class="gstline" style="color:var(--ok)">✓ GST charged &mdash; this one is set up correctly</div>
+
+        <div class="fitbox bad"><b>Which years does it fit?</b>
+          The title says <b>2024&ndash;2025</b>. The description says
+          <b>2020&ndash;Present</b>. A customer with a 2021 HiLux reads the description and orders.</div>
+
+        <div class="ship bad">⚠ Weight 0 g &mdash; a 3&nbsp;mm steel bull bar. Live shipping can't quote it.</div>
+
+        <div class="lbl">Tags the finder reads</div>
+        <div class="tags">
+          <span class="t-bad">2024 TO 2025</span><span class="t-bad">Bar Work</span>
+          <span class="t-bad">Bull Bar</span><span class="t-bad">HILUX</span>
+          <span class="t-bad">TOYOTA</span>
+        </div>
+        <p class="xs muted" style="margin-top:.5rem">Free text in five different styles. A filter
+          can't cascade make → model → series from these.</p>
+
+        <div class="lbl">Description</div>
+        <ul class="feat">
+          <li>Compatible with original factory parking sensors</li>
+          <li class="dup">Rated recovery points included</li>
+          <li>Light bar slot integrated</li>
+          <li class="dup">Rated recovery points included</li>
+          <li>Constructed from 3&nbsp;mm high grade steel plate</li>
+          <li>ADR / Airbag compliant &middot; winch compatible to 12,000&nbsp;lb</li>
+        </ul>
+        <div class="lbl">Category</div>
+        <p class="sm" style="margin:0"><code>Bull Bars</code> &mdash; while 65 other products sit
+          under <code>BULL BAR</code>. Two aisles, same thing.</p>
+      </div>
+    </div>
+
+    <div class="col fix">
+      <header>● With the data settled</header>
+      <div class="pad">
+        <div class="gal">
+          <div class="big"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1954_0_39da1889-1d45-4cbb-ad5c-cd697d0d8749.jpg?v=1773234214" alt="King Series bull bar"></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1951_0_ec4449d5-1660-4896-aac5-5986f421fd70.jpg?v=1773234214" alt=""></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1952_0_75eb0af7-879f-4ff7-8fcd-d8fb83aea8e7.jpg?v=1773234214" alt=""></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1949_0_5786f31f-3ee2-46b4-90f7-c4cdc9846108.jpg?v=1773234214" alt=""></div>
+          <div class="th"><img src="https://cdn.shopify.com/s/files/1/0761/2350/4896/files/DSCF1947_0_20eb4719-6442-4652-b607-540ccd1b6cd8.jpg?v=1773234214" alt=""></div>
+        </div>
+        <div class="pt">Hamer King Series Bull Bar &mdash; Toyota HiLux</div>
+        <div class="pr">$2,790</div>
+        <div class="gstline" style="color:var(--ok)">✓ GST charged &middot; incl. GST</div>
+
+        <div class="fitbox good"><b>Fits</b>
+          Toyota HiLux &mdash; the years confirmed once against Hamer's own fitment sheet, then
+          written identically in the title, the description and the tags.</div>
+
+        <div class="ship good">✓ Weight from Hamer's spec &mdash; live shipping quotes at checkout</div>
+
+        <div class="lbl">Tags the finder reads</div>
+        <div class="tags">
+          <span class="t-good">make_toyota</span><span class="t-good">model_hilux</span>
+          <span class="t-good">series_r24</span><span class="t-good">type_bull-bar</span>
+          <span class="t-good">brand_hamer</span>
+        </div>
+        <p class="xs muted" style="margin-top:.5rem">One shape, every product. Make → model →
+          series cascades, and the finder you already own starts returning results.</p>
+
+        <div class="lbl">Description</div>
+        <ul class="feat">
+          <li>Compatible with original factory parking sensors</li>
+          <li>Rated recovery points included</li>
+          <li>Light bar slot integrated</li>
+          <li>Constructed from 3&nbsp;mm high grade steel plate</li>
+          <li>ADR / Airbag compliant &middot; winch compatible to 12,000&nbsp;lb</li>
+          <li>Matte black powder coat &middot; bash plate and shackles sold separately</li>
+        </ul>
+        <div class="lbl">Category</div>
+        <p class="sm" style="margin:0"><code>Bull Bars</code> &mdash; merged, all 202 products in
+          one aisle.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Field</th><th>Today</th><th>Settled</th><th>Who supplies it</th></tr></thead>
+      <tbody>
+        <tr><td>Fitment years</td><td class="was">2024&ndash;2025 in the title,<br>2020&ndash;Present in the copy</td>
+            <td class="now">One answer, three places</td><td class="sm muted">Hamer fitment sheet</td></tr>
+        <tr><td>Weight</td><td class="was">0 g</td><td class="now">Real shipping weight</td>
+            <td class="sm muted">Hamer spec &mdash; we won't guess it</td></tr>
+        <tr><td>Vehicle tags</td><td class="was">5 free-text labels</td>
+            <td class="now">make / model / series / type / brand</td><td class="sm muted">Script, from your titles</td></tr>
+        <tr><td>Category</td><td class="was">Split across two names</td><td class="now">One</td>
+            <td class="sm muted">Script</td></tr>
+        <tr><td>Description</td><td class="was">One line printed twice</td><td class="now">Deduplicated</td>
+            <td class="sm muted">Script, then your eyes on it</td></tr>
+        <tr><td>GST</td><td class="now">✓ already correct</td><td class="now">✓ unchanged</td>
+            <td class="sm muted">&mdash;</td></tr>
+        <tr><td>Part number</td><td class="now">✓ <code>AM106-R24-NF</code></td><td class="now">✓ unchanged</td>
+            <td class="sm muted">&mdash;</td></tr>
+        <tr><td>Photos</td><td class="now">✓ 18 of them</td><td class="now">✓ unchanged</td>
+            <td class="sm muted">&mdash;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <b>Note the blanks.</b> We haven't invented a weight and we haven't picked the years for you.
+    Both come from Hamer, and getting them wrong on a $2,790 bar that bolts to the front of
+    someone's ute isn't a risk worth taking to make a demo look complete. That's the one thing
+    we'd need from you before starting: the current Hamer fitment and spec data. Everything else
+    on this page, we can do from what your store already holds.
+  </div>
+</main>
+
+<footer class="wrap">
+  <b>Solva</b> &mdash; Brisbane. Product data read from your public storefront, 12 September 2026.
+  Photos and copy are your own.
+</footer>
+</body>
+</html>
