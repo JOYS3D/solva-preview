@@ -2,3 +2,7 @@
 refs/
 node_modules/
 CLAUDE.md
+design/
+build/
+agent/
+.claude/
