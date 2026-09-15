@@ -434,6 +434,13 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
   .js .bub,.js .bub.shown{opacity:1;transform:none;transition:none}
   .scr.on{animation:none}
 }
+.tchips{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:1.1rem}
+.tchip{font-size:.78rem;font-weight:600;padding:.34rem .72rem;border-radius:999px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-3);cursor:pointer;
+  transition:color .2s var(--e),border-color .2s var(--e),background .2s var(--e)}
+.tchip[aria-selected="true"]{background:var(--co);border-color:var(--co);color:#fff}
+.tchip:hover{border-color:var(--co);color:var(--co)}
+.tchip[aria-selected="true"]:hover{color:#fff}
 </style>
 </head>
 <body>
@@ -470,10 +477,11 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
     </div>
 
     <div class="rvs rv">
+      <div class="tchips" id="tchips" role="tablist" aria-label="Pick a trade"></div>
       <div class="phone" id="ph">
         <span class="notch"></span>
         <div class="phone-scr">
-          <div class="phone-top"><span class="num" id="phclock">6:58 am</span><span>Brisbane</span></div>
+          <div class="phone-top"><span class="num" id="phclock">6:58 am</span><span id="phwho">Dental practice</span></div>
           <div class="phone-b">
 
             <div class="scr on" data-scr="0">
@@ -482,19 +490,15 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
                 </div>
                 <b>Incoming call</b>
-                <span class="num">0412 &bull;&bull;&bull; 338</span>
+                <span class="num" id="phnum">0412 &bull;&bull;&bull; 338</span>
               </div>
-              <p class="xs" style="text-align:center;margin:0">You&rsquo;re under a sink.
+              <p class="xs" id="phwhy" style="text-align:center;margin:0">Both hands busy.
                 Nobody can pick up.</p>
             </div>
 
             <div class="scr" data-scr="1">
               <div class="wave" aria-hidden="true"><u></u><u></u><u></u><u></u><u></u><u></u></div>
-              <p class="bub them">Yeah hi &mdash; I&rsquo;ve got a leak under the kitchen sink.</p>
-              <p class="bub us">Is the water still running, or is it off at the mains?</p>
-              <p class="bub them">Off at the mains.</p>
-              <p class="bub us">Good. Whereabouts are you, and when are you home?</p>
-              <p class="bub them">Kelvin Grove. All day Tuesday and Thursday.</p>
+              <div id="phtalk"></div>
             </div>
 
             <div class="scr" data-scr="2">
@@ -503,18 +507,14 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                   On your phone
                 </div>
-                <div class="dl"><b>Job</b><span>Leak under kitchen sink, mains off</span></div>
-                <div class="dl"><b>Where</b><span>Kelvin Grove</span></div>
-                <div class="dl"><b>When</b><span>Home Tuesday and Thursday</span></div>
-                <div class="dl"><b>Note</b><span>Asked about the hot water unit &mdash; flagged, not answered</span></div>
-                <div class="dl"><b>Caller</b><span>D. Whelan &middot; 0412 &bull;&bull;&bull; 338</span></div>
+                <div id="phbrief"></div>
               </div>
             </div>
 
           </div>
         </div>
       </div>
-      <p class="xs phone-cap">A call you didn&rsquo;t take, turned into a job you can price.
+      <p class="xs phone-cap">Same assistant, different questions &mdash; because you write them.
         Fictional name.</p>
     </div>
   </div>
@@ -912,71 +912,121 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
 })();
 </script>
 
+
 <script>
-/* ─── Le téléphone du héros : sonne, décroche, rend le dossier ─── */
+/* ─── Téléphone du héros : quatre métiers, aucun chantier ─── */
 (function(){
-  var ph = document.getElementById('ph');
-  if (!ph) return;
-  var ecrans = ph.querySelectorAll('.scr'),
-      bulles = ph.querySelectorAll('.bub'),
-      horloge = document.getElementById('phclock'),
-      calme = window.matchMedia &&
-              window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var ph=document.getElementById('ph'); if(!ph) return;
 
-  function montre(n){
-    for (var i=0;i<ecrans.length;i++) ecrans[i].classList.toggle('on', i===n);
+  var M=[
+   {nom:'Dental practice',num:'0412 &bull;&bull;&bull; 338',
+    why:'You&rsquo;re in someone&rsquo;s mouth. Nobody can pick up.',
+    talk:[['them','I chipped a tooth on the weekend. Not sore, but it&rsquo;s sharp.'],
+          ['us','Is it bleeding, or just the edge catching your tongue?'],
+          ['them','Just the edge.'],
+          ['us','Have you been here before, and is any day better for you?'],
+          ['them','First time. Mornings suit me.']],
+    brief:[['Reason','Chipped tooth, not bleeding, sharp edge'],
+           ['Urgency','Routine &mdash; did not need the after-hours rule'],
+           ['Patient','New, never seen here'],
+           ['Prefers','Mornings'],
+           ['Caller','R. Okafor &middot; 0412 &bull;&bull;&bull; 338']]},
+
+   {nom:'Tattoo studio',num:'0431 &bull;&bull;&bull; 204',
+    why:'You&rsquo;ve got a needle on skin. Nobody can pick up.',
+    talk:[['them','I want a piece on my forearm, black and grey.'],
+          ['us','Roughly how big, in centimetres?'],
+          ['them','Maybe fifteen by ten.'],
+          ['us','Is it covering anything, and have you got a reference?'],
+          ['them','Not a cover-up. I&rsquo;ve got pictures on my phone.']],
+    brief:[['Piece','Forearm, black and grey, ~15 &times; 10 cm'],
+           ['Cover-up','No'],
+           ['Reference','Has images &mdash; sent them a link to upload'],
+           ['Note','No price quoted. Yours to set.'],
+           ['Caller','S. Renard &middot; 0431 &bull;&bull;&bull; 204']]},
+
+   {nom:'Dog groomer',num:'0455 &bull;&bull;&bull; 917',
+    why:'You&rsquo;ve got a wet dog on the table. Nobody can pick up.',
+    talk:[['them','Can I get my golden retriever in this week?'],
+          ['us','Is the coat matted, or a regular tidy-up?'],
+          ['them','Pretty matted. He&rsquo;s been swimming.'],
+          ['us','Has he been groomed before, and is he alright being handled?'],
+          ['them','Yeah, he&rsquo;s very calm.']],
+    brief:[['Dog','Golden retriever, matted coat'],
+           ['Service','Full groom &mdash; needs the longer slot'],
+           ['Handling','Calm, groomed before'],
+           ['When','This week'],
+           ['Caller','K. Tran &middot; 0455 &bull;&bull;&bull; 917']]},
+
+   {nom:'Restaurant',num:'0408 &bull;&bull;&bull; 662',
+    why:'It&rsquo;s service. Nobody can pick up.',
+    talk:[['them','Have you got a table for six on Friday?'],
+          ['us','What time were you thinking, and is it a celebration?'],
+          ['them','Around eight. It&rsquo;s a birthday.'],
+          ['us','Any allergies, or anyone who can&rsquo;t do stairs?'],
+          ['them','One coeliac, that&rsquo;s all.']],
+    brief:[['Booking','Six, Friday, around 8pm'],
+           ['Occasion','Birthday'],
+           ['Dietary','One coeliac'],
+           ['Access','Stairs not an issue'],
+           ['Caller','M. Whelan &middot; 0408 &bull;&bull;&bull; 662']]}
+  ];
+
+  var ecr=ph.querySelectorAll('.scr'),
+      hor=document.getElementById('phclock'), who=document.getElementById('phwho'),
+      num=document.getElementById('phnum'), why=document.getElementById('phwhy'),
+      talk=document.getElementById('phtalk'), brief=document.getElementById('phbrief'),
+      chips=document.getElementById('tchips'),
+      calme=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  var idx=0,t=[],joue=false,vu=true;
+
+  M.forEach(function(m,i){
+    var b=document.createElement('button');
+    b.className='tchip'; b.type='button'; b.setAttribute('role','tab'); b.textContent=m.nom;
+    b.addEventListener('click',function(){ idx=i; stop(); scene(); });
+    chips.appendChild(b);
+  });
+  var puces=chips.querySelectorAll('.tchip');
+
+  function peuple(i){
+    var m=M[i];
+    who.textContent=m.nom; num.innerHTML=m.num; why.innerHTML=m.why;
+    talk.innerHTML=m.talk.map(function(b){return '<p class="bub '+b[0]+'">'+b[1]+'</p>';}).join('');
+    brief.innerHTML=m.brief.map(function(l){return '<div class="dl"><b>'+l[0]+'</b><span>'+l[1]+'</span></div>';}).join('');
+    for(var k=0;k<puces.length;k++) puces[k].setAttribute('aria-selected',k===i?'true':'false');
   }
-  function fige(){                       /* état final, lisible sans animation */
-    montre(2);
-    for (var i=0;i<bulles.length;i++) bulles[i].classList.add('shown');
-    if (horloge) horloge.textContent = '7:01 am';
+  function montre(n){ for(var i=0;i<ecr.length;i++) ecr[i].classList.toggle('on',i===n); }
+  function stop(){ for(var i=0;i<t.length;i++) clearTimeout(t[i]); t=[]; joue=false; }
+  function tard(f,d){ t.push(setTimeout(f,d)); }
+
+  function fige(){
+    peuple(idx); montre(2);
+    var b=talk.querySelectorAll('.bub');
+    for(var i=0;i<b.length;i++) b[i].classList.add('shown');
+    hor.textContent='7:01 am';
   }
-  if (calme) { fige(); return; }
-
-  var t = [], joue = false, aLEcran = true;
-
-  function stop(){ for (var i=0;i<t.length;i++) clearTimeout(t[i]); t = []; }
-  function plus_tard(fn, d){ t.push(setTimeout(fn, d)); }
+  if(calme){ fige(); return; }
 
   function scene(){
-    joue = true;
-    stop();
-    for (var i=0;i<bulles.length;i++) bulles[i].classList.remove('shown');
-    montre(0);
-    if (horloge) horloge.textContent = '6:58 am';
-
-    plus_tard(function(){
-      montre(1);
-      if (horloge) horloge.textContent = '6:59 am';
-      for (var i=0;i<bulles.length;i++){
-        (function(el,d){ plus_tard(function(){ el.classList.add('shown'); }, d); })(bulles[i], 260 + i*820);
-      }
-    }, 2500);
-
-    plus_tard(function(){
-      montre(2);
-      if (horloge) horloge.textContent = '7:01 am';
-    }, 2500 + 260 + bulles.length*820 + 900);
-
-    plus_tard(function(){ if (aLEcran && !document.hidden) scene(); },
-              2500 + 260 + bulles.length*820 + 900 + 4200);
+    joue=true; peuple(idx); montre(0); hor.textContent='6:58 am';
+    var b=talk.querySelectorAll('.bub'), fin=2400;
+    tard(function(){
+      montre(1); hor.textContent='6:59 am';
+      for(var i=0;i<b.length;i++)
+        (function(el,d){ tard(function(){ el.classList.add('shown'); },d); })(b[i],240+i*820);
+    },2400);
+    fin+=240+b.length*820+850;
+    tard(function(){ montre(2); hor.textContent='7:01 am'; },fin);
+    tard(function(){ idx=(idx+1)%M.length; if(vu&&!document.hidden) scene(); else joue=false; },fin+4000);
   }
+  function surveille(){ if(vu&&!document.hidden){ if(!joue) scene(); } else stop(); }
 
-  function surveille(){
-    if (aLEcran && !document.hidden) { if (!joue) scene(); }
-    else { stop(); joue = false; }
-  }
-
-  if ('IntersectionObserver' in window){
-    new IntersectionObserver(function(es){
-      aLEcran = es[0].isIntersecting;
-      surveille();
-    }, {threshold:.2}).observe(ph);
-    document.addEventListener('visibilitychange', surveille);
-    setTimeout(function(){ if (!joue) fige(); }, 2500);   /* filet : jamais vide */
-  } else {
-    fige();
-  }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){ vu=e[0].isIntersecting; surveille(); },{threshold:.2}).observe(ph);
+    document.addEventListener('visibilitychange',surveille);
+    setTimeout(function(){ if(!joue) fige(); },2500);
+  } else fige();
 })();
 </script>
 </body>
