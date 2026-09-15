@@ -379,6 +379,61 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
   .btn:hover,.so:hover,.pc:hover,.gc:hover,.frc:hover{transform:none}
   .bar i{width:var(--w)}
 }
+
+/* ─── Téléphone du héros ──────────────────────────────── */
+.phone{width:100%;max-width:274px;margin:0 auto;position:relative;
+  border-radius:38px;padding:9px;
+  background:linear-gradient(158deg,var(--alu-1),var(--alu-2) 42%,var(--alu-3));
+  box-shadow:var(--d4),inset 0 1px 1px rgba(255,255,255,.5)}
+.phone::after{content:"";position:absolute;left:12%;right:12%;bottom:-26px;height:26px;
+  background:radial-gradient(ellipse at center,rgba(20,23,28,.28),transparent 72%);
+  filter:blur(9px);pointer-events:none}
+.notch{position:absolute;top:15px;left:50%;transform:translateX(-50%);
+  width:78px;height:20px;border-radius:12px;background:var(--alu-3);opacity:.5;z-index:3}
+.phone-scr{background:var(--surface);border-radius:30px;overflow:hidden;
+  min-height:412px;display:flex;flex-direction:column;position:relative}
+.phone-top{display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1.1rem .3rem;font-size:.7rem;font-weight:600;color:var(--ink-3)}
+.phone-b{flex:1;padding:1rem 1.05rem 1.15rem;display:flex;flex-direction:column}
+.scr{display:none}
+.scr.on{display:flex;flex-direction:column;flex:1;animation:pin .42s var(--e)}
+@keyframes pin{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.ring{display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  padding:2rem 0 1.4rem;text-align:center}
+.ring-av{width:62px;height:62px;border-radius:50%;background:var(--co);display:grid;
+  place-items:center;color:#fff;position:relative;flex-shrink:0;margin-bottom:.5rem}
+.ring-av::before,.ring-av::after{content:"";position:absolute;inset:0;border-radius:50%;
+  border:2px solid var(--co-l);opacity:0}
+.js .ring-av::before{animation:pulse 2.1s var(--e-o) infinite}
+.js .ring-av::after{animation:pulse 2.1s var(--e-o) .7s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.65}100%{transform:scale(2.15);opacity:0}}
+.ring b{font-size:1rem;letter-spacing:-.022em}
+.ring span{font-size:.83rem;color:var(--ink-3)}
+.wave{display:flex;align-items:center;justify-content:center;gap:3px;height:22px;margin:.3rem 0 .9rem}
+.wave u{width:3px;border-radius:2px;background:var(--co);height:18%}
+.js .wave u{animation:wv 1.05s var(--e) infinite}
+.js .wave u:nth-child(2){animation-delay:.1s}.js .wave u:nth-child(3){animation-delay:.22s}
+.js .wave u:nth-child(4){animation-delay:.34s}.js .wave u:nth-child(5){animation-delay:.16s}
+.js .wave u:nth-child(6){animation-delay:.28s}
+@keyframes wv{0%,100%{height:16%}50%{height:100%}}
+.bub{max-width:90%;padding:.55rem .78rem;border-radius:14px;font-size:.82rem;
+  line-height:1.42;margin-bottom:.45rem}
+.bub.them{align-self:flex-start;background:var(--sunk);border-bottom-left-radius:4px}
+.bub.us{align-self:flex-end;background:var(--co);color:#fff;border-bottom-right-radius:4px}
+.js .bub{opacity:0;transform:translateY(7px)}
+.js .bub.shown{opacity:1;transform:none;transition:opacity .34s var(--e),transform .34s var(--e)}
+.done{display:flex;flex-direction:column;gap:.5rem;padding-top:.3rem}
+.done-h{display:flex;align-items:center;gap:.45rem;font-size:.71rem;font-weight:700;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--ok);margin-bottom:.2rem}
+.dl{display:grid;grid-template-columns:7ch 1fr;gap:8px;font-size:.8rem;line-height:1.4}
+.dl b{color:var(--ink-4);font-weight:600;font-size:.66rem;letter-spacing:.05em;
+  text-transform:uppercase;padding-top:.22em}
+.phone-cap{margin-top:2.2rem;text-align:center}
+@media (prefers-reduced-motion:reduce){
+  .js .ring-av::before,.js .ring-av::after,.js .wave u{animation:none}
+  .js .bub,.js .bub.shown{opacity:1;transform:none;transition:none}
+  .scr.on{animation:none}
+}
 </style>
 </head>
 <body>
@@ -414,22 +469,53 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
       <div class="hero-meta"><em></em>Brisbane, Australia &middot; in-person meetings available</div>
     </div>
 
-    <div class="stack rvs rv">
-      <a class="so" href="solva-call/">
-        <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg></div>
-        <div><b>Solva Call</b><small>Something answers when you can&rsquo;t</small></div>
-        <svg class="go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
-      </a>
-      <a class="so" href="custom-software/">
-        <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-        <div><b>Custom software</b><small>The follow-up you meant to send</small></div>
-        <svg class="go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
-      </a>
-      <a class="so" href="#websites">
-        <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-        <div><b>Websites</b><small>Built to turn interest into enquiries</small></div>
-        <svg class="go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      </a>
+    <div class="rvs rv">
+      <div class="phone" id="ph">
+        <span class="notch"></span>
+        <div class="phone-scr">
+          <div class="phone-top"><span class="num" id="phclock">6:58 am</span><span>Brisbane</span></div>
+          <div class="phone-b">
+
+            <div class="scr on" data-scr="0">
+              <div class="ring">
+                <div class="ring-av">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
+                </div>
+                <b>Incoming call</b>
+                <span class="num">0412 &bull;&bull;&bull; 338</span>
+              </div>
+              <p class="xs" style="text-align:center;margin:0">You&rsquo;re under a sink.
+                Nobody can pick up.</p>
+            </div>
+
+            <div class="scr" data-scr="1">
+              <div class="wave" aria-hidden="true"><u></u><u></u><u></u><u></u><u></u><u></u></div>
+              <p class="bub them">Yeah hi &mdash; I&rsquo;ve got a leak under the kitchen sink.</p>
+              <p class="bub us">Is the water still running, or is it off at the mains?</p>
+              <p class="bub them">Off at the mains.</p>
+              <p class="bub us">Good. Whereabouts are you, and when are you home?</p>
+              <p class="bub them">Kelvin Grove. All day Tuesday and Thursday.</p>
+            </div>
+
+            <div class="scr" data-scr="2">
+              <div class="done">
+                <div class="done-h">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  On your phone
+                </div>
+                <div class="dl"><b>Job</b><span>Leak under kitchen sink, mains off</span></div>
+                <div class="dl"><b>Where</b><span>Kelvin Grove</span></div>
+                <div class="dl"><b>When</b><span>Home Tuesday and Thursday</span></div>
+                <div class="dl"><b>Note</b><span>Asked about the hot water unit &mdash; flagged, not answered</span></div>
+                <div class="dl"><b>Caller</b><span>D. Whelan &middot; 0412 &bull;&bull;&bull; 338</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <p class="xs phone-cap">A call you didn&rsquo;t take, turned into a job you can price.
+        Fictional name.</p>
     </div>
   </div>
 </section>
@@ -823,6 +909,74 @@ footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
   };
   [c1, c2, c3].forEach(i => i.addEventListener('input', calcule));
   calcule();
+})();
+</script>
+
+<script>
+/* ─── Le téléphone du héros : sonne, décroche, rend le dossier ─── */
+(function(){
+  var ph = document.getElementById('ph');
+  if (!ph) return;
+  var ecrans = ph.querySelectorAll('.scr'),
+      bulles = ph.querySelectorAll('.bub'),
+      horloge = document.getElementById('phclock'),
+      calme = window.matchMedia &&
+              window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function montre(n){
+    for (var i=0;i<ecrans.length;i++) ecrans[i].classList.toggle('on', i===n);
+  }
+  function fige(){                       /* état final, lisible sans animation */
+    montre(2);
+    for (var i=0;i<bulles.length;i++) bulles[i].classList.add('shown');
+    if (horloge) horloge.textContent = '7:01 am';
+  }
+  if (calme) { fige(); return; }
+
+  var t = [], joue = false, aLEcran = true;
+
+  function stop(){ for (var i=0;i<t.length;i++) clearTimeout(t[i]); t = []; }
+  function plus_tard(fn, d){ t.push(setTimeout(fn, d)); }
+
+  function scene(){
+    joue = true;
+    stop();
+    for (var i=0;i<bulles.length;i++) bulles[i].classList.remove('shown');
+    montre(0);
+    if (horloge) horloge.textContent = '6:58 am';
+
+    plus_tard(function(){
+      montre(1);
+      if (horloge) horloge.textContent = '6:59 am';
+      for (var i=0;i<bulles.length;i++){
+        (function(el,d){ plus_tard(function(){ el.classList.add('shown'); }, d); })(bulles[i], 260 + i*820);
+      }
+    }, 2500);
+
+    plus_tard(function(){
+      montre(2);
+      if (horloge) horloge.textContent = '7:01 am';
+    }, 2500 + 260 + bulles.length*820 + 900);
+
+    plus_tard(function(){ if (aLEcran && !document.hidden) scene(); },
+              2500 + 260 + bulles.length*820 + 900 + 4200);
+  }
+
+  function surveille(){
+    if (aLEcran && !document.hidden) { if (!joue) scene(); }
+    else { stop(); joue = false; }
+  }
+
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      aLEcran = es[0].isIntersecting;
+      surveille();
+    }, {threshold:.2}).observe(ph);
+    document.addEventListener('visibilitychange', surveille);
+    setTimeout(function(){ if (!joue) fige(); }, 2500);   /* filet : jamais vide */
+  } else {
+    fige();
+  }
 })();
 </script>
 </body>
