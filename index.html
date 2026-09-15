@@ -3,1030 +3,983 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Solva — Your business works hard. Your systems should too.</title>
-<meta name="description" content="Websites, an assistant that answers your phone, and software shaped around how your business actually runs. Built in Brisbane, for businesses whose systems stopped keeping up.">
-<meta property="og:title" content="Solva — Your business works hard. Your systems should too.">
-<meta property="og:description" content="Websites, AI voice systems and custom software for small businesses in Brisbane and South East Queensland.">
+<title>Solva &mdash; It doesn&rsquo;t take a message. It takes the job. Brisbane</title>
+<meta name="description" content="An AI phone assistant that answers as your business, asks the questions your trade actually needs, and hands you a job you can quote in two minutes. Ring 0485 066 424 and hear it. Brisbane, Queensland.">
+<meta property="og:title" content="Solva &mdash; It doesn&rsquo;t take a message. It takes the job.">
+<meta property="og:description" content="Ring 0485 066 424. It answers, it&rsquo;s an AI, and it tells you so.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#F7F5F1" media="(prefers-color-scheme:light)">
 <meta name="theme-color" content="#0A0D12" media="(prefers-color-scheme:dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2314171C'/%3E%3Ctext x='50' y='71' font-family='Helvetica,Arial' font-size='64' font-weight='700' fill='%23fff' text-anchor='middle'%3Es%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231B3FD1'/%3E%3Ctext x='32' y='45' font-family='Archivo,Helvetica,Arial,sans-serif' font-weight='700' font-size='38' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+document.documentElement.classList.add('js');
+try{var _t=localStorage.getItem('solva-theme');if(_t)document.documentElement.setAttribute('data-theme',_t);}catch(e){}
+</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"Solva",
-"description":"Websites, AI voice systems and custom software for small businesses.",
+"description":"An inbound AI phone assistant for small businesses, plus custom software and websites.",
+"telephone":"+61485066424",
 "areaServed":{"@type":"City","name":"Brisbane"},
-"address":{"@type":"PostalAddress","addressLocality":"Brisbane","addressRegion":"QLD","addressCountry":"AU"},
-"founder":{"@type":"Person","name":"Yanis Coolen"}}
+"address":{"@type":"PostalAddress","addressLocality":"Brisbane","addressRegion":"QLD","addressCountry":"AU"}}
 </script>
 <style>
-/* ═══════════════════════════════════════════════════════════════
-   SOLVA — page d'accueil
-   Papier chaud, encre profonde, un cobalt rationné.
-   Aucune chasse fixe, aucune esthétique de terminal.
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   SOLVA — accueil. Porté depuis le dossier Claude Design.
+   Vanilla, fichier unique, aucun build. Cobalt rationné.
+   ═══════════════════════════════════════════════════════════ */
 :root{
-  --paper:#F7F5F1; --surface:#FFFFFF; --sunk:#EFECE6; --deep:#14171C;
-  --ink:#14171C; --ink-2:#42474F; --ink-3:#6E747D; --ink-4:#9DA3AC;
-  --line:#E2DFD8; --line-2:#EDEAE4;
-  --co:#1B3FD1; --co-d:#152FA3; --co-l:#4064E8; --co-bg:#E9EDFC; --co-soft:#F3F5FE;
-  --ok:#0C7C55; --ok-bg:#E3F2EC;
-  --urg:#B33A2E; --urg-bg:#FAEAE7;
-  --warm:#A9691C; --warm-bg:#FAF0E2;
-  --alu-1:#E6E4E0; --alu-2:#CFCCC6; --alu-3:#A8A49C;
-  --e:cubic-bezier(.22,1,.36,1); --e-o:cubic-bezier(.16,1,.3,1);
-  --r-s:10px; --r:15px; --r-l:24px; --r-xl:34px;
+  --paper:#F7F5F1;--surface:#FFFFFF;--sunk:#EFECE6;--deep:#14171C;
+  --ink:#14171C;--ink-2:#42474F;--ink-3:#656C76;--ink-4:#9DA3AC;
+  --line:#E2DFD8;--line-2:#EDEAE4;
+  --co:#1B3FD1;--co-d:#152FA3;--co-bg:#E9EDFC;--co-soft:#F3F5FE;
+  --ok:#0C7C55;--ok-bg:#E3F2EC;--urg:#B33A2E;--urg-bg:#FAEAE7;
+  --warm:#A9691C;--warm-bg:#FAF0E2;
+  --alu-1:#E6E4E0;--alu-2:#CFCCC6;--alu-3:#A8A49C;
+  --nav:rgba(247,245,241,.84);
+  --e:cubic-bezier(.22,1,.36,1);
   --d1:0 1px 1px rgba(20,23,28,.04),0 1px 3px rgba(20,23,28,.05);
-  --d2:0 1px 2px rgba(20,23,28,.04),0 8px 20px -8px rgba(20,23,28,.15);
-  --d3:0 2px 6px rgba(20,23,28,.05),0 24px 48px -18px rgba(20,23,28,.25);
-  --d4:0 6px 14px rgba(20,23,28,.06),0 48px 90px -28px rgba(20,23,28,.36);
+  --d2:0 1px 2px rgba(20,23,28,.04),0 10px 24px -10px rgba(20,23,28,.16);
+  --d3:0 2px 6px rgba(20,23,28,.05),0 28px 56px -20px rgba(20,23,28,.26);
+  --d4:0 8px 18px rgba(20,23,28,.1),0 54px 96px -30px rgba(20,23,28,.42);
+  --deep-ink:#EEF0F3;--deep-ink-2:#B0B6BE;--deep-ink-3:#9AA1AA;
+  --deep-line:rgba(255,255,255,.1);--deep-co:#5077F0;--deep-btn:#2A4FE0;
+  --deep-ok:#35B183;--deep-urg:#E0655A;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#0A0D12; --surface:#111519; --sunk:#0D1115; --deep:#05070A;
-  --ink:#EEF0F3; --ink-2:#B0B6BE; --ink-3:#848A93; --ink-4:#5C626B;
-  --line:#1F242B; --line-2:#181C22;
-  --co:#5077F0; --co-d:#3A5CE0; --co-l:#7D9AF6; --co-bg:#131C33; --co-soft:#0D1220;
-  --ok:#35B183; --ok-bg:#0B241A; --urg:#E0655A; --urg-bg:#2A1310;
-  --warm:#D0913F; --warm-bg:#241A0C;
-  --alu-1:#1C2027; --alu-2:#272C34; --alu-3:#3B414A;
+  --paper:#0A0D12;--surface:#111519;--sunk:#0D1115;--deep:#05070A;
+  --ink:#EEF0F3;--ink-2:#B0B6BE;--ink-3:#8A9099;--ink-4:#5C626B;
+  --line:#1F242B;--line-2:#181C22;
+  --co:#5077F0;--co-d:#3A5CE0;--co-bg:#131C33;--co-soft:#0D1220;
+  --ok:#35B183;--ok-bg:#0B241A;--urg:#E0655A;--urg-bg:#2A1310;
+  --warm:#D0913F;--warm-bg:#241A0C;
+  --alu-1:#1C2027;--alu-2:#272C34;--alu-3:#3B414A;
+  --nav:rgba(10,13,18,.84);
   --d1:0 1px 2px rgba(0,0,0,.4);
-  --d2:0 1px 2px rgba(0,0,0,.4),0 8px 20px -8px rgba(0,0,0,.6);
-  --d3:0 2px 6px rgba(0,0,0,.45),0 24px 48px -18px rgba(0,0,0,.7);
-  --d4:0 6px 14px rgba(0,0,0,.5),0 48px 90px -28px rgba(0,0,0,.8);
+  --d2:0 1px 2px rgba(0,0,0,.4),0 10px 24px -10px rgba(0,0,0,.6);
+  --d3:0 2px 6px rgba(0,0,0,.45),0 28px 56px -20px rgba(0,0,0,.72);
+  --d4:0 8px 18px rgba(0,0,0,.5),0 54px 96px -30px rgba(0,0,0,.8);
 }}
+:root[data-theme="dark"]{
+  --paper:#0A0D12;--surface:#111519;--sunk:#0D1115;--deep:#05070A;
+  --ink:#EEF0F3;--ink-2:#B0B6BE;--ink-3:#8A9099;--ink-4:#5C626B;
+  --line:#1F242B;--line-2:#181C22;
+  --co:#5077F0;--co-d:#3A5CE0;--co-bg:#131C33;--co-soft:#0D1220;
+  --ok:#35B183;--ok-bg:#0B241A;--urg:#E0655A;--urg-bg:#2A1310;
+  --warm:#D0913F;--warm-bg:#241A0C;
+  --alu-1:#1C2027;--alu-2:#272C34;--alu-3:#3B414A;
+  --nav:rgba(10,13,18,.84);
+  --d1:0 1px 2px rgba(0,0,0,.4);
+  --d2:0 1px 2px rgba(0,0,0,.4),0 10px 24px -10px rgba(0,0,0,.6);
+  --d3:0 2px 6px rgba(0,0,0,.45),0 28px 56px -20px rgba(0,0,0,.72);
+  --d4:0 8px 18px rgba(0,0,0,.5),0 54px 96px -30px rgba(0,0,0,.8);
+}
 
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:88px}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:80px}
 body{margin:0;background:var(--paper);color:var(--ink);
-  font-family:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  font-size:17px;line-height:1.58;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  font-family:Archivo,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img,svg{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
+a{color:var(--ink);text-decoration:none}
 button,input{font:inherit;color:inherit}
-.num{font-variant-numeric:tabular-nums;letter-spacing:-.012em}
 ::selection{background:var(--co);color:#fff}
-:where(a,button,input,[tabindex]):focus-visible{outline:2px solid var(--co);outline-offset:3px;
-  border-radius:6px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-
-h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.038em;line-height:1.05;text-wrap:balance}
-.d1{font-size:clamp(2.7rem,6.2vw,5rem);letter-spacing:-.052em;line-height:.98}
-.d2{font-size:clamp(1.9rem,3.8vw,3.1rem);letter-spacing:-.043em}
-h3{font-size:1.15rem;letter-spacing:-.028em}
+:where(a,button,input,[tabindex]):focus-visible{outline:2px solid var(--co);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-9999px;top:0;z-index:100;padding:12px 18px;background:var(--co);color:#fff;border-radius:0 0 10px 0}
+.skip:focus{left:0}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.045em;line-height:1.02;text-wrap:balance}
 p{margin:0 0 1rem}p:last-child{margin-bottom:0}
-.lede{font-size:clamp(1.05rem,1.7vw,1.26rem);line-height:1.5;color:var(--ink-2);
-  letter-spacing:-.012em;max-width:38ch}
-.sm{font-size:.9rem;color:var(--ink-2);line-height:1.55}
-.xs{font-size:.79rem;color:var(--ink-3);line-height:1.5}
-.src{font-size:.72rem;color:var(--ink-4);line-height:1.45}
-.src a{border-bottom:1px solid var(--line);}
-.src a:hover{color:var(--ink-2);border-color:var(--ink-4)}
+.num{font-variant-numeric:tabular-nums}
+.wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 clamp(16px,3.5vw,36px)}
+section{padding:clamp(56px,7vw,110px) 0;position:relative}
+.eyebrow{margin:0 0 18px;font-size:12.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--co)}
+.lede{font-size:clamp(1.05rem,1.5vw,1.25rem);line-height:1.5;color:var(--ink-2);
+  max-width:38ch;text-wrap:pretty}
+h1{font-size:clamp(2.4rem,5.4vw,4.4rem);line-height:.98}
+h2{font-size:clamp(1.9rem,4vw,3.2rem)}
+.cap{font-size:13.5px;color:var(--ink-3);line-height:1.5}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));
+  gap:clamp(32px,5vw,72px);align-items:center}
 
-.wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 2.2rem}
-@media(max-width:800px){.wrap{padding:0 1.15rem}}
-section{padding:clamp(3.8rem,7.5vw,7rem) 0;position:relative}
-.sec{display:flex;align-items:center;gap:.8rem;margin-bottom:1.3rem}
-.sec b{font-size:.73rem;font-weight:700;letter-spacing:.15em;color:var(--co)}
-.sec span{font-size:.73rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-3)}
-.sec i{flex:1;max-width:90px;height:1px;background:var(--line);font-style:normal}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 26px;
+  border-radius:12px;font-size:17px;font-weight:600;
+  transition:transform .45s var(--e),box-shadow .45s var(--e),background .3s,border-color .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--d3)}
+.btn-p{background:var(--co);color:#fff}
+.btn-g{border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:500;font-size:16px}
+.btn-d{background:var(--deep-btn);color:#fff}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-  padding:.9rem 1.5rem;border-radius:var(--r-s);font-size:.95rem;font-weight:600;
-  letter-spacing:-.012em;border:1px solid transparent;cursor:pointer;
-  transition:transform .2s var(--e),box-shadow .2s var(--e),background .18s}
-.btn svg{flex-shrink:0;transition:transform .26s var(--e)}
-.btn-p{background:var(--co);color:#fff;
-  box-shadow:0 1px 2px rgba(27,63,209,.3),0 10px 22px -10px rgba(27,63,209,.6)}
-.btn-p:hover{background:var(--co-d);transform:translateY(-2px)}
-.btn-p:hover svg{transform:translate(3px,-3px)}
-.btn-g{background:transparent;border-color:var(--line);color:var(--ink)}
-.btn-g:hover{border-color:var(--ink-4);background:var(--surface);transform:translateY(-2px)}
-.btn-d{background:var(--ink);color:var(--paper);box-shadow:var(--d2)}
-.btn-d:hover{transform:translateY(-2px);box-shadow:var(--d3)}
-.btn-d:hover svg{transform:translate(3px,-3px)}
-
-header{position:sticky;top:0;z-index:70;
-  background:color-mix(in srgb,var(--paper) 84%,transparent);
-  backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);
-  border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
-header.stuck{border-bottom-color:var(--line-2);box-shadow:0 1px 22px -10px rgba(20,23,28,.18)}
-.nav{display:flex;align-items:center;gap:2rem;height:70px;max-width:1220px;margin:0 auto;
-  padding:0 2.2rem}
-@media(max-width:800px){.nav{padding:0 1.15rem;gap:1rem}}
-.logo{font-size:1.55rem;font-weight:700;letter-spacing:-.06em;margin-right:auto}
+header{position:sticky;top:0;z-index:50;background:var(--nav);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line-2)}
+.hb{height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-weight:700;font-size:22px;letter-spacing:-.045em;flex:none}
 .logo i{color:var(--co);font-style:normal}
-.nav ul{display:flex;gap:1.9rem;list-style:none;margin:0;padding:0}
-@media(max-width:900px){.nav ul{display:none}}
-.nav ul a{font-size:.92rem;font-weight:500;color:var(--ink-2);position:relative;padding:.35rem 0}
-.nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;
-  background:var(--co);transform:scaleX(0);transform-origin:left;
-  transition:transform .3s var(--e)}
-.nav ul a:hover{color:var(--ink)}
-.nav ul a:hover::after{transform:scaleX(1)}
-.nav .btn{padding:.6rem 1.15rem;font-size:.87rem}
-@media(max-width:480px){.nav .btn span{display:none}}
+.nav{display:flex;gap:28px;font-size:14.5px;font-weight:500;color:var(--ink-2)}
+.nav a{color:inherit;position:relative}
+.nav a::after{content:'';position:absolute;left:0;bottom:-5px;height:1.5px;width:100%;
+  background:var(--co);transform:scaleX(0);transform-origin:0 50%;transition:transform .4s var(--e)}
+.nav a:hover::after{transform:scaleX(1)}
+.hr{display:flex;align-items:center;gap:10px;flex:none}
+.tgl{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.tgl span{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--ink);
+  background:linear-gradient(90deg,var(--ink) 50%,transparent 50%)}
+.hcall{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 18px;
+  border-radius:11px;background:var(--co);color:#fff;font-size:15px;font-weight:600;white-space:nowrap}
+.mbtn{display:none;align-items:center;min-height:44px;padding:0 14px;border-radius:11px;
+  border:1px solid var(--line);background:none;cursor:pointer;font-size:14px;font-weight:500}
+#mnav{display:none;flex-direction:column;padding:4px clamp(16px,3.5vw,36px) 16px;
+  border-top:1px solid var(--line-2);background:var(--paper)}
+#mnav a{padding:14px 0;font-size:17px;font-weight:500;border-bottom:1px solid var(--line-2)}
+#mnav a:last-child{border-bottom:0}
+#mnav.on{display:flex}
+@media(max-width:900px){.nav,.hcall span{display:none}.mbtn{display:inline-flex}.hcall{padding:0 14px}}
 
-/* ═══ HÉROS ═══ */
-.hero{padding-top:clamp(2.4rem,5vw,4.2rem);overflow:hidden;position:relative}
-.hero::before{content:"";position:absolute;top:-30%;right:-16%;width:min(820px,84vw);
-  aspect-ratio:1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,color-mix(in srgb,var(--co) 12%,transparent),transparent 66%);
-  filter:blur(30px)}
-.hero-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);
-  gap:clamp(2rem,5vw,4.4rem);align-items:center;position:relative}
-@media(max-width:980px){.hero-g{grid-template-columns:1fr;gap:2.6rem}}
-.hero h1{margin-bottom:1.5rem}
-.hero h1 em{font-style:normal;color:var(--co);display:block}
-.hero .lede{margin-bottom:2.1rem}
-.hero-cta{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
-@media(max-width:420px){.hero-cta .btn{width:100%}}
-.hero-meta{display:flex;align-items:center;gap:.75rem;margin-top:2.4rem;font-size:.85rem;
-  color:var(--ink-3)}
-.hero-meta em{width:28px;height:1px;background:var(--line);font-style:normal;flex-shrink:0}
+.hero{padding:clamp(40px,6vw,88px) 0 clamp(48px,6vw,88px);
+  background:radial-gradient(120% 72% at 78% -14%,var(--co-soft) 0%,transparent 58%),var(--paper)}
+.hero h1 em{font-style:normal;color:var(--co)}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.live{margin:26px 0 0;font-size:14px;color:var(--ink-3);display:flex;align-items:center;gap:10px}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none;font-style:normal}
+.js .live i{animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* Les trois offres, en objets empilés */
-.stack{display:flex;flex-direction:column;gap:.7rem}
-.so{display:flex;align-items:center;gap:.95rem;padding:1.1rem 1.2rem;background:var(--surface);
-  border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--d2);
-  transition:transform .34s var(--e),box-shadow .34s var(--e),border-color .3s;
-  position:relative;overflow:hidden}
-.so::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--co);
-  transform:scaleY(0);transform-origin:top;transition:transform .4s var(--e)}
-.so:hover{transform:translateX(5px);box-shadow:var(--d3)}
-.so:hover::after{transform:scaleY(1)}
-.so .ic{width:42px;height:42px;border-radius:12px;background:var(--co-bg);color:var(--co);
-  display:grid;place-items:center;flex-shrink:0}
-.so b{display:block;font-size:1.02rem;font-weight:600;letter-spacing:-.024em}
-.so small{display:block;font-size:.83rem;color:var(--ink-3);line-height:1.4}
-.so .go{margin-left:auto;color:var(--ink-4);flex-shrink:0;transition:transform .26s var(--e),color .26s}
-.so:hover .go{color:var(--co);transform:translate(3px,-3px)}
+.ph-wrap{display:flex;flex-direction:column;align-items:center;gap:22px}
+.pills{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.pill{min-height:38px;padding:0 15px;border-radius:999px;border:1px solid var(--line);
+  background:none;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink-2);
+  transition:all .35s var(--e)}
+.pill[aria-selected="true"]{background:var(--co);border-color:var(--co);color:#fff}
+.phone{width:100%;max-width:328px;position:relative;border-radius:46px;padding:10px;
+  background:linear-gradient(155deg,var(--alu-1) 0%,var(--alu-2) 44%,var(--alu-3) 100%);
+  box-shadow:var(--d4)}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:88px;height:20px;
+  background:#07090C;border-radius:14px;z-index:5}
+.scr{background:var(--surface);border-radius:37px;overflow:hidden;height:544px;
+  display:flex;flex-direction:column;position:relative}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:15px 22px 6px;
+  font-size:12px;font-weight:600;color:var(--ink-3)}
+.sbar b{font-weight:600;display:flex;align-items:center;gap:6px}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--urg)}
+.stage{position:relative;flex:1;min-height:0;padding:8px 16px 18px;display:flex;flex-direction:column}
+.act1{display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;
+  transition:max-height .8s var(--e),opacity .5s}
+.avat{position:relative;width:74px;height:74px;margin:30px 0 14px}
+.avat u,.avat s{position:absolute;inset:0;border-radius:50%;border:2px solid var(--co);text-decoration:none}
+.js .act1[data-on] .avat u{animation:ring 2s var(--e) infinite}
+.js .act1[data-on] .avat s{animation:ring 2s var(--e) .65s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.1);opacity:0}}
+.avat b{position:absolute;inset:0;border-radius:50%;background:var(--co);display:flex;
+  align-items:center;justify-content:center;color:#fff}
+.why{margin-top:16px;padding:8px 14px;border-radius:999px;background:var(--sunk);
+  font-size:12.5px;font-weight:500;color:var(--ink-2);max-width:84%}
+.wave{display:flex;justify-content:center;align-items:center;gap:3px;overflow:hidden;
+  margin:0 0 8px;transition:height .5s var(--e),opacity .4s}
+.wave i{width:3px;height:24px;border-radius:2px;background:var(--co);font-style:normal}
+.js .wave[data-on] i{animation:wv 1s ease-in-out infinite}
+@keyframes wv{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+.talk{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.bub{max-width:90%;font-size:13px;line-height:1.42;overflow:hidden;
+  transition:opacity .5s var(--e),transform .6s var(--e),max-height .5s var(--e),margin .4s var(--e),padding .4s var(--e);
+  opacity:0;max-height:0;margin-top:0;padding:0 12px}
+.bub.on{opacity:1;max-height:180px;margin-top:7px;padding:9px 12px}
+.bub.c{align-self:flex-start;background:var(--sunk);color:var(--ink);border-radius:15px 15px 15px 5px}
+.bub.a{align-self:flex-end;background:var(--co);color:#fff;border-radius:15px 15px 5px 15px}
+.act3{position:absolute;inset:8px 16px 18px;background:var(--surface);display:flex;flex-direction:column;
+  opacity:0;transform:translateY(14px);pointer-events:none;
+  transition:opacity .6s var(--e),transform .8s var(--e)}
+.act3[data-on]{opacity:1;transform:none;pointer-events:auto}
+.act3 h4{display:flex;align-items:center;gap:9px;margin:0 0 12px;padding:11px 13px;border-radius:13px;
+  background:var(--ok-bg);color:var(--ok);font-size:13px;font-weight:600}
+.act3 ul{list-style:none;margin:0;padding:0}
+.act3 li{display:grid;grid-template-columns:5.6rem minmax(0,1fr);gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--line-2);font-size:12.5px}
+.act3 li b{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.act3 li span{font-weight:500;text-wrap:pretty}
+.note{margin:auto 0 0;padding:12px 13px;border-radius:13px;background:var(--co-soft);
+  border:1px solid var(--co-bg);font-size:12.5px;line-height:1.45;color:var(--ink-2)}
 
-/* Bandeau défilant */
-.tick{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);
-  padding:1.05rem 0;overflow:hidden;background:var(--sunk)}
-.tick-in{display:flex;gap:2.6rem;width:max-content;animation:tk 38s linear infinite}
-.tick span{font-size:.79rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-3);white-space:nowrap;display:flex;align-items:center;gap:2.6rem}
-.tick span::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--co);
-  flex-shrink:0;opacity:.6}
-@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.tick:hover .tick-in{animation-play-state:paused}
+.ticker{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);
+  padding:14px 0;overflow:hidden;white-space:nowrap}
+.tk{display:inline-flex;gap:0}
+.js .tk{animation:tick 52s linear infinite}
+.ticker:hover .tk,.ticker:focus-within .tk{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk span{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:0 14px}
+.tk span::after{content:"\00B7";color:var(--co);margin-left:14px}
 
-/* ═══ FRICTION ═══ */
-.fr{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.6rem}
-@media(max-width:860px){.fr{grid-template-columns:1fr}}
-.frc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  padding:1.5rem 1.5rem 1.35rem;box-shadow:var(--d1);
-  transition:transform .3s var(--e),box-shadow .3s var(--e)}
-.frc:hover{transform:translateY(-4px);box-shadow:var(--d2)}
-.frc .q{font-size:1.06rem;font-weight:600;letter-spacing:-.026em;margin-bottom:.7rem;
-  line-height:1.3}
-.frc p{font-size:.88rem;color:var(--ink-2);line-height:1.5;margin:0}
-.frc .lbl{margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--line-2);
-  font-size:.7rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--ink-4)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 22px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(22px,3vw,30px)}
+.dark{background:var(--deep);color:var(--deep-ink)}
+.dark h2,.dark h3{color:#fff}
+.dark p{color:var(--deep-ink-2)}
+.dpanel{background:var(--deep);color:var(--deep-ink);border-radius:22px;padding:clamp(22px,3vw,30px)}
+.quote{background:var(--sunk);border-radius:14px;padding:16px 18px;font-size:15.5px;
+  font-style:italic;color:var(--ink-2);margin:0 0 18px}
+.miss{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.miss li{display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:15px;color:var(--ink-2)}
+.miss li::before{content:"\2014";color:var(--urg);font-weight:700}
+.brow{display:grid;grid-template-columns:5.6rem minmax(0,1fr);gap:12px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid var(--deep-line);font-size:14px}
+.brow b{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--deep-ink-3)}
 
-/* ═══ LES CHIFFRES ═══ */
-.money{background:var(--deep);color:#EDEFF2}
-.money .sec span{color:#7E858F}
-.money h2{color:#fff}
-.money .lede{color:#A6ADB8}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-top:2.6rem}
-@media(max-width:800px){.cmp{grid-template-columns:1fr}}
-.cc{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  border-radius:var(--r-l);padding:1.7rem 1.6rem}
-.cc.hi{background:rgba(64,100,232,.15);border-color:rgba(64,100,232,.36)}
-.cc h3{color:#fff;font-size:1rem;margin-bottom:.2rem}
-.cc>.k{font-size:.72rem;color:#7E858F;margin-bottom:1.2rem}
-.big{font-size:clamp(2.2rem,4.6vw,3.1rem);font-weight:700;letter-spacing:-.05em;
-  line-height:1;color:#fff;display:block}
-.cc.hi .big{color:#8FA9FA}
-.per{font-size:.82rem;color:#A6ADB8;margin-top:.35rem}
-.brk{list-style:none;margin:1.3rem 0 0;padding:1.1rem 0 0;
-  border-top:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:.5rem}
-.brk li{display:flex;justify-content:space-between;gap:1rem;font-size:.85rem;color:#A6ADB8}
-.brk li b{color:#EDEFF2;font-weight:600}
-.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;
-  margin-top:1.4rem}
-.bar i{display:block;height:100%;border-radius:99px;width:0;
-  transition:width 1.4s var(--e-o)}
-.bar.on i{width:var(--w)}
-.honest{margin-top:1.8rem;padding:1.1rem 1.3rem;border-radius:var(--r);
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:.92rem;
-  color:#A6ADB8;line-height:1.55;max-width:74ch}
-.honest b{color:#fff;font-weight:600}
+.jrow{display:grid;grid-template-columns:minmax(120px,148px) 1fr;gap:clamp(14px,3vw,28px);
+  align-items:start;padding:20px 22px;border:1px solid var(--line);border-radius:18px;
+  background:var(--surface);margin-bottom:8px}
+.jrow:last-child{margin-bottom:0}
+.jrow.hi{background:var(--co-soft);border-color:var(--co)}
+.jrow time{font-size:13.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.jrow.hi time{color:var(--co)}
+.jrow b{display:block;font-size:17px;letter-spacing:-.025em;margin-bottom:4px}
+.jrow p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+@media(max-width:620px){.jrow{grid-template-columns:1fr;gap:8px}}
 
-/* Études réelles */
-.studies{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.4rem}
-@media(max-width:860px){.studies{grid-template-columns:1fr}}
-.st{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  border-radius:var(--r);padding:1.4rem 1.45rem}
-.st .n{font-size:2rem;font-weight:700;letter-spacing:-.045em;color:#8FA9FA;display:block;
-  line-height:1}
-.st p{font-size:.87rem;color:#A6ADB8;line-height:1.5;margin:.6rem 0 0}
-.st .src{color:#6E757F;margin-top:.9rem;padding-top:.7rem;
-  border-top:1px solid rgba(255,255,255,.09)}
-.st .src a{color:#8B93A0;border-bottom-color:rgba(255,255,255,.18)}
-.st .src a:hover{color:#C6CDD6}
+.tcard ul{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
+.tcard li{display:grid;grid-template-columns:14px 1fr;gap:9px;font-size:14.5px;color:var(--ink-2);line-height:1.45}
+.tcard li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--co);margin-top:.55em}
+.tcard .nt{padding-top:12px;border-top:1px solid var(--line-2);font-size:13.5px;color:var(--ink-3);margin:0}
 
-/* Calculateur */
-.calc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);
-  padding:clamp(1.5rem,3vw,2.2rem);box-shadow:var(--d3);margin-top:2.6rem;
-  display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.4rem,3vw,2.8rem);align-items:center}
-@media(max-width:800px){.calc{grid-template-columns:1fr}}
-.fl{margin-bottom:1.1rem}
-.fl label{display:block;font-size:.82rem;font-weight:600;color:var(--ink-2);margin-bottom:.4rem}
-.fl input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:5px;
-  border-radius:99px;background:var(--line);cursor:pointer;padding:0}
-.fl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
-  border-radius:50%;background:var(--co);border:3px solid var(--surface);box-shadow:var(--d1)}
-.fl input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
-  background:var(--co);border:3px solid var(--surface)}
-.fl .v{float:right;font-weight:700;color:var(--co);font-variant-numeric:tabular-nums}
-.res{background:var(--sunk);border-radius:var(--r);padding:1.5rem;text-align:center}
-.res .k{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-4);margin-bottom:.4rem}
-.res .amt{font-size:clamp(2rem,4.4vw,2.9rem);font-weight:700;letter-spacing:-.048em;
-  color:var(--ink);display:block;line-height:1}
-.res p{font-size:.83rem;color:var(--ink-3);margin:.7rem 0 0;line-height:1.45}
+.ctrl{margin-bottom:26px}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  font-size:15px;font-weight:600;margin-bottom:10px}
+.ctrl label b{font-size:20px;letter-spacing:-.03em;color:var(--co)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;
+  background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;
+  background:var(--co);border:3px solid var(--surface);box-shadow:var(--d2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--co);
+  border:3px solid var(--surface);box-shadow:var(--d2);cursor:pointer}
+.dollar{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);padding:0 14px;max-width:220px}
+.dollar span{color:var(--ink-3);font-weight:600}
+.dollar input{border:0;background:none;outline:none;padding:13px 0;width:100%;font-size:17px;
+  font-weight:600;font-variant-numeric:tabular-nums}
+.radios{display:flex;gap:8px;flex-wrap:wrap}
+.radios button{min-height:44px;padding:0 18px;border-radius:11px;border:1px solid var(--line);
+  background:var(--surface);cursor:pointer;font-size:15px;font-weight:600;transition:all .3s var(--e)}
+.radios button[aria-checked="true"]{background:var(--co);border-color:var(--co);color:#fff}
+.big{font-size:clamp(2.6rem,5.4vw,4.6rem);font-weight:600;letter-spacing:-.05em;line-height:1;
+  font-variant-numeric:tabular-nums;color:#fff;margin:0}
 
-/* ═══ PILIERS ═══ */
-.pil{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.6rem}
-@media(max-width:900px){.pil{grid-template-columns:1fr}}
-.pc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);
-  overflow:hidden;box-shadow:var(--d1);display:flex;flex-direction:column;
-  transition:transform .34s var(--e),box-shadow .34s var(--e)}
-.pc:hover{transform:translateY(-5px);box-shadow:var(--d3)}
-.pc-v{height:150px;background:linear-gradient(158deg,var(--sunk),var(--surface));
-  border-bottom:1px solid var(--line-2);display:grid;place-items:center;position:relative;
-  overflow:hidden;padding:1rem}
-.pc-b{padding:1.5rem 1.5rem 1.4rem;display:flex;flex-direction:column;flex:1}
-.pc h3{margin-bottom:.5rem;font-size:1.22rem}
-.pc p{font-size:.9rem;color:var(--ink-2);line-height:1.5;margin-bottom:1.2rem}
-.pc-f{margin-top:auto;padding-top:1rem;border-top:1px solid var(--line-2);
-  display:flex;align-items:center;justify-content:space-between;gap:.6rem}
-.pc-f span{font-size:.76rem;color:var(--ink-3)}
-.pc-f em{font-style:normal;font-size:.86rem;font-weight:600;color:var(--co);display:flex;
-  align-items:center;gap:.32rem}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:clamp(14px,3vw,32px);
+  align-items:center;padding:22px 24px;background:var(--surface);border:1px solid var(--line);
+  border-radius:18px;margin-bottom:8px}
+.prow.hi{background:var(--co-soft);border-color:var(--co)}
+.prow b{font-size:clamp(1.05rem,1.5vw,1.2rem);font-weight:600;letter-spacing:-.025em}
+.prow .yr{font-size:14.5px;color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.prow .wk{font-size:clamp(1.2rem,2vw,1.6rem);font-weight:600;letter-spacing:-.035em;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.prow .wk s{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-3);letter-spacing:0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;margin-top:14px}
+.tile{padding:20px 22px;background:var(--sunk);border-radius:16px}
+.tile span{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:8px}
+.tile b{font-size:20px;letter-spacing:-.03em}
 
-/* Miniatures animées des piliers */
-.mini{width:100%;max-width:190px;background:var(--surface);border:1px solid var(--line);
-  border-radius:9px;box-shadow:var(--d2);overflow:hidden}
-.mini-b{display:flex;align-items:center;gap:.28rem;padding:.32rem .45rem;background:var(--sunk);
-  border-bottom:1px solid var(--line-2)}
-.mini-b u{width:5px;height:5px;border-radius:50%;background:var(--line);text-decoration:none}
-.mini-c{padding:.6rem .65rem}
-.ln{height:5px;border-radius:3px;background:var(--line-2);margin-bottom:.32rem}
-.ln.t{background:var(--ink);height:8px;width:72%;margin-bottom:.45rem}
-.ln.a{background:var(--co);width:42%;height:11px;border-radius:4px;margin-top:.5rem}
-.pw{display:flex;align-items:center;justify-content:center;gap:2px;height:22px;margin:.5rem 0}
-.pw u{width:2.5px;border-radius:2px;background:var(--co);height:20%;text-decoration:none;
-  display:block}
-.in .pw u{animation:wv 1.05s ease-in-out infinite}
-@keyframes wv{0%,100%{height:16%}50%{height:100%}}
-.pk{display:grid;grid-template-columns:1fr 1fr;gap:.3rem}
-.pk div{background:var(--sunk);border-radius:5px;padding:.35rem .4rem}
-.pk b{display:block;font-size:.5rem;color:var(--ink-4)}
-.pk span{display:block;font-size:.68rem;font-weight:700;letter-spacing:-.02em}
+.lim{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.lim li{display:grid;grid-template-columns:20px 1fr;gap:12px;font-size:15.5px;line-height:1.5;
+  color:var(--deep-ink-2)}
+.lim li b{font-weight:700}
+.will li b{color:var(--deep-ok)}
+.wont li b{color:var(--deep-urg)}
 
-/* ═══ TRAVAUX ═══ */
-.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-top:2.4rem}
-@media(max-width:1000px){.gal{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.gal{grid-template-columns:1fr}}
-.gc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  padding:1.15rem 1.2rem;box-shadow:var(--d1);display:flex;flex-direction:column;
-  transition:transform .3s var(--e),box-shadow .3s var(--e);position:relative;overflow:hidden}
-.gc::after{content:"";position:absolute;left:0;right:0;top:0;height:2.5px;background:var(--co);
-  transform:scaleX(0);transform-origin:left;transition:transform .4s var(--e)}
-.gc:hover{transform:translateY(-4px);box-shadow:var(--d2)}
-.gc:hover::after{transform:scaleX(1)}
-.gc-t{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
-.gc h4{font-size:.98rem}
-.gc p{font-size:.82rem;color:var(--ink-3);line-height:1.45;margin-bottom:.9rem}
-.gc em{font-style:normal;margin-top:auto;font-size:.8rem;font-weight:600;color:var(--co);
-  display:flex;align-items:center;gap:.3rem}
-.tag{display:inline-flex;align-items:center;padding:.16rem .5rem;border-radius:999px;
-  font-size:.62rem;font-weight:700;white-space:nowrap}
-.tag-real{background:var(--ok-bg);color:var(--ok)}
-.tag-demo{background:var(--line-2);color:var(--ink-4)}
+.strike{display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:13px 0;border-bottom:1px solid var(--line-2);font-size:15px}
+.strike s{text-decoration-line:line-through;text-decoration-color:var(--urg);color:var(--ink-3)}
+.strike em{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--urg);background:var(--urg-bg);padding:4px 9px;border-radius:999px;white-space:nowrap}
 
-/* ═══ FONDATEUR ═══ */
-.fdr{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
-  gap:clamp(1.8rem,4vw,4rem);align-items:center}
-@media(max-width:860px){.fdr{grid-template-columns:1fr;gap:2rem}}
-.fdr-ph{aspect-ratio:4/5;border-radius:var(--r-l);max-width:310px;
-  background:repeating-linear-gradient(94deg,transparent 0 3px,rgba(20,23,28,.02) 3px 4px),
-    linear-gradient(158deg,var(--alu-1),var(--alu-2) 55%,var(--alu-3));
-  border:1px solid var(--line);box-shadow:var(--d3);display:grid;place-items:center;
-  position:relative}
-.fdr-ph span{font-size:3.4rem;font-weight:700;color:var(--alu-3);letter-spacing:-.06em}
-.fdr-ph em{position:absolute;bottom:.85rem;left:.85rem;right:.85rem;font-style:normal;
-  font-size:.68rem;color:var(--ink-3);
-  background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(6px);
-  padding:.35rem .6rem;border-radius:999px;text-align:center}
-.fdr blockquote{margin:0 0 1.4rem;font-size:clamp(1.2rem,2.1vw,1.6rem);font-weight:500;
-  letter-spacing:-.032em;line-height:1.32}
-.fdr-n{display:flex;align-items:center;gap:.7rem;padding-top:1.2rem;border-top:1px solid var(--line)}
-.fdr-n b{font-size:1rem;letter-spacing:-.02em;display:block}
-.fdr-n span{font-size:.83rem;color:var(--ink-3)}
+.demos{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:16px}
+.dtile{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+  border-radius:20px;overflow:hidden;min-height:300px;
+  transition:transform .5s var(--e),box-shadow .5s var(--e),border-color .4s}
+.dtile:hover{transform:translateY(-4px);box-shadow:var(--d3);border-color:var(--ink-3)}
+.dhead{padding:22px 22px 0;height:160px;overflow:hidden;display:flex;align-items:flex-end}
+.dwin{width:100%;background:var(--surface);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:var(--d3);padding:12px 14px 0;display:flex;
+  flex-direction:column;gap:8px;transform-origin:50% 100%;transition:transform .7s var(--e)}
+.dtile:hover .dwin{transform:translateY(-4px) scale(1.015)}
+.dwin .hd{display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+.dwin .rw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;
+  border-radius:9px;background:var(--sunk);font-size:11.5px;font-weight:500}
+.dwin .rw span{display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.dwin .rw i{width:7px;height:7px;border-radius:50%;flex:none;font-style:normal}
+.dbody{padding:18px 22px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.dbody .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dbody .cat{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.dbody .tag{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;
+  background:var(--sunk);color:var(--ink-2)}
+.dbody .tag.client{background:var(--co);color:#fff}
+.dbody b{font-size:20px;letter-spacing:-.03em;line-height:1.15}
+.dbody p{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.dbody .go{margin-top:auto;padding-top:6px;font-size:14px;font-weight:600;color:var(--co)}
 
-/* ═══ CTA ═══ */
-.fin{background:var(--deep);border-radius:var(--r-xl);padding:clamp(2.4rem,5vw,4.4rem);
-  color:#fff;position:relative;overflow:hidden;box-shadow:var(--d4)}
-.fin::before{content:"";position:absolute;top:-45%;right:-10%;width:560px;aspect-ratio:1;
-  border-radius:50%;background:radial-gradient(circle,rgba(64,100,232,.44),transparent 68%);
-  filter:blur(34px);pointer-events:none}
-.fin-g{display:grid;grid-template-columns:1fr auto;gap:2.4rem;align-items:end;position:relative}
-@media(max-width:860px){.fin-g{grid-template-columns:1fr;align-items:start}}
-.fin h2{color:#fff;margin-bottom:1rem}
-.fin p{color:#A6ADB8;max-width:40ch}
-.fin .btn-g{border-color:rgba(255,255,255,.24);color:#fff}
-.fin .btn-g:hover{background:rgba(255,255,255,.08)}
-footer{padding:3rem 0 2.2rem;border-top:1px solid var(--line-2)}
-.ft{display:flex;gap:1.6rem;align-items:center;flex-wrap:wrap}
-.ft-l{display:flex;gap:1.4rem;margin-left:auto;flex-wrap:wrap}
-.ft-l a{font-size:.86rem;color:var(--ink-3)}
-.ft-l a:hover{color:var(--ink)}
-.ft-b{margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid var(--line-2);display:flex;
-  justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.79rem;color:var(--ink-4)}
+footer{background:var(--deep);color:var(--deep-ink-2);border-top:1px solid var(--deep-line);padding:28px 0}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+footer a{color:inherit}
+footer .fn{display:flex;gap:22px;font-size:14px;flex-wrap:wrap}
 
-/* ─── Animations d'entrée ─────────────────────────────
-   L'état masqué dépend de .js : sans script, ou s'il échoue, tout
-   reste visible. Une page blanche n'est jamais acceptable. */
-.js .rv{opacity:0;transform:translateY(20px);
-  transition:opacity .8s var(--e-o),transform .8s var(--e-o)}
-.rv.in{opacity:1;transform:none}
-.js .rvs>*{opacity:0;transform:translateY(18px);
-  transition:opacity .7s var(--e-o),transform .7s var(--e-o)}
-.rvs.in>*{opacity:1;transform:none}
-.rvs.in>*:nth-child(2){transition-delay:.08s}
-.rvs.in>*:nth-child(3){transition-delay:.16s}
-.rvs.in>*:nth-child(4){transition-delay:.24s}
-.rvs.in>*:nth-child(5){transition-delay:.32s}
-.rvs.in>*:nth-child(6){transition-delay:.40s}
-.rvs.in>*:nth-child(7){transition-delay:.48s}
-.rvs.in>*:nth-child(8){transition-delay:.56s}
-
+.js [data-rv]{opacity:0;transform:translateY(18px);transition:opacity .9s var(--e),transform .9s var(--e)}
+.js [data-rv][data-in]{opacity:1;transform:none}
+.js [data-rvs]>*{opacity:0;transform:translateY(14px);transition:opacity .8s var(--e),transform .8s var(--e)}
+.js [data-rvs][data-in]>*{opacity:1;transform:none}
+[data-rvs][data-in]>:nth-child(2){transition-delay:.08s}
+[data-rvs][data-in]>:nth-child(3){transition-delay:.16s}
+[data-rvs][data-in]>:nth-child(4){transition-delay:.24s}
+[data-rvs][data-in]>:nth-child(5){transition-delay:.32s}
+@keyframes sRise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.js .rise{animation:sRise .9s var(--e) both}
+.js .r1{animation-delay:.05s}.js .r2{animation-delay:.12s}.js .r3{animation-delay:.2s}
+.js .r4{animation-delay:.28s}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
-    transition-duration:.01ms!important}
-  .rv,.rvs>*{opacity:1!important;transform:none!important}
-  .btn:hover,.so:hover,.pc:hover,.gc:hover,.frc:hover{transform:none}
-  .bar i{width:var(--w)}
+  .js [data-rv],.js [data-rvs]>*,.js .rise{opacity:1!important;transform:none!important;
+    transition:none!important;animation:none!important}
+  *{animation:none!important}
 }
-
-/* ─── Téléphone du héros ──────────────────────────────── */
-.phone{width:100%;max-width:274px;margin:0 auto;position:relative;
-  border-radius:38px;padding:9px;
-  background:linear-gradient(158deg,var(--alu-1),var(--alu-2) 42%,var(--alu-3));
-  box-shadow:var(--d4),inset 0 1px 1px rgba(255,255,255,.5)}
-.phone::after{content:"";position:absolute;left:12%;right:12%;bottom:-26px;height:26px;
-  background:radial-gradient(ellipse at center,rgba(20,23,28,.28),transparent 72%);
-  filter:blur(9px);pointer-events:none}
-.notch{position:absolute;top:15px;left:50%;transform:translateX(-50%);
-  width:78px;height:20px;border-radius:12px;background:var(--alu-3);opacity:.5;z-index:3}
-.phone-scr{background:var(--surface);border-radius:30px;overflow:hidden;
-  min-height:412px;display:flex;flex-direction:column;position:relative}
-.phone-top{display:flex;align-items:center;justify-content:space-between;
-  padding:.75rem 1.1rem .3rem;font-size:.7rem;font-weight:600;color:var(--ink-3)}
-.phone-b{flex:1;padding:1rem 1.05rem 1.15rem;display:flex;flex-direction:column}
-.scr{display:none}
-.scr.on{display:flex;flex-direction:column;flex:1;animation:pin .42s var(--e)}
-@keyframes pin{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
-.ring{display:flex;flex-direction:column;align-items:center;gap:.5rem;
-  padding:2rem 0 1.4rem;text-align:center}
-.ring-av{width:62px;height:62px;border-radius:50%;background:var(--co);display:grid;
-  place-items:center;color:#fff;position:relative;flex-shrink:0;margin-bottom:.5rem}
-.ring-av::before,.ring-av::after{content:"";position:absolute;inset:0;border-radius:50%;
-  border:2px solid var(--co-l);opacity:0}
-.js .ring-av::before{animation:pulse 2.1s var(--e-o) infinite}
-.js .ring-av::after{animation:pulse 2.1s var(--e-o) .7s infinite}
-@keyframes pulse{0%{transform:scale(1);opacity:.65}100%{transform:scale(2.15);opacity:0}}
-.ring b{font-size:1rem;letter-spacing:-.022em}
-.ring span{font-size:.83rem;color:var(--ink-3)}
-.wave{display:flex;align-items:center;justify-content:center;gap:3px;height:22px;margin:.3rem 0 .9rem}
-.wave u{width:3px;border-radius:2px;background:var(--co);height:18%}
-.js .wave u{animation:wv 1.05s var(--e) infinite}
-.js .wave u:nth-child(2){animation-delay:.1s}.js .wave u:nth-child(3){animation-delay:.22s}
-.js .wave u:nth-child(4){animation-delay:.34s}.js .wave u:nth-child(5){animation-delay:.16s}
-.js .wave u:nth-child(6){animation-delay:.28s}
-@keyframes wv{0%,100%{height:16%}50%{height:100%}}
-.bub{max-width:90%;padding:.55rem .78rem;border-radius:14px;font-size:.82rem;
-  line-height:1.42;margin-bottom:.45rem}
-.bub.them{align-self:flex-start;background:var(--sunk);border-bottom-left-radius:4px}
-.bub.us{align-self:flex-end;background:var(--co);color:#fff;border-bottom-right-radius:4px}
-.js .bub{opacity:0;transform:translateY(7px)}
-.js .bub.shown{opacity:1;transform:none;transition:opacity .34s var(--e),transform .34s var(--e)}
-.done{display:flex;flex-direction:column;gap:.5rem;padding-top:.3rem}
-.done-h{display:flex;align-items:center;gap:.45rem;font-size:.71rem;font-weight:700;
-  letter-spacing:.11em;text-transform:uppercase;color:var(--ok);margin-bottom:.2rem}
-.dl{display:grid;grid-template-columns:7ch 1fr;gap:8px;font-size:.8rem;line-height:1.4}
-.dl b{color:var(--ink-4);font-weight:600;font-size:.66rem;letter-spacing:.05em;
-  text-transform:uppercase;padding-top:.22em}
-.phone-cap{margin-top:2.2rem;text-align:center}
-@media (prefers-reduced-motion:reduce){
-  .js .ring-av::before,.js .ring-av::after,.js .wave u{animation:none}
-  .js .bub,.js .bub.shown{opacity:1;transform:none;transition:none}
-  .scr.on{animation:none}
-}
-.tchips{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:1.1rem}
-.tchip{font-size:.78rem;font-weight:600;padding:.34rem .72rem;border-radius:999px;
-  border:1px solid var(--line);background:var(--surface);color:var(--ink-3);cursor:pointer;
-  transition:color .2s var(--e),border-color .2s var(--e),background .2s var(--e)}
-.tchip[aria-selected="true"]{background:var(--co);border-color:var(--co);color:#fff}
-.tchip:hover{border-color:var(--co);color:var(--co)}
-.tchip[aria-selected="true"]:hover{color:#fff}
 </style>
 </head>
 <body>
-<a href="#what" class="sr">Skip to content</a>
+<a href="#main" class="skip">Skip to content</a>
 
-<header id="hd">
-  <nav class="nav">
-    <a href="./" class="logo">solva<i>.</i></a>
-    <ul>
-      <li><a href="#what">What we do</a></li>
-      <li><a href="#numbers">The numbers</a></li>
-      <li><a href="#work">Work</a></li>
-      <li><a href="#about">About</a></li>
-    </ul>
-    <a href="#talk" class="btn btn-d">Tell us what&rsquo;s slowing you down
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+<header>
+  <div class="wrap hb">
+    <a href="./" class="logo" aria-label="Solva home">Solva<i>.</i></a>
+    <nav class="nav" aria-label="Main">
+      <a href="solva-call/">Solva Call</a>
+      <a href="#prices">Prices</a>
+      <a href="custom-software/">Custom software</a>
+      <a href="#work">Work</a>
+    </nav>
+    <div class="hr">
+      <button class="tgl" id="tgl" aria-label="Switch light and dark mode"><span aria-hidden="true"></span></button>
+      <a href="tel:+61485066424" class="hcall" aria-label="Ring Solva on 0485 066 424">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
+        <span class="num">0485 066 424</span>
+      </a>
+      <button class="mbtn" id="mbtn" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+  <nav id="mnav" aria-label="Mobile">
+    <a href="solva-call/">Solva Call</a>
+    <a href="#prices">Prices</a>
+    <a href="custom-software/">Custom software</a>
+    <a href="#work">Work</a>
   </nav>
 </header>
 
-<!-- ══════ HÉROS ══════ -->
+<main id="main">
+
 <section class="hero">
-  <div class="wrap hero-g">
-    <div class="rv">
-      <div class="sec"><b>01</b><i></i><span>Brisbane digital studio</span></div>
-      <h1 class="d1">Your business works hard.<em>Your systems should too.</em></h1>
-      <p class="lede">Websites, an assistant that answers your phone, and software shaped around
-        how your business actually runs.</p>
-      <div class="hero-cta">
-        <a href="#talk" class="btn btn-p">Tell us what&rsquo;s slowing you down
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a href="#numbers" class="btn btn-g">See the numbers</a>
+  <div class="wrap grid2">
+    <div>
+      <p class="eyebrow rise">Solva Call &middot; Brisbane</p>
+      <h1 class="rise r1">It doesn&rsquo;t take a message.<br><em>It takes the job.</em></h1>
+      <p class="lede rise r2" style="margin-top:22px">An AI phone assistant that answers as your
+        business, asks the questions your trade actually needs, and hands you a job you can quote
+        in two minutes.</p>
+      <div class="cta rise r3">
+        <a href="tel:+61485066424" class="btn btn-p">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
+          Ring 0485&nbsp;066&nbsp;424</a>
+        <a href="#prices" class="btn btn-g">See what it costs</a>
       </div>
-      <div class="hero-meta"><em></em>Brisbane, Australia &middot; in-person meetings available</div>
+      <p class="live rise r4"><i aria-hidden="true"></i>That number is the product. It answers,
+        and it&rsquo;s an AI.</p>
     </div>
 
-    <div class="rvs rv">
-      <div class="tchips" id="tchips" role="tablist" aria-label="Pick a trade"></div>
-      <div class="phone" id="ph">
-        <span class="notch"></span>
-        <div class="phone-scr">
-          <div class="phone-top"><span class="num" id="phclock">6:58 am</span><span id="phwho">Dental practice</span></div>
-          <div class="phone-b">
+    <div class="ph-wrap rise r4" id="phw">
+      <div class="pills" role="tablist" aria-label="Choose a business" id="pills"></div>
+      <div class="phone">
+        <span class="notch" aria-hidden="true"></span>
+        <div class="scr">
+          <div class="sbar">
+            <span class="num" id="clock">12:41</span>
+            <b><span class="sdot" id="sdot"></span><span id="sname">Ringing</span></b>
+          </div>
+          <div class="stage">
 
-            <div class="scr on" data-scr="0">
-              <div class="ring">
-                <div class="ring-av">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
-                </div>
-                <b>Incoming call</b>
-                <span class="num" id="phnum">0412 &bull;&bull;&bull; 338</span>
+            <div class="act1" id="act1" data-on style="max-height:300px;opacity:1">
+              <div class="avat">
+                <u aria-hidden="true"></u><s aria-hidden="true"></s>
+                <b><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg></b>
               </div>
-              <p class="xs" id="phwhy" style="text-align:center;margin:0">Both hands busy.
-                Nobody can pick up.</p>
+              <b style="font-size:17px;letter-spacing:-.025em">Unknown number</b>
+              <span class="num" style="font-size:13px;color:var(--ink-3);margin-top:3px" id="pnum">0412 &bull;&bull;&bull; 338</span>
+              <span class="why" id="pwhy">You&rsquo;re in someone&rsquo;s mouth.</span>
             </div>
 
-            <div class="scr" data-scr="1">
-              <div class="wave" aria-hidden="true"><u></u><u></u><u></u><u></u><u></u><u></u></div>
-              <div id="phtalk"></div>
-            </div>
+            <div class="wave" id="wave" aria-hidden="true" style="height:0;opacity:0"></div>
+            <div class="talk" id="talk"></div>
 
-            <div class="scr" data-scr="2">
-              <div class="done">
-                <div class="done-h">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                  On your phone
-                </div>
-                <div id="phbrief"></div>
-              </div>
+            <div class="act3" id="act3">
+              <h4><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>On your phone, 40 seconds later</h4>
+              <ul id="brief"></ul>
+              <p class="note" id="pnote"></p>
             </div>
 
           </div>
         </div>
       </div>
-      <p class="xs phone-cap">Same assistant, different questions &mdash; because you write them.
-        Fictional name.</p>
+      <p class="cap" style="text-align:center;margin:0">Example call &middot; fictional names &middot;
+        <b style="font-weight:600;color:var(--ink-2)" id="pbiz">Ashgrove Dental</b></p>
     </div>
   </div>
 </section>
 
-<div class="tick" aria-hidden="true">
-  <div class="tick-in">
-    <span>Missed calls answered</span><span>Quotes that follow themselves up</span><span>One place for the job</span><span>Websites that ask for the work</span>
-    <span>Missed calls answered</span><span>Quotes that follow themselves up</span><span>One place for the job</span><span>Websites that ask for the work</span>
-    <span>Missed calls answered</span><span>Quotes that follow themselves up</span><span>One place for the job</span><span>Websites that ask for the work</span>
+<div class="ticker">
+  <div class="tk">
+    <span>Dental practices</span><span>Tattoo studios</span><span>Dog groomers</span><span>Restaurants</span><span>Physios</span><span>Vets</span><span>Salons</span><span>Signwriters</span><span>Landscapers</span><span>Caterers</span><span>Printers</span><span>Mechanics</span><span aria-hidden="true">Dental practices</span><span aria-hidden="true">Tattoo studios</span><span aria-hidden="true">Dog groomers</span><span aria-hidden="true">Restaurants</span><span aria-hidden="true">Physios</span><span aria-hidden="true">Vets</span><span aria-hidden="true">Salons</span><span aria-hidden="true">Signwriters</span><span aria-hidden="true">Landscapers</span><span aria-hidden="true">Caterers</span><span aria-hidden="true">Printers</span><span aria-hidden="true">Mechanics</span>
   </div>
 </div>
 
-<!-- ══════ FRICTION ══════ -->
-<section id="what">
+<section>
   <div class="wrap">
-    <div class="rv" style="max-width:660px">
-      <div class="sec"><b>02</b><i></i><span>Recognise this?</span></div>
-      <h2 class="d2">Good businesses,<br>held back by small things.</h2>
-      <p class="lede" style="margin-top:1rem">Nothing here is dramatic. That is exactly why it
-        never gets fixed.</p>
+    <div data-rv style="max-width:740px;margin-bottom:40px">
+      <p class="eyebrow">The difference</p>
+      <h2>Everyone else hands you a message.</h2>
+      <p class="lede" style="margin-top:18px">A message means you still have to ring back, still
+        have to ask everything, still have to find a gap in the day to do it.</p>
     </div>
-    <div class="fr rvs rv">
-      <div class="frc"><div class="q">&ldquo;Can you call back later?&rdquo;</div>
-        <p>The phone rang while you had both hands full. By the time you called back, they had
-          already booked someone else.</p>
-        <div class="lbl">The enquiry that got away</div></div>
-      <div class="frc"><div class="q">&ldquo;I&rsquo;ve entered this already.&rdquo;</div>
-        <p>The same name, the same number, the same address &mdash; typed into the notebook, the
-          email, the spreadsheet and the invoice.</p>
-        <div class="lbl">The admin that keeps growing</div></div>
-      <div class="frc"><div class="q">&ldquo;Just checking on that quote.&rdquo;</div>
-        <p>You sent it eight days ago. You meant to follow up on Monday. It is Thursday, and they
-          are asking you.</p>
-        <div class="lbl">The work between the work</div></div>
+    <div class="grid2" style="align-items:stretch" data-rvs>
+      <div class="panel">
+        <p class="eyebrow" style="color:var(--ink-3)">What you get today</p>
+        <p class="quote">&ldquo;Dave rang about a job. 0412&nbsp;&bull;&bull;&bull;&nbsp;338.
+          He&rsquo;ll try you again.&rdquo;</p>
+        <ul class="miss">
+          <li>You don&rsquo;t know what the work is.</li>
+          <li>You don&rsquo;t know if it&rsquo;s urgent.</li>
+          <li>You can&rsquo;t price it, so you ring back at nine at night.</li>
+        </ul>
+      </div>
+      <div class="dpanel">
+        <p class="eyebrow" style="color:var(--deep-co)">What Solva Call hands you</p>
+        <div class="brow"><b>Caller</b><span>S. Nguyen</span></div>
+        <div class="brow"><b>Problem</b><span>Matted coat, cocker spaniel</span></div>
+        <div class="brow"><b>Handling</b><span style="color:var(--deep-co)">Nervous about paws</span></div>
+        <div class="brow"><b>Slot</b><span style="color:var(--deep-co)">Longer than standard</span></div>
+        <div class="brow" style="border-bottom:0"><b>Asked for</b><span>Any weekday morning</span></div>
+        <p style="margin:18px 0 0;font-size:14.5px;color:var(--deep-ink-2);line-height:1.5">Quotable
+          or refusable in two minutes, without ringing anyone back. That is the entire product.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ══════ LES CHIFFRES ══════ -->
-<section class="money" id="numbers">
-  <div class="wrap">
-    <div class="rv" style="max-width:700px">
-      <div class="sec"><b>03</b><i></i><span>What it actually costs</span></div>
-      <h2 class="d2">Real figures,<br>with their sources.</h2>
-      <p class="lede" style="margin-top:1rem">Most companies selling phone assistants quote a
-        loss of &ldquo;$126,000 a year&rdquo;. That number has no traceable source. We are not
-        going to use it.</p>
+<section class="dark">
+  <div class="wrap grid2" style="align-items:start">
+    <div data-rv>
+      <p class="eyebrow" style="color:var(--deep-co)">Judge it yourself</p>
+      <h2>Ring it. Tell it what&rsquo;s going wrong with your phone.</h2>
+      <p style="margin-top:20px;font-size:16.5px;line-height:1.55;max-width:44ch">It&rsquo;ll ask
+        about your trade, read you the questions it would ask your callers, and take your details.
+        Three minutes. If you&rsquo;d have hung up on it, don&rsquo;t buy one &mdash; that&rsquo;s
+        the whole test.</p>
+      <p style="font-size:16.5px;line-height:1.55;max-width:44ch">It tells you it&rsquo;s an AI in
+        its first sentence. Everyone else in this business is trying to sound human. Ring it and see
+        which one you&rsquo;d rather have answering your phone.</p>
     </div>
-
-    <div class="cmp rv">
-      <div class="cc">
-        <h3>A full-time receptionist</h3>
-        <div class="k">Australian median, salary plus superannuation</div>
-        <b class="big num" data-count="71577" data-pre="$">$71,577</b>
-        <div class="per">per year, before leave, workers compensation, payroll tax,
-          equipment and recruitment</div>
-        <ul class="brk">
-          <li><span>Median full-time earnings</span><b class="num">$63,908</b></li>
-          <li><span>Superannuation at 12%</span><b class="num">$7,669</b></li>
-          <li><span>Hours covered</span><b>38 per week</b></li>
-        </ul>
-        <div class="bar" style="--w:100%"><i style="background:#8B93A0"></i></div>
-      </div>
-
-      <div class="cc hi">
-        <h3>Solva Call</h3>
-        <div class="k">First year, including setup</div>
-        <b class="big num" data-count="3238" data-pre="$">$3,238</b>
-        <div class="per">per year, answering every hour of every day including
-          weekends and public holidays</div>
-        <ul class="brk">
-          <li><span>Setup, once</span><b class="num">from $690</b></li>
-          <li><span>Then, per week</span><b class="num">$49</b></li>
-          <li><span>Which is, per year</span><b class="num">$2,548</b></li>
-          <li><span>Hours covered</span><b>168 per week</b></li>
-        </ul>
-        <div class="bar" style="--w:4.5%"><i style="background:#4064E8"></i></div>
-      </div>
-    </div>
-
-    <div class="honest rv">
-      <b>The comparison is not fair, and we should say so.</b> A receptionist greets people at
-      the door, calms an angry customer, chases a supplier and notices things no software will.
-      Solva Call answers the phone. If you need a receptionist, hire one &mdash; and let this
-      cover the hours nobody is at the desk.
-    </div>
-
-    <div class="studies rvs rv">
-      <div class="st"><b class="n num" data-count="7" data-suf="&times;">7&times;</b>
-        <p>more likely to reach a decision-maker when a lead is contacted within the hour,
-          rather than an hour later.</p>
-        <div class="src">Harvard Business Review, 2011 &mdash; 2,241 US companies.
-          <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" target="_blank" rel="noopener">Read it</a></div></div>
-      <div class="st"><b class="n num" data-count="60" data-suf="&times;">60&times;</b>
-        <p>less likely to qualify a lead at all when the response takes a day or more instead
-          of under an hour.</p>
-        <div class="src">Harvard Business Review, 2011 &mdash; same study.
-          <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" target="_blank" rel="noopener">Read it</a></div></div>
-      <div class="st"><b class="n num" data-count="38" data-suf="%">38%</b>
-        <p>of calls to small businesses were answered by a person. The rest went to voicemail
-          or rang out.</p>
-        <div class="src">411 Locals, 85 businesses across 58 industries, 30 days. Small sample
-          &mdash; treat it as an indication, not a law.</div></div>
-    </div>
-
-    <div class="honest rv" style="margin-top:1.6rem">
-      <b>What we deliberately left out.</b> &ldquo;85% never call back&rdquo;, &ldquo;82% call a
-      competitor&rdquo;, &ldquo;$126,000 lost per year&rdquo;. Every one of those circulates
-      without a primary source, published almost exclusively by companies selling the same thing
-      we sell. Work out your own number below instead.
+    <div data-rv style="border:1px solid var(--deep-line);border-radius:22px;padding:clamp(24px,3vw,32px)">
+      <p class="eyebrow" style="color:var(--deep-ink-3)">No form. No email. Just this.</p>
+      <a href="tel:+61485066424" class="num" style="display:block;font-size:clamp(2.1rem,4.4vw,3.4rem);font-weight:600;letter-spacing:-.05em;line-height:1;color:#fff;margin-bottom:22px">0485 066 424</a>
+      <a href="tel:+61485066424" class="btn btn-d">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
+        Ring it now</a>
+      <p style="margin:20px 0 0;font-size:14px;line-height:1.5;color:var(--deep-ink-3)">It won&rsquo;t
+        quote a price for your business &mdash; it doesn&rsquo;t know yours, and that&rsquo;s yours to
+        set. It won&rsquo;t promise an integration either. We sell an assistant that would rather say
+        it doesn&rsquo;t know.</p>
     </div>
   </div>
 </section>
 
-<!-- ══════ CALCULATEUR ══════ -->
-<section style="padding-top:0">
+<section>
   <div class="wrap">
-    <div class="calc rv">
-      <div>
-        <div class="sec" style="margin-bottom:1rem"><b>04</b><i></i><span>Your number, not ours</span></div>
-        <h3 style="font-size:1.45rem;margin-bottom:.5rem;letter-spacing:-.035em">
-          Three numbers you already know.</h3>
-        <p class="xs" style="margin-bottom:1.5rem">Change the last one. It is an assumption, not
-          a fact, and it is yours to set.</p>
+    <div data-rv style="max-width:740px;margin-bottom:36px">
+      <p class="eyebrow">Start to finish</p>
+      <h2>From your first call to your own number, in two days.</h2>
+    </div>
+    <div data-rvs>
+      <div class="jrow"><time>30 seconds</time><div><b>You ring it</b><p>It picks up and tells you it&rsquo;s an AI in its first sentence.</p></div></div>
+      <div class="jrow"><time>Straight away</time><div><b>You tell it what&rsquo;s going wrong</b><p>&ldquo;The phone rings while I&rsquo;m with a client.&rdquo; &ldquo;I ring everyone back at nine at night.&rdquo; &ldquo;I miss every Saturday call.&rdquo;</p></div></div>
+      <div class="jrow"><time>One minute</time><div><b>It reads you your own questions</b><p>The ones it would ask your callers, in your trade, so you can hear whether they&rsquo;re the right ones.</p></div></div>
+      <div class="jrow"><time>Three minutes</time><div><b>Seven questions</b><p>Your trade, your greeting, the three questions you always ask, what counts as urgent, where urgent goes, what you use as a diary, and a number to ring you back on.</p></div></div>
+      <div class="jrow hi"><time>48 hours</time><div><b>You ring your own number</b><p>We build yours. You hear it answer as your business. Five a week, no more.</p></div></div>
+    </div>
+    <p class="cap" data-rv style="margin-top:22px;max-width:66ch">We build five a week. Past five,
+      the 48 hours stops being true, and the 48 hours is the only promise worth making.</p>
+  </div>
+</section>
 
-        <div class="fl">
-          <label for="c1">Calls you miss in a week <span class="v num" id="v1">6</span></label>
-          <input type="range" id="c1" min="1" max="40" value="6" step="1">
+<section style="background:var(--sunk);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
+  <div class="wrap">
+    <div data-rv style="max-width:760px;margin-bottom:40px">
+      <p class="eyebrow">Who it&rsquo;s for</p>
+      <h2>Any trade where you can&rsquo;t quote without asking first.</h2>
+      <p class="lede" style="margin-top:18px;max-width:46ch">And where the person who does the work
+        has both hands busy. The questions below are the ones each business actually asks &mdash;
+        because they wrote them.</p>
+    </div>
+    <div data-rvs style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px">
+      <div class="card tcard"><b style="display:block;font-size:18px;letter-spacing:-.025em;margin-bottom:12px">Dental practice</b>
+        <ul><li>Is it bleeding, or is it just catching?</li><li>Have you been in to see us before?</li><li>What time of day suits you?</li></ul>
+        <p class="nt">Triage first. A chip without bleeding isn&rsquo;t an emergency, and it knows that because you said so.</p></div>
+      <div class="card tcard"><b style="display:block;font-size:18px;letter-spacing:-.025em;margin-bottom:12px">Tattoo studio</b>
+        <ul><li>How big is it, in centimetres?</li><li>Is it a cover-up?</li><li>Do you have a reference?</li></ul>
+        <p class="nt">Has images &mdash; so it texts a link for them to drop the photos in. What prices this is visual.</p></div>
+      <div class="card tcard"><b style="display:block;font-size:18px;letter-spacing:-.025em;margin-bottom:12px">Dog groomer</b>
+        <ul><li>Is the coat matted, or is this a maintenance groom?</li><li>Has he been groomed before?</li><li>Is he happy being handled?</li></ul>
+        <p class="nt">A matted coat is a longer slot. It flags that rather than booking a standard one.</p></div>
+      <div class="card tcard"><b style="display:block;font-size:18px;letter-spacing:-.025em;margin-bottom:12px">Restaurant</b>
+        <ul><li>What time, and is it an occasion?</li><li>Any allergies?</li><li>Any steps we should avoid?</li></ul>
+        <p class="nt">Front of house finds out about the cake and the coeliac before service, not during it.</p></div>
+    </div>
+    <p class="cap" data-rv style="margin-top:22px;max-width:60ch">The list isn&rsquo;t the point.
+      If quoting your work means asking half a dozen questions first, this was built for you.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div data-rv style="max-width:740px;margin-bottom:40px">
+      <p class="eyebrow">Your figures, not ours</p>
+      <h2>Work out your own number.</h2>
+    </div>
+    <div class="grid2" style="align-items:center">
+      <div data-rv>
+        <div class="ctrl">
+          <label for="calls">Calls you miss a week <b class="num" id="callsOut">5</b></label>
+          <input type="range" id="calls" min="1" max="40" value="5">
         </div>
-        <div class="fl">
-          <label for="c2">Average job value <span class="v num" id="v2">$800</span></label>
-          <input type="range" id="c2" min="100" max="8000" value="800" step="100">
+        <div class="ctrl">
+          <label for="value">What an average job or client is worth</label>
+          <div class="dollar"><span>$</span><input type="number" id="value" value="600" min="0" step="10" inputmode="numeric"></div>
         </div>
-        <div class="fl" style="margin-bottom:0">
-          <label for="c3">Of those calls, how many would have become work?
-            <span class="v num" id="v3">1 in 4</span></label>
-          <input type="range" id="c3" min="5" max="50" value="25" step="5">
+        <div class="ctrl">
+          <label id="rateLbl">How many would become work</label>
+          <div class="radios" role="radiogroup" aria-labelledby="rateLbl" id="rates">
+            <button type="button" role="radio" aria-checked="false" data-r="0.5">1 in 2</button>
+            <button type="button" role="radio" aria-checked="true" data-r="0.25">1 in 4</button>
+            <button type="button" role="radio" aria-checked="false" data-r="0.1">1 in 10</button>
+          </div>
         </div>
       </div>
-
-      <div class="res">
-        <div class="k">Work that never reached you</div>
-        <b class="amt num" id="out">$62,400</b>
-        <p>a year, on your own figures</p>
-        <p style="margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line);
-          font-size:.79rem">Against <b class="num">$3,238</b> for the first year of Solva Call.
+      <div class="dpanel" data-rv>
+        <p class="eyebrow" style="color:var(--deep-ink-3)">Work that rang somewhere else</p>
+        <p class="big" id="calcOut" aria-live="polite">$39,000</p>
+        <p style="margin:10px 0 0;color:var(--deep-ink-2);font-size:15.5px">a year, on your own figures</p>
+        <p style="margin:20px 0 0;padding-top:18px;border-top:1px solid var(--deep-line);font-size:14.5px;line-height:1.5;color:var(--deep-ink-2)">Against
+          <b class="num" style="color:#fff">$3,238</b> for the first year of Solva Call.
           We have not touched any of the three numbers above.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════ LES TROIS PILIERS ══════ -->
-<section id="websites" style="background:var(--sunk);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
+<section style="background:var(--sunk);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
   <div class="wrap">
-    <div class="rv" style="max-width:660px">
-      <div class="sec"><b>05</b><i></i><span>Three ways in</span></div>
-      <h2 class="d2">Start with the problem.<br>Not the technology.</h2>
-      <p class="lede" style="margin-top:1rem">You do not need to know which of these you want.
-        Describe the week you are having and we will tell you.</p>
+    <div data-rv style="max-width:820px;margin-bottom:40px">
+      <p class="eyebrow">The comparison everyone makes</p>
+      <h2>The comparison isn&rsquo;t fair, and we&rsquo;d rather say so.</h2>
+      <p class="lede" style="margin-top:20px;max-width:64ch">A receptionist greets people at the
+        door, calms an angry customer, chases a supplier and notices things no software will.
+        Solva Call answers the phone. If you need a receptionist, hire one &mdash; and let this cover
+        the hours nobody is at the desk. Ring
+        <a href="tel:+61485066424" style="color:var(--co);font-weight:600">0485&nbsp;066&nbsp;424</a>
+        and judge it yourself.</p>
     </div>
-
-    <div class="pil rvs rv">
-      <article class="pc">
-        <div class="pc-v">
-          <div class="mini">
-            <div class="mini-b"><u></u><u></u><u></u></div>
-            <div class="mini-c">
-              <div class="ln t"></div><div class="ln" style="width:90%"></div>
-              <div class="ln" style="width:76%"></div><div class="ln a"></div>
-            </div>
-          </div>
-        </div>
-        <div class="pc-b">
-          <h3>Websites</h3>
-          <p>A clear, fast, mobile-first home for your business, built so a visitor knows what
-            you do and how to ask for it &mdash; inside five seconds.</p>
-          <div class="pc-f"><span>From $299</span>
-            <em>Talk to us
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></div>
-        </div>
-      </article>
-
-      <a class="pc" href="solva-call/">
-        <div class="pc-v">
-          <div class="mini">
-            <div class="mini-b"><u></u><u></u><u></u></div>
-            <div class="mini-c">
-              <div class="ln t" style="width:56%"></div>
-              <div class="pw"><u></u><u></u><u></u><u></u><u></u><u></u><u></u><u></u><u></u><u></u><u></u></div>
-              <div class="ln" style="width:82%"></div><div class="ln" style="width:64%"></div>
-            </div>
-          </div>
-        </div>
-        <div class="pc-b">
-          <h3>Solva Call</h3>
-          <p>Answers on the second ring, asks the questions you agreed, sorts the emergency from
-            the price enquiry, and books into your real diary.</p>
-          <div class="pc-f"><span>$49/week &middot; setup from $690</span>
-            <em>See it work
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></div>
-        </div>
-      </a>
-
-      <a class="pc" href="custom-software/">
-        <div class="pc-v">
-          <div class="mini">
-            <div class="mini-b"><u></u><u></u><u></u></div>
-            <div class="mini-c">
-              <div class="pk"><div><b>Booked</b><span class="num">3</span></div>
-                <div><b>Chasing</b><span class="num">2</span></div></div>
-              <div class="ln" style="width:88%;margin-top:.5rem"></div>
-              <div class="ln" style="width:70%"></div>
-            </div>
-          </div>
-        </div>
-        <div class="pc-b">
-          <h3>Custom software</h3>
-          <p>One place for the job, the quote and the customer &mdash; with the follow-ups
-            going out on their own, which is where the money usually leaks.</p>
-          <div class="pc-f"><span>From $2,500</span>
-            <em>Open eight systems
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></div>
-        </div>
-      </a>
+    <div class="grid2" style="align-items:stretch" data-rvs>
+      <div class="panel">
+        <p class="eyebrow" style="color:var(--ink-3)">A receptionist, a year</p>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line-2);font-size:15px"><span style="color:var(--ink-2)">Median salary</span><b class="num">$63,908</b></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line-2);font-size:15px"><span style="color:var(--ink-2)">Superannuation at 12%</span><b class="num">+ $7,669</b></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 0"><span style="font-weight:600">Total</span><b class="num" data-cnt data-target="71577" style="font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:600;letter-spacing:-.04em">$71,577</b></div>
+        <p class="cap" style="margin-top:14px">Covers the hours somebody is at the desk.</p>
+      </div>
+      <div class="dpanel">
+        <p class="eyebrow" style="color:var(--deep-co)">Solva Call, first year</p>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--deep-line);font-size:15px"><span style="color:var(--deep-ink-2)">Set-up, once</span><b class="num" style="color:#fff">$690</b></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--deep-line);font-size:15px"><span style="color:var(--deep-ink-2)">$49 a week &times; 52</span><b class="num" style="color:#fff">$2,548</b></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 0"><span style="font-weight:600;color:#fff">Total</span><b class="num" data-cnt data-target="3238" style="font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:600;letter-spacing:-.04em;color:var(--deep-co)">$3,238</b></div>
+        <p class="cap" style="margin-top:14px;color:var(--deep-ink-3)">Covers 168 hours a week. Does one job, the phone.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ══════ TRAVAUX ══════ -->
-<section id="work">
+<section id="prices">
   <div class="wrap">
-    <div class="rv" style="max-width:680px">
-      <div class="sec"><b>06</b><i></i><span>Things we&rsquo;ve built</span></div>
-      <h2 class="d2">Eight systems.<br>All of them open.</h2>
-      <p class="lede" style="margin-top:1rem">Not screenshots. Working interfaces you can click
-        through right now &mdash; each one says whether it was built for a client or as a
-        demonstration.</p>
+    <div data-rv style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px 48px;align-items:end;margin-bottom:40px">
+      <h2>The whole price list.<br>Nothing behind a form.</h2>
+      <p class="lede" style="max-width:42ch">Which is $2,548 a year on the entry plan. We show both,
+        because a weekly price that hides the yearly one is a trick.</p>
     </div>
-    <div class="gal rvs rv">
-      <article class="gc"><div class="gc-t"><h4>TradieCatch</h4><span class="tag tag-demo">Demo</span></div>
-        <p>Enquiry to invoice for a trade business.</p>
-        <a href="demos/tradiecatch/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>PoolFlow</h4><span class="tag tag-demo">Demo</span></div>
-        <p>Recurring visits, one-off jobs, quotes waiting.</p>
-        <a href="demos/poolflow/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>AgencyOS</h4><span class="tag tag-demo">Demo</span></div>
-        <p>Client work with the reminder sequences built in.</p>
-        <a href="demos/agencyos/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>RingBack</h4><span class="tag tag-demo">Demo</span></div>
-        <p>What happens after a missed call, both sides.</p>
-        <a href="demos/ringback/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>RestoPilot</h4><span class="tag tag-demo">Demo</span></div>
-        <p>Covers, tables and the no-shows you spot at eight.</p>
-        <a href="demos/restopilot/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>BriefImmo</h4><span class="tag tag-demo">Demo</span></div>
-        <p>Qualifying a buyer before anyone drives anywhere.</p>
-        <a href="demos/briefimmo/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>Acquisition Copilot</h4><span class="tag tag-demo">Demo</span></div>
-        <p>Who to contact, when, and what was said last time.</p>
-        <a href="demos/copilot/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
-      <article class="gc"><div class="gc-t"><h4>Le Petit Menuisier</h4><span class="tag tag-real">Client</span></div>
-        <p>A joiner&rsquo;s quoting workspace, in 3D.</p>
-        <a href="demos/menuisier/"><em>Open <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></em></a></article>
+    <div data-rvs>
+      <div class="prow hi"><b>Up to 100 calls a month</b><span class="yr">$2,548 a year</span><span class="wk">$49<s> /wk</s></span></div>
+      <div class="prow"><b>Up to 250 calls a month</b><span class="yr">$4,628 a year</span><span class="wk">$89<s> /wk</s></span></div>
+      <div class="prow"><b>Up to 600 calls a month</b><span class="yr">$8,788 a year</span><span class="wk">$169<s> /wk</s></span></div>
+      <div class="prow"><b>Up to 1,200 calls a month</b><span class="yr">$15,548 a year</span><span class="wk">$299<s> /wk</s></span></div>
     </div>
-    <p class="xs rv" style="margin-top:1.3rem;max-width:70ch">Business names inside the
-      demonstrations are invented. Le Petit Menuisier is real client work, shown with permission.</p>
-  </div>
-</section>
+    <div class="tiles" data-rvs>
+      <div class="tile"><span>Set-up, once</span><b>From $690</b></div>
+      <div class="tile"><span>Hours covered</span><b>168 a week</b></div>
+      <div class="tile"><span>Commitment</span><b>None</b></div>
+      <div class="tile"><span>Outbound calling</span><b style="color:var(--co)">Never</b></div>
+    </div>
 
-<!-- ══════ FONDATEUR ══════ -->
-<section id="about" style="background:var(--sunk);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
-  <div class="wrap fdr">
-    <div class="rv"><div class="fdr-ph"><span>Y</span><em>Photograph coming</em></div></div>
-    <div class="rv">
-      <div class="sec"><b>07</b><i></i><span>Who you deal with</span></div>
-      <blockquote>&ldquo;Nobody wants software. They want the Thursday afternoon back.&rdquo;</blockquote>
-      <p class="sm">Solva is run by Yanis, in Brisbane. A background in business development,
-        hospitality and construction &mdash; which mostly means having been on the other side of
-        the counter when the phone rang and nobody could get it.</p>
-      <p class="sm" style="margin-top:.8rem">The work starts by understanding how a business
-        actually runs, then building the smallest useful thing. If your existing tools already
-        do the job, we say so and you keep your money.</p>
-      <div class="fdr-n">
-        <div><b>Yanis</b><span>Founder &middot; you speak to the person who builds it</span></div>
+    <div class="grid2" style="margin-top:48px;align-items:stretch" data-rvs>
+      <div class="panel">
+        <p class="eyebrow" style="color:var(--ink-3)">Also built here</p>
+        <b style="display:block;font-size:20px;letter-spacing:-.03em;margin-bottom:8px">Custom software</b>
+        <p style="font-size:15px;color:var(--ink-2);margin-bottom:14px">Dashboards, quoting tools,
+          client portals, job management. Shaped around how you already work.</p>
+        <p style="margin:0;font-size:15px;font-weight:600;color:var(--co)">Free demo first &middot; from $2,500</p>
+        <p style="margin:12px 0 0"><a href="custom-software/" style="font-size:14.5px;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:2px">See what that looks like &rarr;</a></p>
+      </div>
+      <div class="panel">
+        <p class="eyebrow" style="color:var(--ink-3)">Also built here</p>
+        <b style="display:block;font-size:20px;letter-spacing:-.03em;margin-bottom:8px">Websites</b>
+        <p style="font-size:15px;color:var(--ink-2);margin-bottom:14px">One clear offer, one reason
+          to trust you, one obvious next step. Price depends entirely on the content.</p>
+        <p style="margin:0;font-size:15px;font-weight:600;color:var(--co)">Ring for a quote</p>
+        <p style="margin:12px 0 0"><a href="tel:+61485066424" style="font-size:14.5px;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:2px">Ring 0485 066 424 &rarr;</a></p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════ CTA ══════ -->
-<section id="talk">
+<section class="dark">
   <div class="wrap">
-    <div class="fin rv">
-      <div class="fin-g">
-        <div>
-          <h2 class="d2">Tell us how the work<br>happens today.</h2>
-          <p>One conversation. We will tell you what would help, what wouldn&rsquo;t, and what it
-            would cost &mdash; before anything is built.</p>
-        </div>
-        <div class="hero-cta">
-          <a href="#talk" class="btn btn-p" data-todo="remplacer par mailto: dès que le domaine existe">
-            Start the conversation
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          <a href="solva-call/" class="btn btn-g">See Solva Call first</a>
-        </div>
+    <div data-rv style="max-width:820px;margin-bottom:40px">
+      <p class="eyebrow" style="color:var(--deep-co)">Where it stops</p>
+      <h2>Anyone selling you a phone assistant that never needs a human is selling you a problem.</h2>
+    </div>
+    <div class="grid2" style="align-items:start" data-rvs>
+      <div>
+        <p class="eyebrow" style="color:var(--deep-ok)">It will always</p>
+        <ul class="lim will">
+          <li><b>&#10003;</b>Answer every call, at any hour, as your business</li>
+          <li><b>&#10003;</b>Ask the questions you agreed, in your words</li>
+          <li><b>&#10003;</b>Separate an emergency from a price enquiry</li>
+          <li><b>&#10003;</b>Work with the diary you already use &mdash; writing the booking in where your system allows it, lodging it for you to confirm where it doesn&rsquo;t</li>
+          <li><b>&#10003;</b>Say it&rsquo;s an AI, every time it&rsquo;s asked</li>
+          <li><b>&#10003;</b>Pass on, word for word, anything it couldn&rsquo;t answer</li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow" style="color:var(--deep-urg)">It won&rsquo;t ever</p>
+        <ul class="lim wont">
+          <li><b>&#10007;</b>Quote a price you haven&rsquo;t set</li>
+          <li><b>&#10007;</b>Book outside your rules &mdash; hours, job types, deposits</li>
+          <li><b>&#10007;</b>Improvise an answer it doesn&rsquo;t have</li>
+          <li><b>&#10007;</b>Make an outbound call. No cold calling, ever</li>
+          <li><b>&#10007;</b>Replace the conversation a difficult customer needs to have with you</li>
+          <li><b>&#10007;</b>Pretend to be a human</li>
+        </ul>
       </div>
     </div>
-    <footer>
-      <div class="ft">
-        <a href="./" class="logo" style="font-size:1.3rem">solva<i>.</i></a>
-        <div class="ft-l">
-          <a href="solva-call/">Solva Call</a>
-          <a href="custom-software/">Custom software</a>
-          <a href="#work">Work</a>
-          <a href="#about">About</a>
-        </div>
-      </div>
-      <div class="ft-b">
-        <span>&copy; 2026 Solva &middot; Brisbane, Australia</span>
-        <span>Founder-run. You speak to the person who builds it.</span>
-      </div>
-    </footer>
   </div>
 </section>
+
+<section>
+  <div class="wrap">
+    <div data-rv style="max-width:740px;margin-bottom:40px">
+      <p class="eyebrow">The only figures we use</p>
+      <h2>Two studies, both linked.</h2>
+    </div>
+    <div class="grid2" style="align-items:start" data-rvs>
+      <div style="display:grid;gap:12px">
+        <div class="card">
+          <p style="margin:0 0 10px;font-size:16px;line-height:1.5">Answer within an hour and you are
+            far likelier to qualify the lead than an hour later.</p>
+          <p class="cap" style="margin:0">Harvard Business Review, 2011 &middot; 2,241 US companies &middot;
+            <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener" style="color:var(--co);border-bottom:1px solid var(--co)">read it</a></p>
+        </div>
+        <div class="card">
+          <p style="margin:0 0 10px;font-size:16px;line-height:1.5">38% of calls to small businesses
+            were answered by a human.</p>
+          <p class="cap" style="margin:0">411 Locals &middot; 85 businesses &middot; small sample,
+            an indication, not a law.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="eyebrow" style="color:var(--ink-3)">What this industry quotes at you</p>
+        <p style="margin:0 0 8px;font-size:18px;font-weight:600;letter-spacing:-.025em">You won&rsquo;t find these here.</p>
+        <div class="strike"><s>&ldquo;$126,000 lost a year&rdquo;</s><em>No source</em></div>
+        <div class="strike"><s>&ldquo;85% never call back&rdquo;</s><em>No source</em></div>
+        <div class="strike"><s>&ldquo;82% ring a competitor&rdquo;</s><em>No source</em></div>
+        <div class="strike" style="border-bottom:0"><s>&ldquo;10&times; cheaper than a receptionist&rdquo;</s><em>No source</em></div>
+        <p class="cap" style="margin-top:16px">Every one of them circulates in this industry, and not
+          one traces back to a primary source. They are published almost only by companies selling
+          what we sell. We would rather hand you a working phone number than a convincing statistic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work" style="background:var(--sunk);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
+  <div class="wrap">
+    <div data-rv style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px 48px;align-items:end;margin-bottom:40px">
+      <h2>Eight things that run in your browser.<br>Open any of them.</h2>
+      <p class="lede" style="max-width:44ch">Software demonstrations, not screenshots. One real
+        client: Le Petit Menuisier, a joiner in France, shown with his written permission.</p>
+    </div>
+    <div class="demos" data-rvs id="demos"></div>
+    <p class="cap" style="margin-top:18px;max-width:70ch">Business names inside the demonstrations
+      are invented. Le Petit Menuisier is real client work, shown with written permission.</p>
+  </div>
+</section>
+
+<section class="dark" style="text-align:center">
+  <div class="wrap">
+    <h2 data-rv style="max-width:22ch;margin:0 auto 22px;font-size:clamp(2rem,5vw,4rem);line-height:1;letter-spacing:-.05em">Ring it and hear what your callers would hear.</h2>
+    <p data-rv style="max-width:46ch;margin:0 auto 30px;font-size:16.5px">No form, no email, no chat
+      window. A studio that sells a phone assistant should be reachable by phone &mdash; and its
+      assistant should be the one who answers.</p>
+    <a href="tel:+61485066424" class="num" data-rv style="display:block;margin:0 auto 28px;font-size:clamp(2.4rem,7vw,5rem);font-weight:600;letter-spacing:-.05em;line-height:1;color:#fff">0485 066 424</a>
+    <div data-rv><a href="tel:+61485066424" class="btn btn-d">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
+      Ring 0485&nbsp;066&nbsp;424</a></div>
+    <p data-rv style="margin:28px 0 0;font-size:14px;color:var(--deep-ink-3)">Brisbane, Queensland
+      &middot; in-person meetings available</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="./" class="logo" style="color:var(--deep-ink)">Solva<i style="color:var(--deep-co)">.</i></a>
+    <nav class="fn" aria-label="Footer">
+      <a href="solva-call/">Solva Call</a>
+      <a href="#prices">Prices</a>
+      <a href="custom-software/">Custom software</a>
+      <a href="#work">Work</a>
+      <a href="tel:+61485066424" class="num">0485 066 424</a>
+    </nav>
+    <p style="margin:0;font-size:13px;color:var(--deep-ink-3)">&copy; 2026 Solva &middot; Brisbane, Queensland</p>
+  </div>
+</footer>
 
 <script>
-(() => {
-  'use strict';
-  const $ = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const hd = $('#hd');
-  const majNav = () => hd.classList.toggle('stuck', scrollY > 8);
-  majNav(); addEventListener('scroll', majNav, { passive: true });
-
-  /* Révélations, avec filet : si l'observateur ne démarre jamais — conteneur
-     de taille nulle, onglet caché — on affiche tout plutôt que du vide. */
-  const cibles = $$('.rv, .rvs');
-  if (calme || !('IntersectionObserver' in window)) {
-    cibles.forEach(e => e.classList.add('in'));
-  } else {
-    const obs = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
-    }), { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
-    cibles.forEach(e => obs.observe(e));
-    setTimeout(() => { cibles.forEach(e => e.classList.add('in')); obs.disconnect(); }, 2500);
-  }
-
-  // Barres de comparaison : elles ne partent qu'une fois à l'écran.
-  if ('IntersectionObserver' in window) {
-    const ob2 = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('on'); ob2.unobserve(e.target); }
-    }), { threshold: 0.4 });
-    $$('.bar').forEach(b => ob2.observe(b));
-  } else $$('.bar').forEach(b => b.classList.add('on'));
-
-  /* Compteurs. On repart de la valeur écrite dans le HTML, donc sans
-     JavaScript le chiffre exact reste affiché — jamais un zéro. */
-  const monte = (el) => {
-    const cible = +el.dataset.count, pre = el.dataset.pre || '', suf = el.dataset.suf || '';
-    if (!isFinite(cible)) return;
-    const t0 = performance.now(), duree = 1500;
-    const pas = (t) => {
-      const p = Math.min((t - t0) / duree, 1);
-      const v = Math.round(cible * (1 - Math.pow(1 - p, 3)));
-      el.innerHTML = pre + v.toLocaleString('en-AU') + suf;
-      if (p < 1) requestAnimationFrame(pas);
-    };
-    requestAnimationFrame(pas);
-  };
-  if (!calme && 'IntersectionObserver' in window) {
-    const ob3 = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { monte(e.target); ob3.unobserve(e.target); }
-    }), { threshold: 0.6 });
-    $$('[data-count]').forEach(el => ob3.observe(el));
-  }
-
-  /* ═══ Le calculateur ═══
-     Les trois entrées appartiennent au visiteur, y compris le taux de
-     conversion. On n'emprunte aucune statistique : c'est son chiffre. */
-  const c1 = $('#c1'), c2 = $('#c2'), c3 = $('#c3'), out = $('#out');
-  const SEM = 52;
-  const calcule = () => {
-    const appels = +c1.value, valeur = +c2.value, taux = +c3.value / 100;
-    $('#v1').textContent = appels;
-    $('#v2').textContent = '$' + (+valeur).toLocaleString('en-AU');
-    $('#v3').textContent = taux >= .5 ? '1 in 2' : '1 in ' + Math.round(1 / taux);
-    out.textContent = '$' + Math.round(appels * SEM * valeur * taux).toLocaleString('en-AU');
-  };
-  [c1, c2, c3].forEach(i => i.addEventListener('input', calcule));
-  calcule();
-})();
-</script>
-
-
-<script>
-/* ─── Téléphone du héros : quatre métiers, aucun chantier ─── */
 (function(){
-  var ph=document.getElementById('ph'); if(!ph) return;
+'use strict';
+var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  var M=[
-   {nom:'Dental practice',num:'0412 &bull;&bull;&bull; 338',
-    why:'You&rsquo;re in someone&rsquo;s mouth. Nobody can pick up.',
-    talk:[['them','I chipped a tooth on the weekend. Not sore, but it&rsquo;s sharp.'],
-          ['us','Is it bleeding, or just the edge catching your tongue?'],
-          ['them','Just the edge.'],
-          ['us','Have you been here before, and is any day better for you?'],
-          ['them','First time. Mornings suit me.']],
-    brief:[['Reason','Chipped tooth, not bleeding, sharp edge'],
-           ['Urgency','Routine &mdash; did not need the after-hours rule'],
-           ['Patient','New, never seen here'],
-           ['Prefers','Mornings'],
-           ['Caller','R. Okafor &middot; 0412 &bull;&bull;&bull; 338']]},
+document.getElementById('tgl').addEventListener('click', function(){
+  var r = document.documentElement,
+      cur = r.getAttribute('data-theme') ||
+            (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'),
+      next = cur === 'dark' ? 'light' : 'dark';
+  r.setAttribute('data-theme', next);
+  try { localStorage.setItem('solva-theme', next); } catch(e){}
+});
 
-   {nom:'Tattoo studio',num:'0431 &bull;&bull;&bull; 204',
-    why:'You&rsquo;ve got a needle on skin. Nobody can pick up.',
-    talk:[['them','I want a piece on my forearm, black and grey.'],
-          ['us','Roughly how big, in centimetres?'],
-          ['them','Maybe fifteen by ten.'],
-          ['us','Is it covering anything, and have you got a reference?'],
-          ['them','Not a cover-up. I&rsquo;ve got pictures on my phone.']],
-    brief:[['Piece','Forearm, black and grey, ~15 &times; 10 cm'],
-           ['Cover-up','No'],
-           ['Reference','Has images &mdash; sent them a link to upload'],
-           ['Note','No price quoted. Yours to set.'],
-           ['Caller','S. Renard &middot; 0431 &bull;&bull;&bull; 204']]},
+var mb = document.getElementById('mbtn'), mn = document.getElementById('mnav');
+mb.addEventListener('click', function(){
+  var on = mn.classList.toggle('on');
+  mb.setAttribute('aria-expanded', on ? 'true' : 'false');
+  mb.textContent = on ? 'Close' : 'Menu';
+});
+Array.prototype.forEach.call(mn.querySelectorAll('a'), function(a){
+  a.addEventListener('click', function(){ mn.classList.remove('on'); mb.textContent = 'Menu';
+    mb.setAttribute('aria-expanded','false'); });
+});
 
-   {nom:'Dog groomer',num:'0455 &bull;&bull;&bull; 917',
-    why:'You&rsquo;ve got a wet dog on the table. Nobody can pick up.',
-    talk:[['them','Can I get my golden retriever in this week?'],
-          ['us','Is the coat matted, or a regular tidy-up?'],
-          ['them','Pretty matted. He&rsquo;s been swimming.'],
-          ['us','Has he been groomed before, and is he alright being handled?'],
-          ['them','Yeah, he&rsquo;s very calm.']],
-    brief:[['Dog','Golden retriever, matted coat'],
-           ['Service','Full groom &mdash; needs the longer slot'],
-           ['Handling','Calm, groomed before'],
-           ['When','This week'],
-           ['Caller','K. Tran &middot; 0455 &bull;&bull;&bull; 917']]},
+var D = [
+ ['tradiecatch','TradieCatch','Trades','Enquiry to invoice for a trade business.','Demo','warm',['Jobs today','4 open'],[['Leak · Nerang','Urgent','urg'],['Hot water · Ascot','Quoted','warm'],['Tap · Carina','Invoiced','ok']]],
+ ['poolflow','PoolFlow','Pool service','Recurring visits, one-off jobs, quotes waiting.','Demo','ok',['This week','12 visits'],[['Weekly clean · Sarah','Mon 8:00','ok'],['Salt cell · Tony','Quote','warm'],['Green pool · Sophie','Deposit','ok']]],
+ ['agencyos','AgencyOS','Agencies','Client work with the reminder sequences built in.','Demo','co',['Clients','Reminders on'],[['Proposal · Harbour Co','Day 3','co'],['Invoice · Nord','Overdue 2d','urg'],['Kick-off · Lumen','Tue','ink']]],
+ ['ringback','RingBack','Missed calls','What happens after a missed call, both sides.','Demo','urg',['Missed 18:32','Recovered'],[['Call missed','18:32','urg'],['Text sent','18:33','co'],['Booked','18:41','ok']]],
+ ['restopilot','RestoPilot','Restaurants','Covers, tables and the no-shows you spot at eight.','Demo','ok',['Service','20:42'],[['Table 4 · 2 covers','Seated','ok'],['Table 9 · 6 covers','20:15','warm'],['Table 2 · 4 covers','No-show?','urg']]],
+ ['briefimmo','BriefImmo','Property','Qualifying a buyer before anyone drives anywhere.','Demo','warm',['Buyers','5 active'],[['Céline &amp; Marc','Qualified','ok'],['Thomas · rental','Pending','warm'],['Isabelle','New','co']]],
+ ['copilot','Acquisition Copilot','Sales','Who to contact, when, and what was said last time.','Demo','co',['Today','6 follow-ups'],[['Call back · Hinds','10:30','co'],['Send quote · Ortiz','Today','warm'],['Check in · Mayer','Day 10','ink']]],
+ ['menuisier','Le Petit Menuisier','Joinery · France','A joiner’s quoting workspace, in 3D.','Client','co',['Quote','Wardrobe'],[['Dimensions','Reviewed','ok'],['Cut list · 11 panels','Into quote','co'],['Total TTC','3 330,60 €','ink']]]
+];
+var C = {co:['var(--co)','var(--co-bg)'],ok:['var(--ok)','var(--ok-bg)'],urg:['var(--urg)','var(--urg-bg)'],
+         warm:['var(--warm)','var(--warm-bg)'],ink:['var(--ink-3)','var(--sunk)']};
+document.getElementById('demos').innerHTML = D.map(function(d){
+  var rows = d[7].map(function(r){
+    return '<div class="rw"><span><i style="background:'+C[r[2]][0]+'"></i>'+r[0]+'</span>'+
+           '<span style="font-size:10.5px;font-weight:700;color:'+C[r[2]][0]+'">'+r[1]+'</span></div>';
+  }).join('');
+  return '<a class="dtile" href="demos/'+d[0]+'/" target="_blank" rel="noopener">'+
+    '<div class="dhead" style="background:'+C[d[5]][1]+'"><div class="dwin">'+
+    '<div class="hd"><span>'+d[6][0]+'</span><span style="color:'+C[d[5]][0]+'">'+d[6][1]+'</span></div>'+
+    rows+'</div></div>'+
+    '<div class="dbody"><div class="top"><span class="cat">'+d[2]+'</span>'+
+    '<span class="tag'+(d[4]==='Client'?' client':'')+'">'+d[4]+'</span></div>'+
+    '<b>'+d[1]+'</b><p>'+d[3]+'</p>'+
+    '<span class="go">Open the demo ↗</span></div></a>';
+}).join('');
 
-   {nom:'Restaurant',num:'0408 &bull;&bull;&bull; 662',
-    why:'It&rsquo;s service. Nobody can pick up.',
-    talk:[['them','Have you got a table for six on Friday?'],
-          ['us','What time were you thinking, and is it a celebration?'],
-          ['them','Around eight. It&rsquo;s a birthday.'],
-          ['us','Any allergies, or anyone who can&rsquo;t do stairs?'],
-          ['them','One coeliac, that&rsquo;s all.']],
-    brief:[['Booking','Six, Friday, around 8pm'],
-           ['Occasion','Birthday'],
-           ['Dietary','One coeliac'],
-           ['Access','Stairs not an issue'],
-           ['Caller','M. Whelan &middot; 0408 &bull;&bull;&bull; 662']]}
-  ];
+var compte = {};
+function monte(el){
+  var k = el.getAttribute('data-target');
+  if (compte[k]) return; compte[k] = 1;
+  if (calme) return;
+  var cible = +k, t0 = Date.now(), dur = 1600;
+  var iv = setInterval(function(){
+    var p = Math.min(1,(Date.now()-t0)/dur), e = 1-Math.pow(1-p,3);
+    el.textContent = '$' + Math.round(cible*e).toLocaleString('en-AU');
+    if (p >= 1) clearInterval(iv);
+  }, 30);
+}
+function entre(el){
+  if (el.hasAttribute('data-cnt')) monte(el);
+  Array.prototype.forEach.call(el.querySelectorAll('[data-cnt]'), monte);
+}
+var cibles = document.querySelectorAll('[data-rv],[data-rvs]');
+function tout(){ Array.prototype.forEach.call(cibles, function(el){
+  el.setAttribute('data-in',''); entre(el); }); }
+if (calme || !('IntersectionObserver' in window)) { tout(); }
+else {
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (e.isIntersecting){ e.target.setAttribute('data-in',''); entre(e.target); io.unobserve(e.target); }
+    });
+  }, {threshold:.08, rootMargin:'0px 0px -8% 0px'});
+  Array.prototype.forEach.call(cibles, function(el){ io.observe(el); });
+  setTimeout(function(){ if (!document.querySelector('[data-in]')) tout(); }, 2500);
+}
 
-  var ecr=ph.querySelectorAll('.scr'),
-      hor=document.getElementById('phclock'), who=document.getElementById('phwho'),
-      num=document.getElementById('phnum'), why=document.getElementById('phwhy'),
-      talk=document.getElementById('phtalk'), brief=document.getElementById('phbrief'),
-      chips=document.getElementById('tchips'),
-      calme=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-
-  var idx=0,t=[],joue=false,vu=true;
-
-  M.forEach(function(m,i){
-    var b=document.createElement('button');
-    b.className='tchip'; b.type='button'; b.setAttribute('role','tab'); b.textContent=m.nom;
-    b.addEventListener('click',function(){ idx=i; stop(); scene(); });
-    chips.appendChild(b);
+var elCalls = document.getElementById('calls'), elVal = document.getElementById('value'),
+    elOut = document.getElementById('calcOut'), elCallsOut = document.getElementById('callsOut'),
+    taux = 0.25;
+function calcule(){
+  var n = +elCalls.value, v = +elVal.value || 0;
+  elCallsOut.textContent = n;
+  elOut.textContent = '$' + Math.round(n*v*taux*52).toLocaleString('en-AU');
+}
+elCalls.addEventListener('input', calcule);
+elVal.addEventListener('input', calcule);
+Array.prototype.forEach.call(document.querySelectorAll('#rates button'), function(b){
+  b.addEventListener('click', function(){
+    taux = +b.getAttribute('data-r');
+    Array.prototype.forEach.call(document.querySelectorAll('#rates button'), function(o){
+      o.setAttribute('aria-checked', o === b ? 'true' : 'false'); });
+    calcule();
   });
-  var puces=chips.querySelectorAll('.tchip');
+});
+calcule();
 
-  function peuple(i){
-    var m=M[i];
-    who.textContent=m.nom; num.innerHTML=m.num; why.innerHTML=m.why;
-    talk.innerHTML=m.talk.map(function(b){return '<p class="bub '+b[0]+'">'+b[1]+'</p>';}).join('');
-    brief.innerHTML=m.brief.map(function(l){return '<div class="dl"><b>'+l[0]+'</b><span>'+l[1]+'</span></div>';}).join('');
-    for(var k=0;k<puces.length;k++) puces[k].setAttribute('aria-selected',k===i?'true':'false');
+var T = [
+ {pill:'Dental practice', biz:'Ashgrove Dental', clock:['12:41','12:42','12:44'],
+  num:'0412 ••• 338', why:'You’re in someone’s mouth.',
+  lines:[['c','I’ve chipped a tooth on a bread roll.'],
+         ['a','I’m an AI assistant for Ashgrove Dental — I can take the details. Is it bleeding, or is it just catching?'],
+         ['c','Just catching. It’s sharp on my tongue.'],
+         ['a','Have you been in to see us before?'],
+         ['c','About two years ago, under my wife’s name.']],
+  brief:[['Caller','M. Ferrand'],['Number','0412 ••• 338'],['Problem','Chipped upper molar, sharp edge'],['Bleeding','No — not urgent'],['History','Existing patient, ~2 years'],['Asked for','Thursday or Friday, after 4pm']],
+  note:'Triaged as not urgent, because you said a chip without bleeding isn’t one.'},
+ {pill:'Tattoo studio', biz:'Grey Lane Tattoo', clock:['6:58','6:59','7:01'],
+  num:'0455 ••• 907', why:'You’re three hours into a back piece.',
+  lines:[['c','I’m after a cover-up on my forearm.'],
+         ['a','I’m an AI assistant for Grey Lane. How big is the piece, roughly, in centimetres?'],
+         ['c','Fifteen by ten, something like that.'],
+         ['a','Is there a reference you can send? I’ll text you a link to drop the photos in.'],
+         ['c','Yeah, I’ve got photos of the old one.']],
+  brief:[['Caller','J. Ruiz'],['Number','0455 ••• 907'],['Piece','Cover-up, inner forearm'],['Size','~15 × 10 cm'],['Images','Link sent — 3 photos received'],['Asked for','Weekend consult']],
+  note:'What prices this is visual, so it sent a link. The photos were in before you washed your hands.'},
+ {pill:'Dog groomer', biz:'Paddington Pet Grooming', clock:['8:12','8:13','8:15'],
+  num:'0433 ••• 120', why:'You’ve got clippers in one hand and a nervous spaniel in the other.',
+  lines:[['c','I need to get my dog in for a groom.'],
+         ['a','I’m an AI assistant for the salon. Is the coat matted, or is this a maintenance groom?'],
+         ['c','He’s pretty matted. We’ve left it too long.'],
+         ['a','Has he been groomed before, and is he happy being handled?'],
+         ['c','Once. He gets funny about his paws.']],
+  brief:[['Caller','S. Nguyen'],['Number','0433 ••• 120'],['Dog','Cocker spaniel, 3 years'],['Coat','Matted — needs a longer slot'],['Handling','Nervous about paws'],['Asked for','Any weekday morning']],
+  note:'A matted coat isn’t a standard booking, so it flagged the slot instead of guessing.'},
+ {pill:'Restaurant', biz:'Bar Corvina', clock:['7:24','7:25','7:27'],
+  num:'0419 ••• 462', why:'You’re plating forty covers.',
+  lines:[['c','I’d like a table for six on Saturday.'],
+         ['a','I’m an AI assistant for Bar Corvina. What time, and is it an occasion?'],
+         ['c','Around seven. It’s my mum’s sixtieth.'],
+         ['a','Any allergies, or steps we should keep you away from?'],
+         ['c','One coeliac, and Mum can’t do stairs.']],
+  brief:[['Caller','A. Whitcombe'],['Number','0419 ••• 462'],['Party','6 guests, Saturday ~7pm'],['Occasion','60th birthday'],['Access','Ground floor — no stairs'],['Allergies','1 coeliac']],
+  note:'Front of house knew about the cake, the coeliac and the stairs before service started.'}
+];
+var DUR = [2200,1500,1900,1500,1800,1500,4600];
+var phw = document.getElementById('phw'), pills = document.getElementById('pills'),
+    act1 = document.getElementById('act1'), act3 = document.getElementById('act3'),
+    wave = document.getElementById('wave'), talk = document.getElementById('talk'),
+    clock = document.getElementById('clock'), sdot = document.getElementById('sdot'),
+    sname = document.getElementById('sname'), pnum = document.getElementById('pnum'),
+    pwhy = document.getElementById('pwhy'), pbiz = document.getElementById('pbiz'),
+    brief = document.getElementById('brief'), pnote = document.getElementById('pnote');
+var ti = 0, step = 0, timer = null, vu = true;
+
+var wh = '';
+for (var wi = 0; wi < 15; wi++) wh += '<i></i>';
+wave.innerHTML = wh;
+Array.prototype.forEach.call(wave.children, function(b,i){
+  b.style.animationDuration = (0.85 + (i%5)*0.14).toFixed(2)+'s';
+  b.style.animationDelay = (i*0.06).toFixed(2)+'s';
+});
+
+pills.innerHTML = T.map(function(s,i){
+  return '<button class="pill" type="button" role="tab" aria-selected="'+(i===0)+'">'+s.pill+'</button>';
+}).join('');
+Array.prototype.forEach.call(pills.children, function(b,i){
+  b.addEventListener('click', function(){ ti = i; step = 0; peuple(); rend(); arme(); });
+});
+
+function peuple(){
+  var S = T[ti];
+  pnum.textContent = S.num; pwhy.textContent = S.why; pbiz.textContent = S.biz;
+  talk.innerHTML = S.lines.map(function(l){
+    return '<div class="bub '+l[0]+'">'+l[1]+'</div>'; }).join('');
+  brief.innerHTML = S.brief.map(function(r){
+    var hot = /urgent|longer slot|Link sent|no stairs/i.test(r[1]);
+    return '<li><b>'+r[0]+'</b><span'+(hot?' style="color:var(--co)"':'')+'>'+r[1]+'</span></li>'; }).join('');
+  pnote.textContent = S.note;
+  Array.prototype.forEach.call(pills.children, function(b,i){
+    b.setAttribute('aria-selected', i===ti ? 'true' : 'false'); });
+}
+function rend(){
+  var S = T[ti], ring = step===0, parle = step>=1 && step<=5, fini = step>=6;
+  clock.textContent = S.clock[step===0?0:step<=4?1:2];
+  sname.textContent = ring ? 'Ringing' : fini ? 'Call ended' : 'AI assistant';
+  sdot.style.background = ring ? 'var(--urg)' : fini ? 'var(--ok)' : 'var(--co)';
+  act1.style.maxHeight = ring ? '300px' : '0px';
+  act1.style.opacity = ring ? '1' : '0';
+  if (ring) act1.setAttribute('data-on',''); else act1.removeAttribute('data-on');
+  wave.style.height = parle ? '24px' : '0px';
+  wave.style.opacity = parle ? '1' : '0';
+  if (parle) wave.setAttribute('data-on',''); else wave.removeAttribute('data-on');
+  Array.prototype.forEach.call(talk.children, function(b,i){
+    if (i < Math.min(step,5)) b.classList.add('on'); else b.classList.remove('on'); });
+  if (fini) act3.setAttribute('data-on',''); else act3.removeAttribute('data-on');
+}
+function arme(){
+  clearTimeout(timer);
+  if (calme) return;
+  timer = setTimeout(function(){
+    if (!document.hidden && vu){
+      if (step >= 6){ ti = (ti+1) % T.length; step = 0; peuple(); }
+      else step++;
+      rend();
+    }
+    arme();
+  }, DUR[Math.min(step,6)]);
+}
+peuple();
+if (calme){ step = 6; rend(); }
+else {
+  rend();
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ vu = es[0].isIntersecting; }, {threshold:.15}).observe(phw);
   }
-  function montre(n){ for(var i=0;i<ecr.length;i++) ecr[i].classList.toggle('on',i===n); }
-  function stop(){ for(var i=0;i<t.length;i++) clearTimeout(t[i]); t=[]; joue=false; }
-  function tard(f,d){ t.push(setTimeout(f,d)); }
-
-  function fige(){
-    peuple(idx); montre(2);
-    var b=talk.querySelectorAll('.bub');
-    for(var i=0;i<b.length;i++) b[i].classList.add('shown');
-    hor.textContent='7:01 am';
-  }
-  if(calme){ fige(); return; }
-
-  function scene(){
-    joue=true; peuple(idx); montre(0); hor.textContent='6:58 am';
-    var b=talk.querySelectorAll('.bub'), fin=2400;
-    tard(function(){
-      montre(1); hor.textContent='6:59 am';
-      for(var i=0;i<b.length;i++)
-        (function(el,d){ tard(function(){ el.classList.add('shown'); },d); })(b[i],240+i*820);
-    },2400);
-    fin+=240+b.length*820+850;
-    tard(function(){ montre(2); hor.textContent='7:01 am'; },fin);
-    tard(function(){ idx=(idx+1)%M.length; if(vu&&!document.hidden) scene(); else joue=false; },fin+4000);
-  }
-  function surveille(){ if(vu&&!document.hidden){ if(!joue) scene(); } else stop(); }
-
-  if('IntersectionObserver' in window){
-    new IntersectionObserver(function(e){ vu=e[0].isIntersecting; surveille(); },{threshold:.2}).observe(ph);
-    document.addEventListener('visibilitychange',surveille);
-    setTimeout(function(){ if(!joue) fige(); },2500);
-  } else fige();
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) arme(); });
+  arme();
+}
 })();
 </script>
 </body>
